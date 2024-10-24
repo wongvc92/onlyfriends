@@ -13,6 +13,11 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as AboutImport } from './routes/about'
 import { Route as IndexImport } from './routes/index'
+import { Route as AuthVerifyEmailIndexImport } from './routes/_auth/verify-email/index'
+import { Route as AuthResetIndexImport } from './routes/_auth/reset/index'
+import { Route as AuthRegisterIndexImport } from './routes/_auth/register/index'
+import { Route as AuthNewPasswordIndexImport } from './routes/_auth/new-password/index'
+import { Route as AuthLoginIndexImport } from './routes/_auth/login/index'
 
 // Create/Update Routes
 
@@ -25,6 +30,36 @@ const AboutRoute = AboutImport.update({
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AuthVerifyEmailIndexRoute = AuthVerifyEmailIndexImport.update({
+  id: '/_auth/verify-email/',
+  path: '/verify-email/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AuthResetIndexRoute = AuthResetIndexImport.update({
+  id: '/_auth/reset/',
+  path: '/reset/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AuthRegisterIndexRoute = AuthRegisterIndexImport.update({
+  id: '/_auth/register/',
+  path: '/register/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AuthNewPasswordIndexRoute = AuthNewPasswordIndexImport.update({
+  id: '/_auth/new-password/',
+  path: '/new-password/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AuthLoginIndexRoute = AuthLoginIndexImport.update({
+  id: '/_auth/login/',
+  path: '/login/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -46,6 +81,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutImport
       parentRoute: typeof rootRoute
     }
+    '/_auth/login/': {
+      id: '/_auth/login/'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof AuthLoginIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/_auth/new-password/': {
+      id: '/_auth/new-password/'
+      path: '/new-password'
+      fullPath: '/new-password'
+      preLoaderRoute: typeof AuthNewPasswordIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/_auth/register/': {
+      id: '/_auth/register/'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof AuthRegisterIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/_auth/reset/': {
+      id: '/_auth/reset/'
+      path: '/reset'
+      fullPath: '/reset'
+      preLoaderRoute: typeof AuthResetIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/_auth/verify-email/': {
+      id: '/_auth/verify-email/'
+      path: '/verify-email'
+      fullPath: '/verify-email'
+      preLoaderRoute: typeof AuthVerifyEmailIndexImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -54,36 +124,83 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/login': typeof AuthLoginIndexRoute
+  '/new-password': typeof AuthNewPasswordIndexRoute
+  '/register': typeof AuthRegisterIndexRoute
+  '/reset': typeof AuthResetIndexRoute
+  '/verify-email': typeof AuthVerifyEmailIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/login': typeof AuthLoginIndexRoute
+  '/new-password': typeof AuthNewPasswordIndexRoute
+  '/register': typeof AuthRegisterIndexRoute
+  '/reset': typeof AuthResetIndexRoute
+  '/verify-email': typeof AuthVerifyEmailIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/_auth/login/': typeof AuthLoginIndexRoute
+  '/_auth/new-password/': typeof AuthNewPasswordIndexRoute
+  '/_auth/register/': typeof AuthRegisterIndexRoute
+  '/_auth/reset/': typeof AuthResetIndexRoute
+  '/_auth/verify-email/': typeof AuthVerifyEmailIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/login'
+    | '/new-password'
+    | '/register'
+    | '/reset'
+    | '/verify-email'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about'
-  id: '__root__' | '/' | '/about'
+  to:
+    | '/'
+    | '/about'
+    | '/login'
+    | '/new-password'
+    | '/register'
+    | '/reset'
+    | '/verify-email'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/_auth/login/'
+    | '/_auth/new-password/'
+    | '/_auth/register/'
+    | '/_auth/reset/'
+    | '/_auth/verify-email/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AuthLoginIndexRoute: typeof AuthLoginIndexRoute
+  AuthNewPasswordIndexRoute: typeof AuthNewPasswordIndexRoute
+  AuthRegisterIndexRoute: typeof AuthRegisterIndexRoute
+  AuthResetIndexRoute: typeof AuthResetIndexRoute
+  AuthVerifyEmailIndexRoute: typeof AuthVerifyEmailIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AuthLoginIndexRoute: AuthLoginIndexRoute,
+  AuthNewPasswordIndexRoute: AuthNewPasswordIndexRoute,
+  AuthRegisterIndexRoute: AuthRegisterIndexRoute,
+  AuthResetIndexRoute: AuthResetIndexRoute,
+  AuthVerifyEmailIndexRoute: AuthVerifyEmailIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -99,7 +216,12 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/about"
+        "/about",
+        "/_auth/login/",
+        "/_auth/new-password/",
+        "/_auth/register/",
+        "/_auth/reset/",
+        "/_auth/verify-email/"
       ]
     },
     "/": {
@@ -107,6 +229,21 @@ export const routeTree = rootRoute
     },
     "/about": {
       "filePath": "about.tsx"
+    },
+    "/_auth/login/": {
+      "filePath": "_auth/login/index.tsx"
+    },
+    "/_auth/new-password/": {
+      "filePath": "_auth/new-password/index.tsx"
+    },
+    "/_auth/register/": {
+      "filePath": "_auth/register/index.tsx"
+    },
+    "/_auth/reset/": {
+      "filePath": "_auth/reset/index.tsx"
+    },
+    "/_auth/verify-email/": {
+      "filePath": "_auth/verify-email/index.tsx"
     }
   }
 }
