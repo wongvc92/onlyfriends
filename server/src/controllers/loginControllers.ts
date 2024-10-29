@@ -16,11 +16,8 @@ export const loginUser = async (req: Request, res: Response) => {
       res.status(400).json({ message: "Please provide email or password!" });
       return;
     }
-    console.log("loginUser email", email);
-    console.log("loginUser password", password);
 
     const userData = await pool.query("SELECT * from users where email=$1", [email]);
-    console.log("userData", userData);
 
     if (userData.rows.length === 0) {
       res.status(400).json({ message: "User not found!" });
@@ -30,7 +27,7 @@ export const loginUser = async (req: Request, res: Response) => {
     const existingUser: IUser = userData.rows[0];
 
     const isValid = await bcrypt.compare(password, existingUser.password);
-    console.log("passport valid");
+
     if (!isValid) {
       res.status(401).json({ message: "Invalid credentials" });
       return;
@@ -98,26 +95,30 @@ export const loginUser = async (req: Request, res: Response) => {
     // Store the access token in an httpOnly cookie
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // Use 'true' in production (HTTPS)
-      sameSite: "strict", // Protect against CSRF
-      maxAge: 15 * 60 * 1000, // 15 minutes
+      secure: false, // set to false for local testing
+      sameSite: "lax",
+      maxAge: 3600000, // 15 minutes
+      path: "/",
     });
 
     // Store the refresh token in an httpOnly cookie
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      secure: false, // set to false for local testing
+      sameSite: "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      path: "/",
     });
 
     // Optionally, send user data or success message (no need to send the tokens in the body)
     res.status(200).json({
       message: "Login successful",
+      accessToken,
       user: {
         id: existingUser.id,
         email: existingUser.email,
         username: existingUser.username,
+        image: existingUser.image,
       },
     });
   } catch (error) {
@@ -126,43 +127,32 @@ export const loginUser = async (req: Request, res: Response) => {
   }
 };
 
-export const refreshToken = async (req: Request, res: Response) => {
+export const refreshAccessToken = (req: Request, res: Response) => {
+  console.log("refreshAccessToken hit");
   const refreshToken = req.cookies.refreshToken;
-
+  console.log("refreshToken", refreshToken);
   if (!refreshToken) {
-    res.status(401).json({ message: "Refresh token not found" });
-    return;
+    res.status(400).json({ message: "Refresh token not found" });
   }
 
-  try {
-    // Verify the refresh token
-    const userData = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET!);
+  const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET!) as JwtPayload;
 
-    // Type checking: ensure userData is of type JwtPayload
-    if (typeof userData === "string") {
-      res.status(400).json({ message: "Invalid token format" });
-      return;
-    }
+  const newAccessToken = jwt.sign(
+    {
+      id: decoded.id,
+      email: decoded.email,
+      username: decoded.username,
+      image: decoded.image,
+    },
+    process.env.JWT_SECRET_KEY!,
+    { expiresIn: "15m" }
+  );
 
-    // Narrowing the type: userData is now JwtPayload
-    const { id, email } = userData as JwtPayload;
-
-    // Check if id and email exist
-    if (!id || !email) {
-      res.status(400).json({ message: "Invalid token data" });
-      return;
-    }
-
-    // Generate a new access token
-    const newAccessToken = jwt.sign(
-      { id: id, email: email },
-      process.env.JWT_SECRET_KEY!,
-      { expiresIn: "15m" } // Short-lived access token
-    );
-
-    // Send the new access token to the client
-    res.status(200).json({ accessToken: newAccessToken });
-  } catch (error) {
-    res.status(403).json({ message: "Invalid or expired refresh token" });
-  }
+  res.cookie("accessToken", newAccessToken, {
+    httpOnly: true,
+    secure: false, // set to false for local testing
+    sameSite: "lax",
+    maxAge: 3600000, // 15 minutes
+    path: "/",
+  });
 };

@@ -1,44 +1,24 @@
-import * as React from "react";
-import { Link, Outlet, createRootRoute } from "@tanstack/react-router";
+import { Link, Outlet, createRootRouteWithContext, useMatch, useRouterState } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "@/components/ui/toaster";
+import { IAuthContext, useAuth } from "@/auth";
+import LogoutButton from "@/components/auth/logout-button";
 
-export const Route = createRootRoute({
+interface MyRouterContext {
+  auth: IAuthContext;
+  queryClient: QueryClient;
+}
+export const Route = createRootRouteWithContext<MyRouterContext>()({
   component: RootComponent,
 });
 
 function RootComponent() {
-  const queryClient = new QueryClient();
+  const auth = useAuth();
   return (
-    <>
-      <QueryClientProvider client={queryClient}>
-        <div className="p-2 flex gap-2 text-lg">
-          <Link
-            to="/"
-            activeProps={{
-              className: "font-bold",
-            }}
-            activeOptions={{ exact: true }}
-          >
-            Home
-          </Link>
-          <Link
-            to="/register"
-            activeProps={{
-              className: "font-bold",
-            }}
-          >
-            Register
-          </Link>
-        </div>
-        <hr />
-        <div className="px-2">
-          <Outlet />
-        </div>
-        <Toaster />
-      </QueryClientProvider>
+    <div className="container mx-auto">
+      <Outlet />
+
       <TanStackRouterDevtools position="bottom-right" />
-    </>
+    </div>
   );
 }

@@ -4,6 +4,7 @@
     "paths": {
       "@/*": ["./src/*"]
     },
+    "types": ["vite/client"],
     "strict": true,
     "esModuleInterop": true,
     "jsx": "react-jsx",

@@ -11,19 +11,28 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as AboutImport } from './routes/about'
+import { Route as LoginImport } from './routes/login'
+import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as IndexImport } from './routes/index'
-import { Route as AuthVerifyEmailIndexImport } from './routes/_auth/verify-email/index'
-import { Route as AuthResetIndexImport } from './routes/_auth/reset/index'
-import { Route as AuthRegisterIndexImport } from './routes/_auth/register/index'
-import { Route as AuthNewPasswordIndexImport } from './routes/_auth/new-password/index'
-import { Route as AuthLoginIndexImport } from './routes/_auth/login/index'
+import { Route as AuthenticatedProfileIndexImport } from './routes/_authenticated/profile/index'
+import { Route as AuthenticatedPostsIndexImport } from './routes/_authenticated/posts/index'
+import { Route as AuthenticatedHomeIndexImport } from './routes/_authenticated/home/index'
+import { Route as AuthenticatedAboutIndexImport } from './routes/_authenticated/about/index'
+import { Route as authVerifyEmailIndexImport } from './routes/(auth)/verify-email/index'
+import { Route as authResetIndexImport } from './routes/(auth)/reset/index'
+import { Route as authRegisterIndexImport } from './routes/(auth)/register/index'
+import { Route as authNewPasswordIndexImport } from './routes/(auth)/new-password/index'
 
 // Create/Update Routes
 
-const AboutRoute = AboutImport.update({
-  id: '/about',
-  path: '/about',
+const LoginRoute = LoginImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AuthenticatedRoute = AuthenticatedImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -33,33 +42,51 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const AuthVerifyEmailIndexRoute = AuthVerifyEmailIndexImport.update({
-  id: '/_auth/verify-email/',
+const AuthenticatedProfileIndexRoute = AuthenticatedProfileIndexImport.update({
+  id: '/profile/',
+  path: '/profile/',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
+const AuthenticatedPostsIndexRoute = AuthenticatedPostsIndexImport.update({
+  id: '/posts/',
+  path: '/posts/',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
+const AuthenticatedHomeIndexRoute = AuthenticatedHomeIndexImport.update({
+  id: '/home/',
+  path: '/home/',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
+const AuthenticatedAboutIndexRoute = AuthenticatedAboutIndexImport.update({
+  id: '/about/',
+  path: '/about/',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
+const authVerifyEmailIndexRoute = authVerifyEmailIndexImport.update({
+  id: '/(auth)/verify-email/',
   path: '/verify-email/',
   getParentRoute: () => rootRoute,
 } as any)
 
-const AuthResetIndexRoute = AuthResetIndexImport.update({
-  id: '/_auth/reset/',
+const authResetIndexRoute = authResetIndexImport.update({
+  id: '/(auth)/reset/',
   path: '/reset/',
   getParentRoute: () => rootRoute,
 } as any)
 
-const AuthRegisterIndexRoute = AuthRegisterIndexImport.update({
-  id: '/_auth/register/',
+const authRegisterIndexRoute = authRegisterIndexImport.update({
+  id: '/(auth)/register/',
   path: '/register/',
   getParentRoute: () => rootRoute,
 } as any)
 
-const AuthNewPasswordIndexRoute = AuthNewPasswordIndexImport.update({
-  id: '/_auth/new-password/',
+const authNewPasswordIndexRoute = authNewPasswordIndexImport.update({
+  id: '/(auth)/new-password/',
   path: '/new-password/',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const AuthLoginIndexRoute = AuthLoginIndexImport.update({
-  id: '/_auth/login/',
-  path: '/login/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -74,133 +101,203 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutImport
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthenticatedImport
       parentRoute: typeof rootRoute
     }
-    '/_auth/login/': {
-      id: '/_auth/login/'
+    '/login': {
+      id: '/login'
       path: '/login'
       fullPath: '/login'
-      preLoaderRoute: typeof AuthLoginIndexImport
+      preLoaderRoute: typeof LoginImport
       parentRoute: typeof rootRoute
     }
-    '/_auth/new-password/': {
-      id: '/_auth/new-password/'
+    '/(auth)/new-password/': {
+      id: '/(auth)/new-password/'
       path: '/new-password'
       fullPath: '/new-password'
-      preLoaderRoute: typeof AuthNewPasswordIndexImport
+      preLoaderRoute: typeof authNewPasswordIndexImport
       parentRoute: typeof rootRoute
     }
-    '/_auth/register/': {
-      id: '/_auth/register/'
+    '/(auth)/register/': {
+      id: '/(auth)/register/'
       path: '/register'
       fullPath: '/register'
-      preLoaderRoute: typeof AuthRegisterIndexImport
+      preLoaderRoute: typeof authRegisterIndexImport
       parentRoute: typeof rootRoute
     }
-    '/_auth/reset/': {
-      id: '/_auth/reset/'
+    '/(auth)/reset/': {
+      id: '/(auth)/reset/'
       path: '/reset'
       fullPath: '/reset'
-      preLoaderRoute: typeof AuthResetIndexImport
+      preLoaderRoute: typeof authResetIndexImport
       parentRoute: typeof rootRoute
     }
-    '/_auth/verify-email/': {
-      id: '/_auth/verify-email/'
+    '/(auth)/verify-email/': {
+      id: '/(auth)/verify-email/'
       path: '/verify-email'
       fullPath: '/verify-email'
-      preLoaderRoute: typeof AuthVerifyEmailIndexImport
+      preLoaderRoute: typeof authVerifyEmailIndexImport
       parentRoute: typeof rootRoute
+    }
+    '/_authenticated/about/': {
+      id: '/_authenticated/about/'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AuthenticatedAboutIndexImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/home/': {
+      id: '/_authenticated/home/'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof AuthenticatedHomeIndexImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/posts/': {
+      id: '/_authenticated/posts/'
+      path: '/posts'
+      fullPath: '/posts'
+      preLoaderRoute: typeof AuthenticatedPostsIndexImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/profile/': {
+      id: '/_authenticated/profile/'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AuthenticatedProfileIndexImport
+      parentRoute: typeof AuthenticatedImport
     }
   }
 }
 
 // Create and export the route tree
 
+interface AuthenticatedRouteChildren {
+  AuthenticatedAboutIndexRoute: typeof AuthenticatedAboutIndexRoute
+  AuthenticatedHomeIndexRoute: typeof AuthenticatedHomeIndexRoute
+  AuthenticatedPostsIndexRoute: typeof AuthenticatedPostsIndexRoute
+  AuthenticatedProfileIndexRoute: typeof AuthenticatedProfileIndexRoute
+}
+
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedAboutIndexRoute: AuthenticatedAboutIndexRoute,
+  AuthenticatedHomeIndexRoute: AuthenticatedHomeIndexRoute,
+  AuthenticatedPostsIndexRoute: AuthenticatedPostsIndexRoute,
+  AuthenticatedProfileIndexRoute: AuthenticatedProfileIndexRoute,
+}
+
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
+)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/login': typeof AuthLoginIndexRoute
-  '/new-password': typeof AuthNewPasswordIndexRoute
-  '/register': typeof AuthRegisterIndexRoute
-  '/reset': typeof AuthResetIndexRoute
-  '/verify-email': typeof AuthVerifyEmailIndexRoute
+  '': typeof AuthenticatedRouteWithChildren
+  '/login': typeof LoginRoute
+  '/new-password': typeof authNewPasswordIndexRoute
+  '/register': typeof authRegisterIndexRoute
+  '/reset': typeof authResetIndexRoute
+  '/verify-email': typeof authVerifyEmailIndexRoute
+  '/about': typeof AuthenticatedAboutIndexRoute
+  '/home': typeof AuthenticatedHomeIndexRoute
+  '/posts': typeof AuthenticatedPostsIndexRoute
+  '/profile': typeof AuthenticatedProfileIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/login': typeof AuthLoginIndexRoute
-  '/new-password': typeof AuthNewPasswordIndexRoute
-  '/register': typeof AuthRegisterIndexRoute
-  '/reset': typeof AuthResetIndexRoute
-  '/verify-email': typeof AuthVerifyEmailIndexRoute
+  '': typeof AuthenticatedRouteWithChildren
+  '/login': typeof LoginRoute
+  '/new-password': typeof authNewPasswordIndexRoute
+  '/register': typeof authRegisterIndexRoute
+  '/reset': typeof authResetIndexRoute
+  '/verify-email': typeof authVerifyEmailIndexRoute
+  '/about': typeof AuthenticatedAboutIndexRoute
+  '/home': typeof AuthenticatedHomeIndexRoute
+  '/posts': typeof AuthenticatedPostsIndexRoute
+  '/profile': typeof AuthenticatedProfileIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/_auth/login/': typeof AuthLoginIndexRoute
-  '/_auth/new-password/': typeof AuthNewPasswordIndexRoute
-  '/_auth/register/': typeof AuthRegisterIndexRoute
-  '/_auth/reset/': typeof AuthResetIndexRoute
-  '/_auth/verify-email/': typeof AuthVerifyEmailIndexRoute
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/login': typeof LoginRoute
+  '/(auth)/new-password/': typeof authNewPasswordIndexRoute
+  '/(auth)/register/': typeof authRegisterIndexRoute
+  '/(auth)/reset/': typeof authResetIndexRoute
+  '/(auth)/verify-email/': typeof authVerifyEmailIndexRoute
+  '/_authenticated/about/': typeof AuthenticatedAboutIndexRoute
+  '/_authenticated/home/': typeof AuthenticatedHomeIndexRoute
+  '/_authenticated/posts/': typeof AuthenticatedPostsIndexRoute
+  '/_authenticated/profile/': typeof AuthenticatedProfileIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/about'
+    | ''
     | '/login'
     | '/new-password'
     | '/register'
     | '/reset'
     | '/verify-email'
+    | '/about'
+    | '/home'
+    | '/posts'
+    | '/profile'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/about'
+    | ''
     | '/login'
     | '/new-password'
     | '/register'
     | '/reset'
     | '/verify-email'
+    | '/about'
+    | '/home'
+    | '/posts'
+    | '/profile'
   id:
     | '__root__'
     | '/'
-    | '/about'
-    | '/_auth/login/'
-    | '/_auth/new-password/'
-    | '/_auth/register/'
-    | '/_auth/reset/'
-    | '/_auth/verify-email/'
+    | '/_authenticated'
+    | '/login'
+    | '/(auth)/new-password/'
+    | '/(auth)/register/'
+    | '/(auth)/reset/'
+    | '/(auth)/verify-email/'
+    | '/_authenticated/about/'
+    | '/_authenticated/home/'
+    | '/_authenticated/posts/'
+    | '/_authenticated/profile/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AboutRoute: typeof AboutRoute
-  AuthLoginIndexRoute: typeof AuthLoginIndexRoute
-  AuthNewPasswordIndexRoute: typeof AuthNewPasswordIndexRoute
-  AuthRegisterIndexRoute: typeof AuthRegisterIndexRoute
-  AuthResetIndexRoute: typeof AuthResetIndexRoute
-  AuthVerifyEmailIndexRoute: typeof AuthVerifyEmailIndexRoute
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  LoginRoute: typeof LoginRoute
+  authNewPasswordIndexRoute: typeof authNewPasswordIndexRoute
+  authRegisterIndexRoute: typeof authRegisterIndexRoute
+  authResetIndexRoute: typeof authResetIndexRoute
+  authVerifyEmailIndexRoute: typeof authVerifyEmailIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AboutRoute: AboutRoute,
-  AuthLoginIndexRoute: AuthLoginIndexRoute,
-  AuthNewPasswordIndexRoute: AuthNewPasswordIndexRoute,
-  AuthRegisterIndexRoute: AuthRegisterIndexRoute,
-  AuthResetIndexRoute: AuthResetIndexRoute,
-  AuthVerifyEmailIndexRoute: AuthVerifyEmailIndexRoute,
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  LoginRoute: LoginRoute,
+  authNewPasswordIndexRoute: authNewPasswordIndexRoute,
+  authRegisterIndexRoute: authRegisterIndexRoute,
+  authResetIndexRoute: authResetIndexRoute,
+  authVerifyEmailIndexRoute: authVerifyEmailIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -216,34 +313,56 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/about",
-        "/_auth/login/",
-        "/_auth/new-password/",
-        "/_auth/register/",
-        "/_auth/reset/",
-        "/_auth/verify-email/"
+        "/_authenticated",
+        "/login",
+        "/(auth)/new-password/",
+        "/(auth)/register/",
+        "/(auth)/reset/",
+        "/(auth)/verify-email/"
       ]
     },
     "/": {
       "filePath": "index.tsx"
     },
-    "/about": {
-      "filePath": "about.tsx"
+    "/_authenticated": {
+      "filePath": "_authenticated.tsx",
+      "children": [
+        "/_authenticated/about/",
+        "/_authenticated/home/",
+        "/_authenticated/posts/",
+        "/_authenticated/profile/"
+      ]
     },
-    "/_auth/login/": {
-      "filePath": "_auth/login/index.tsx"
+    "/login": {
+      "filePath": "login.tsx"
     },
-    "/_auth/new-password/": {
-      "filePath": "_auth/new-password/index.tsx"
+    "/(auth)/new-password/": {
+      "filePath": "(auth)/new-password/index.tsx"
     },
-    "/_auth/register/": {
-      "filePath": "_auth/register/index.tsx"
+    "/(auth)/register/": {
+      "filePath": "(auth)/register/index.tsx"
     },
-    "/_auth/reset/": {
-      "filePath": "_auth/reset/index.tsx"
+    "/(auth)/reset/": {
+      "filePath": "(auth)/reset/index.tsx"
     },
-    "/_auth/verify-email/": {
-      "filePath": "_auth/verify-email/index.tsx"
+    "/(auth)/verify-email/": {
+      "filePath": "(auth)/verify-email/index.tsx"
+    },
+    "/_authenticated/about/": {
+      "filePath": "_authenticated/about/index.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/home/": {
+      "filePath": "_authenticated/home/index.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/posts/": {
+      "filePath": "_authenticated/posts/index.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/profile/": {
+      "filePath": "_authenticated/profile/index.tsx",
+      "parent": "/_authenticated"
     }
   }
 }

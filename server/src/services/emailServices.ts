@@ -5,6 +5,7 @@ const RESEND_VERIFIED_DOMAIN = process.env.RESEND_VERIFIED_DOMAIN!;
 const PUBLIC_URL = process.env.PUBLIC_URL!;
 
 export const sendEmailVerificationToken = async (email: string, username: string, verificationToken: string) => {
+  console.log("PUBLIC_URL", PUBLIC_URL);
   if (!PUBLIC_URL) {
     console.log("Missing public URL");
     throw new Error("Missing public URL");

@@ -9,7 +9,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 
 const RegisterForm = () => {
-  const queryClient = useQueryClient();
   const form = useForm<TSignUpFormSchema>({
     resolver: zodResolver(signUpSchema),
     mode: "all",
@@ -39,30 +38,20 @@ const RegisterForm = () => {
     });
     if (!res.ok) {
       const errRes = await res.json();
-      return errRes;
+      toast({
+        variant: "destructive",
+        description: errRes.message || "Something went wrong. Please try again.",
+      });
     }
     const succRes = await res.json();
-    return succRes;
+    toast({
+      variant: "default",
+      description: succRes.message || "Successfully registered",
+    });
   };
 
   const { mutate, isPending } = useMutation({
     mutationFn: registerUser,
-    onSuccess: (data) => {
-      toast({
-        variant: "default",
-        description: data.message || "Successfully registered",
-      });
-      // Invalidate and refetch
-      queryClient.invalidateQueries({ queryKey: ["register"] });
-    },
-
-    onError: () => {
-      toast({
-        variant: "destructive",
-        description: "Something went wrong. Please try again.",
-      });
-      return;
-    },
   });
 
   const onSubmit = async () => {
