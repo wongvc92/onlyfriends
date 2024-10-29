@@ -5,5 +5,5 @@ import { refreshAccessToken } from "../controllers/loginControllers";
 
 const authRoutes = Router();
 authRoutes.get("/api/check-auth", authenticateJWT, checkAuth);
-authRoutes.post("/api/refresh-token", authenticateJWT, refreshAccessToken);
+authRoutes.post("/api/refresh-token", refreshAccessToken);
 export default authRoutes;
