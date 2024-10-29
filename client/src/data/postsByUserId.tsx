@@ -1,6 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 
-const fetchPostsByUserId = async () => {
+export const fetchPostsByUserId = async () => {
   const response = await fetch(`http://localhost:5001/api/posts`, {
     method: "GET",
     credentials: "include",

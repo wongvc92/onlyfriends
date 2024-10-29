@@ -1,108 +1,75 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useEffect } from "react";
 import { IUserClient } from "./types/ICheckAuth";
-import apiClient from "./utils/apiClient";
-import { toast } from "./hooks/use-toast";
+import { useQuery } from "@tanstack/react-query";
 
-export const checkIfAuthenticated = async (): Promise<{ isAuthenticated: boolean; user: IUserClient | null }> => {
-  const options = {
+export const checkIfAuthenticated = async () => {
+  const response = await fetch("/api/check-auth", {
     method: "GET",
-  };
-  const response = await apiClient("/api/check-auth", options);
-  if (response.error) {
-    return { isAuthenticated: false, user: null };
+    credentials: "include",
+  });
+  if (!response.ok) {
+    throw new Error("Unable to fetch data");
   }
-  return { isAuthenticated: true, user: response.user };
+  const data = await response.json();
+
+  return data.user;
+};
+
+const refreshAccessToken = async () => {
+  const response = await fetch("/api/refresh-token", {
+    method: "POST",
+    credentials: "include", // Include cookies to send the refresh token
+  });
+
+  if (!response.ok) {
+    throw new Error("Unable to refresh token");
+  }
+
+  const data = await response.json();
+  return data;
+};
+
+export const useAuthQuery = () => {
+  return useQuery({
+    queryKey: ["users"],
+    queryFn: checkIfAuthenticated,
+    retry: false,
+  });
 };
 
 export interface IAuthContext {
-  setAuthState: React.Dispatch<
-    React.SetStateAction<{
-      isAuthenticated: boolean;
-      user: IUserClient | null;
-    }>
-  >;
-  authState: {
-    isAuthenticated: boolean;
-    user: IUserClient | null;
-  };
-  showTwoFactor: boolean;
-  loginUser: (code: string, email: string, password: string) => Promise<void>;
-  logoutUser: () => Promise<void>;
+  error: Error | null;
+  isLoading: boolean;
+  user?: IUserClient | null;
+  isAuthenticated: boolean;
 }
 
-const AuthContext = createContext<IAuthContext | undefined>(undefined);
+const AuthContext = createContext<IAuthContext | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [authState, setAuthState] = useState<{ isAuthenticated: boolean; user: IUserClient | null }>({
-    isAuthenticated: false,
-    user: null,
-  });
+  const { data: user, isLoading, error, refetch } = useAuthQuery();
+  let isAuthenticated;
+  isAuthenticated = !!user;
 
-  const [showTwoFactor, setShowTwoFactor] = useState(false);
-
-  // useEffect(() => {
-  //   const checkAuth = async () => {
-  //     const data = await checkIfAuthenticated();
-
-  //     setAuthState({
-  //       isAuthenticated: data.isAuthenticated,
-  //       user: data.user,
-  //     });
-  //   };
-  //   if (authState.isAuthenticated === false) {
-  //     checkAuth();
-  //   }
-  // }, []);
-
-  console.log("data checkAuth", authState);
-
-  const loginUser = async (code: string, email: string, password: string) => {
-    console.log("loginUser....");
-
-    const res = await fetch("/api/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+  // Refresh token every 14 minutes (assuming a 15-minute expiry on the access token)
+  useEffect(() => {
+    const refreshTokenInterval = setInterval(
+      async () => {
+        try {
+          await refreshAccessToken();
+          await refetch(); // Refetch user data after refreshing the token
+        } catch (error) {
+          isAuthenticated = false;
+          console.error("Token refresh failed:", error);
+        }
       },
-      body: JSON.stringify({ code, email, password }),
-    });
-    if (!res.ok) {
-      const errorData = await res.json();
-      console.log("errorData", errorData);
-      toast({
-        variant: "destructive",
-        description: errorData.message,
-      });
+      14 * 60 * 1000
+    ); // 14 minutes in milliseconds
 
-      return;
-    }
-    const data = await res.json();
+    return () => clearInterval(refreshTokenInterval); // Clear the interval on unmount
+  }, [refetch]);
 
-    if (data.twoFactor === true) {
-      setShowTwoFactor(true);
-      toast({
-        variant: "default",
-        description: "Please check email for two factor code",
-      });
-    }
-
-    console.log("data login", data);
-
-    setAuthState({ isAuthenticated: true, user: data.user });
-  };
-
-  const logoutUser = async () => {
-    let url;
-
-    const options = {
-      method: "POST",
-    };
-    await apiClient("/api/logout", options);
-
-    setAuthState({ isAuthenticated: false, user: null });
-  };
-
-  return <AuthContext.Provider value={{ authState, setAuthState, showTwoFactor, loginUser, logoutUser }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ isAuthenticated, user, isLoading, error }}>{isLoading ? null : children}</AuthContext.Provider>;
 };
 
 export function useAuth() {

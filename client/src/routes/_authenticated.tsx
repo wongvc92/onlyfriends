@@ -1,5 +1,6 @@
+import { checkIfAuthenticated } from "@/auth";
 import LogoutButton from "@/components/auth/logout-button";
-import { Link, Outlet } from "@tanstack/react-router";
+import { Link, Outlet, redirect, useRouter } from "@tanstack/react-router";
 import { createFileRoute, useRouterState } from "@tanstack/react-router";
 
 const NAV_LINKS = [
@@ -22,6 +23,16 @@ const NAV_LINKS = [
 ];
 
 export const Route = createFileRoute("/_authenticated")({
+  beforeLoad: async ({ location, context }) => {
+    if (!context.auth.isAuthenticated) {
+      throw redirect({
+        to: "/login",
+        search: {
+          redirect: location.href,
+        },
+      });
+    }
+  },
   component: Layout,
 });
 
