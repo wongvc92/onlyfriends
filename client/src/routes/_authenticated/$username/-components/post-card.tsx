@@ -8,8 +8,9 @@ import React, { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import { FaRegHeart } from "react-icons/fa";
 import { PiShareFatBold } from "react-icons/pi";
-
+import { CiMenuKebab } from "react-icons/ci";
 import { FaRegComment } from "react-icons/fa";
+import PostACtion from "./post-action";
 
 const PostCard = () => {
   const { user } = useAuth();
@@ -67,7 +68,8 @@ const PostCard = () => {
                     <AvatarFallback>CN</AvatarFallback>
                   </Avatar>
                   <CardTitle className="text-muted-foreground">@{user?.username}</CardTitle>
-                  <CardDescription> {getrelativeTime(post.created_at)}</CardDescription>
+                  <CardDescription>{getrelativeTime(post.created_at)}</CardDescription>
+                  <CiMenuKebab />
                 </div>
               </CardHeader>
 

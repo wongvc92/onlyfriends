@@ -10,6 +10,7 @@ import { FaRegHeart } from "react-icons/fa";
 import { PiShareFatBold } from "react-icons/pi";
 
 import { FaRegComment } from "react-icons/fa";
+import PostACtion from "../../../-components/post-action";
 
 const PostCard = () => {
   const { user } = useAuth();
@@ -68,6 +69,9 @@ const PostCard = () => {
                   </Avatar>
                   <CardTitle className="text-muted-foreground">@{user?.username}</CardTitle>
                   <CardDescription> {getrelativeTime(post.created_at)}</CardDescription>
+                  <div className="ml-auto">
+                    <PostACtion postId={post.id} />
+                  </div>
                 </div>
               </CardHeader>
 

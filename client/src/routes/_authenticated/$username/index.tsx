@@ -1,4 +1,4 @@
-import { createFileRoute, redirect, useNavigate, useParams } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
 import { useEffect } from "react";
 
 export const Route = createFileRoute("/_authenticated/$username/")({

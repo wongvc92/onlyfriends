@@ -2,7 +2,8 @@ import { checkIfAuthenticated, useAuth } from "@/auth";
 import LogoutButton from "@/components/auth/logout-button";
 import { Link, Outlet, redirect, useRouter } from "@tanstack/react-router";
 import { createFileRoute, useRouterState } from "@tanstack/react-router";
-
+import { IoHomeOutline } from "react-icons/io5";
+import { CgProfile } from "react-icons/cg";
 export const Route = createFileRoute("/_authenticated")({
   beforeLoad: async ({ location, context }) => {
     if (!context.auth.isAuthenticated) {
@@ -23,11 +24,13 @@ function Layout() {
     {
       label: "home",
       path: "/home",
+      icon: <IoHomeOutline />,
     },
 
     {
       label: "profile",
       path: `/${user?.username}`,
+      icon: <CgProfile />,
     },
   ];
 
@@ -42,7 +45,13 @@ function Layout() {
               } = useRouterState();
               const isActive = nav.path.split("/")[1] === pathname.split("/")[1];
               return (
-                <Link key={nav.label} to={nav.path} className={`text-right ${isActive && "font-bold"}`} activeOptions={{ exact: true }}>
+                <Link
+                  key={nav.label}
+                  to={nav.path}
+                  className={`flex items-center gap-2 text-left  ${isActive && "font-bold"}`}
+                  activeOptions={{ exact: true }}
+                >
+                  {nav.icon}
                   {nav.label}
                 </Link>
               );
