@@ -1,26 +1,7 @@
-import { checkIfAuthenticated } from "@/auth";
+import { checkIfAuthenticated, useAuth } from "@/auth";
 import LogoutButton from "@/components/auth/logout-button";
 import { Link, Outlet, redirect, useRouter } from "@tanstack/react-router";
 import { createFileRoute, useRouterState } from "@tanstack/react-router";
-
-const NAV_LINKS = [
-  {
-    label: "home",
-    path: "/home",
-  },
-  {
-    label: "about",
-    path: "/about",
-  },
-  {
-    label: "profile",
-    path: "/profile",
-  },
-  {
-    label: "posts",
-    path: "/posts",
-  },
-];
 
 export const Route = createFileRoute("/_authenticated")({
   beforeLoad: async ({ location, context }) => {
@@ -37,6 +18,19 @@ export const Route = createFileRoute("/_authenticated")({
 });
 
 function Layout() {
+  const { user } = useAuth();
+  const NAV_LINKS = [
+    {
+      label: "home",
+      path: "/home",
+    },
+
+    {
+      label: "profile",
+      path: `/${user?.username}`,
+    },
+  ];
+
   return (
     <div className="container mx-auto">
       <div className="grid grid-cols-1 md:grid-cols-4">
@@ -56,10 +50,10 @@ function Layout() {
             <LogoutButton />
           </nav>
         </aside>
-        <div className="p-4 w-full border md:col-span-2">
+        <div className="p-4 w-full md:col-span-2">
           <Outlet />
         </div>
-        <div className="hidden md:block md:col-span-1 md:h-screen sticky top-0 p-4">test</div>
+        <div className="hidden md:block md:col-span-1 md:h-screen sticky top-0 p-4 border-l">test</div>
       </div>
     </div>
   );

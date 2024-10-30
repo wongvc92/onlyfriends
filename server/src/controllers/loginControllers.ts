@@ -97,7 +97,7 @@ export const loginUser = async (req: Request, res: Response) => {
       httpOnly: true,
       secure: false, // set to false for local testing
       sameSite: "lax",
-      maxAge: 3600000, // 15 minutes
+      maxAge: 15 * 60 * 1000, // 15 minutes
       path: "/",
     });
 

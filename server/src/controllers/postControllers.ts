@@ -29,8 +29,25 @@ export const getPost = async (req: Request, res: Response) => {
     res.status(400).json({ message: "Post content and userId are required" });
     return;
   }
-  const postsResult = await pool.query("SELECT * FROM posts WHERE user_id = $1", [userId]);
+
+  const page = parseInt(req.query.page as string) || 1;
+  const limit = parseInt(req.query.limit as string) || 3;
+  const offset = (page - 1) * limit;
+
+  // Query the total count of posts for the user to calculate total pages
+  const totalPostsResult = await pool.query("SELECT COUNT(*) FROM posts WHERE user_id = $1", [userId]);
+  const totalPosts = parseInt(totalPostsResult.rows[0].count);
+  const totalPages = Math.ceil(totalPosts / limit);
+
+  const postsResult = await pool.query("SELECT * FROM posts WHERE user_id = $1 ORDER BY created_at DESC LIMIT $2 OFFSET $3", [userId, limit, offset]);
 
   const posts = postsResult.rows.map(({ user_id, ...rest }) => rest);
-  res.status(200).json({ posts });
+
+  res.status(200).json({
+    data: posts,
+    currentPage: page,
+    nextPage: page < totalPages ? page + 1 : null,
+    totalPages,
+    totalPosts,
+  });
 };

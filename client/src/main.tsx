@@ -5,6 +5,7 @@ import { routeTree } from "./routeTree.gen";
 import "../src/main.css";
 import { AuthProvider, useAuth } from "./auth";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "sonner";
 
 const queryClient = new QueryClient();
 // Set up a Router instance
@@ -35,6 +36,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
+        <Toaster richColors position="top-center" />
         <InnerApp />
       </AuthProvider>
     </QueryClientProvider>
