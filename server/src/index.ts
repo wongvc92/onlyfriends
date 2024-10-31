@@ -7,6 +7,7 @@ import passport from "./config/passport-config";
 import authRoutes from "./routes/authRoutes";
 import cookieParser from "cookie-parser";
 import postRoutes from "./routes/postsRoutes";
+import profileRoutes from "./routes/profileRoutes";
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -27,6 +28,7 @@ app.use(registerRoutes);
 app.use(logoutRoutes);
 app.use(authRoutes);
 app.use(postRoutes);
+app.use(profileRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

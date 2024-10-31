@@ -24,6 +24,7 @@ import { Route as authRegisterIndexImport } from './routes/(auth)/register/index
 import { Route as authNewPasswordIndexImport } from './routes/(auth)/new-password/index'
 import { Route as AuthenticatedUsernameLayoutImport } from './routes/_authenticated/$username/_layout'
 import { Route as AuthenticatedUsernameEditIndexImport } from './routes/_authenticated/$username/edit/index'
+import { Route as AuthenticatedUsernameAddIndexImport } from './routes/_authenticated/$username/add/index'
 import { Route as AuthenticatedUsernameLayoutPostsIndexImport } from './routes/_authenticated/$username/_layout/posts/index'
 import { Route as AuthenticatedUsernameLayoutMediaIndexImport } from './routes/_authenticated/$username/_layout/media/index'
 
@@ -106,6 +107,13 @@ const AuthenticatedUsernameEditIndexRoute =
   AuthenticatedUsernameEditIndexImport.update({
     id: '/edit/',
     path: '/edit/',
+    getParentRoute: () => AuthenticatedUsernameRoute,
+  } as any)
+
+const AuthenticatedUsernameAddIndexRoute =
+  AuthenticatedUsernameAddIndexImport.update({
+    id: '/add/',
+    path: '/add/',
     getParentRoute: () => AuthenticatedUsernameRoute,
   } as any)
 
@@ -204,6 +212,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedHomeIndexImport
       parentRoute: typeof AuthenticatedImport
     }
+    '/_authenticated/$username/add/': {
+      id: '/_authenticated/$username/add/'
+      path: '/add'
+      fullPath: '/$username/add'
+      preLoaderRoute: typeof AuthenticatedUsernameAddIndexImport
+      parentRoute: typeof AuthenticatedUsernameImport
+    }
     '/_authenticated/$username/edit/': {
       id: '/_authenticated/$username/edit/'
       path: '/edit'
@@ -251,6 +266,7 @@ const AuthenticatedUsernameLayoutRouteWithChildren =
 interface AuthenticatedUsernameRouteChildren {
   AuthenticatedUsernameLayoutRoute: typeof AuthenticatedUsernameLayoutRouteWithChildren
   AuthenticatedUsernameIndexRoute: typeof AuthenticatedUsernameIndexRoute
+  AuthenticatedUsernameAddIndexRoute: typeof AuthenticatedUsernameAddIndexRoute
   AuthenticatedUsernameEditIndexRoute: typeof AuthenticatedUsernameEditIndexRoute
 }
 
@@ -258,6 +274,7 @@ const AuthenticatedUsernameRouteChildren: AuthenticatedUsernameRouteChildren = {
   AuthenticatedUsernameLayoutRoute:
     AuthenticatedUsernameLayoutRouteWithChildren,
   AuthenticatedUsernameIndexRoute: AuthenticatedUsernameIndexRoute,
+  AuthenticatedUsernameAddIndexRoute: AuthenticatedUsernameAddIndexRoute,
   AuthenticatedUsernameEditIndexRoute: AuthenticatedUsernameEditIndexRoute,
 }
 
@@ -291,6 +308,7 @@ export interface FileRoutesByFullPath {
   '/verify-email': typeof authVerifyEmailIndexRoute
   '/$username/': typeof AuthenticatedUsernameIndexRoute
   '/home': typeof AuthenticatedHomeIndexRoute
+  '/$username/add': typeof AuthenticatedUsernameAddIndexRoute
   '/$username/edit': typeof AuthenticatedUsernameEditIndexRoute
   '/$username/media': typeof AuthenticatedUsernameLayoutMediaIndexRoute
   '/$username/posts': typeof AuthenticatedUsernameLayoutPostsIndexRoute
@@ -306,6 +324,7 @@ export interface FileRoutesByTo {
   '/reset': typeof authResetIndexRoute
   '/verify-email': typeof authVerifyEmailIndexRoute
   '/home': typeof AuthenticatedHomeIndexRoute
+  '/$username/add': typeof AuthenticatedUsernameAddIndexRoute
   '/$username/edit': typeof AuthenticatedUsernameEditIndexRoute
   '/$username/media': typeof AuthenticatedUsernameLayoutMediaIndexRoute
   '/$username/posts': typeof AuthenticatedUsernameLayoutPostsIndexRoute
@@ -324,6 +343,7 @@ export interface FileRoutesById {
   '/(auth)/verify-email/': typeof authVerifyEmailIndexRoute
   '/_authenticated/$username/': typeof AuthenticatedUsernameIndexRoute
   '/_authenticated/home/': typeof AuthenticatedHomeIndexRoute
+  '/_authenticated/$username/add/': typeof AuthenticatedUsernameAddIndexRoute
   '/_authenticated/$username/edit/': typeof AuthenticatedUsernameEditIndexRoute
   '/_authenticated/$username/_layout/media/': typeof AuthenticatedUsernameLayoutMediaIndexRoute
   '/_authenticated/$username/_layout/posts/': typeof AuthenticatedUsernameLayoutPostsIndexRoute
@@ -342,6 +362,7 @@ export interface FileRouteTypes {
     | '/verify-email'
     | '/$username/'
     | '/home'
+    | '/$username/add'
     | '/$username/edit'
     | '/$username/media'
     | '/$username/posts'
@@ -356,6 +377,7 @@ export interface FileRouteTypes {
     | '/reset'
     | '/verify-email'
     | '/home'
+    | '/$username/add'
     | '/$username/edit'
     | '/$username/media'
     | '/$username/posts'
@@ -372,6 +394,7 @@ export interface FileRouteTypes {
     | '/(auth)/verify-email/'
     | '/_authenticated/$username/'
     | '/_authenticated/home/'
+    | '/_authenticated/$username/add/'
     | '/_authenticated/$username/edit/'
     | '/_authenticated/$username/_layout/media/'
     | '/_authenticated/$username/_layout/posts/'
@@ -438,6 +461,7 @@ export const routeTree = rootRoute
       "children": [
         "/_authenticated/$username/_layout",
         "/_authenticated/$username/",
+        "/_authenticated/$username/add/",
         "/_authenticated/$username/edit/"
       ]
     },
@@ -468,6 +492,10 @@ export const routeTree = rootRoute
     "/_authenticated/home/": {
       "filePath": "_authenticated/home/index.tsx",
       "parent": "/_authenticated"
+    },
+    "/_authenticated/$username/add/": {
+      "filePath": "_authenticated/$username/add/index.tsx",
+      "parent": "/_authenticated/$username"
     },
     "/_authenticated/$username/edit/": {
       "filePath": "_authenticated/$username/edit/index.tsx",

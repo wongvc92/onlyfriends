@@ -14,7 +14,7 @@ import PostACtion from "./post-action";
 
 const PostCard = () => {
   const { user } = useAuth();
-  console.log("useAuth", user);
+
   const { ref, inView } = useInView();
   const { status, data, error, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage } = useInfiniteQuery({
     queryKey: ["posts"],
@@ -53,7 +53,6 @@ const PostCard = () => {
 
   if (status === "error") return <h1>{`An error has occurred: " + ${error.message}`}</h1>;
 
-  console.log("data", data.pages[0]);
   return (
     <div className="flex flex-col gap-2">
       <div>{isFetching && !isFetchingNextPage ? "updating..." : null}</div>

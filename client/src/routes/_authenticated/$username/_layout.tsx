@@ -1,6 +1,7 @@
 import { createFileRoute, Link, Outlet, useParams, useRouterState } from "@tanstack/react-router";
-import Banner from "./-components/banner";
+
 import PostCard from "./-components/post-card";
+import ProfileInfo from "./-components/profile-info";
 
 export const Route = createFileRoute("/_authenticated/$username/_layout")({
   component: Layout,
@@ -22,7 +23,7 @@ function Layout() {
   return (
     <div className="w-full">
       <section className="w-full">
-        <Banner />
+        <ProfileInfo />
       </section>
       <div className="sticky top-0 z-10 bg-white">
         <nav className="flex items-center gap-2 text-lg border-b p-2 capitalize">
