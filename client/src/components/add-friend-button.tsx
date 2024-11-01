@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "./ui/button";
 import Spinner from "./ui/spinner";
 import { toast } from "sonner";
+import UnfriendButton from "./unfriend-button";
 
 const AddFriendButton = ({ peopleId }: { peopleId: string }) => {
   const queryClient = useQueryClient();
@@ -23,7 +24,9 @@ const AddFriendButton = ({ peopleId }: { peopleId: string }) => {
   const { mutate, isPending, isError, isSuccess } = useMutation({
     mutationFn: followPeople,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["peoples"] });
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: ["peoples"] });
+      }, 60000); // 60,000 milliseconds = 1 minute
       toast.success("Friend request sent");
     },
     onError: () => {
@@ -37,15 +40,18 @@ const AddFriendButton = ({ peopleId }: { peopleId: string }) => {
   };
 
   return (
-    <Button type="button" className="rounded-full" size="sm" onClick={onFollowPeople}>
-      {isPending ? (
-        <div className="flex items-center gap-1">
-          <Spinner color="white" size="4" /> Adding...
-        </div>
-      ) : (
-        "Add"
-      )}
-    </Button>
+    <>
+      <Button type="button" className={`rounded-full ${isSuccess ? "hidden" : "block"}`} size="sm" onClick={onFollowPeople} disabled={isPending}>
+        {isPending ? (
+          <div className="flex items-center gap-1">
+            <Spinner color="white" size="4" /> Adding...
+          </div>
+        ) : (
+          "Add Friend"
+        )}
+      </Button>
+      {isSuccess && <UnfriendButton peopleId={peopleId} />}
+    </>
   );
 };
 

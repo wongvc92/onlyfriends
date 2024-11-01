@@ -34,7 +34,7 @@ const PeoplesList = () => {
                 <p className="font-light text-muted-foreground">@{people.username}</p>
               </div>
             </div>
-            {people.friendship_status === "pending" ? <UnfriendButton peopleId={people.id} /> : <AddFriendButton peopleId={people.id} />}
+            <AddFriendButton peopleId={people.id} />
           </div>
         ))}
       </div>
