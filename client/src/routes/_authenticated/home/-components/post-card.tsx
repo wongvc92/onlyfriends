@@ -11,6 +11,7 @@ import { FaRegComment } from "react-icons/fa";
 import PostACtion from "./post-action";
 import { getAllPosts } from "@/data/getAllPosts";
 import { DotFilledIcon } from "@radix-ui/react-icons";
+import { Link } from "@tanstack/react-router";
 
 const PostCard = () => {
   const { user } = useAuth();
@@ -63,10 +64,12 @@ const PostCard = () => {
             <Card key={post.id}>
               <CardHeader>
                 <div className="flex gap-1 items-start">
-                  <Avatar>
-                    <AvatarImage src="https://github.com/shadcn.png" />
-                    <AvatarFallback>CN</AvatarFallback>
-                  </Avatar>
+                  <Link to={`/${post.username}`}>
+                    <Avatar>
+                      <AvatarImage src="https://github.com/shadcn.png" />
+                      <AvatarFallback>CN</AvatarFallback>
+                    </Avatar>
+                  </Link>
                   <CardTitle>
                     <div className="flex flex-wrap items-center gap-1">
                       <p className="line-clamp-2">{post.name}</p>
