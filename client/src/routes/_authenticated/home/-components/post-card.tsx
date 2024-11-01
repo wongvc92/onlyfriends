@@ -77,7 +77,7 @@ const PostCard = () => {
                   </CardTitle>
 
                   <div className="ml-auto">
-                    <PostACtion postId={post.id} />
+                    <PostACtion post={post} />
                   </div>
                 </div>
               </CardHeader>

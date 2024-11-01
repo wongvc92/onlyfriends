@@ -7,13 +7,15 @@ import { Button } from "@/components/ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import Spinner from "@/components/ui/spinner";
+import { IPost } from "@/types/IPost";
+import { useAuth } from "@/auth";
 
-const PostACtion = ({ postId }: { postId: number }) => {
+const PostACtion = ({ post }: { post: IPost }) => {
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
-
+  const auth = useAuth();
   const deletePost = async () => {
-    const res = await fetch(`/api/post?id=${postId}`, {
+    const res = await fetch(`/api/post?id=${post.id}`, {
       method: "DELETE",
       credentials: "include",
     });
@@ -69,7 +71,7 @@ const PostACtion = ({ postId }: { postId: number }) => {
           <BsThreeDots color="gray" />
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuItem onClick={() => setIsOpen(true)}>
+          <DropdownMenuItem onClick={() => setIsOpen(true)} className={`${post.user_id === auth.user?.id ? "flex" : "hidden"}`}>
             <FaRegTrashCan />
             Delete
           </DropdownMenuItem>
