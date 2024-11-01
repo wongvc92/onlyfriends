@@ -17,7 +17,7 @@ const PostCard = () => {
   console.log("useAuth", user);
   const { ref, inView } = useInView();
   const { status, data, error, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage } = useInfiniteQuery({
-    queryKey: ["posts"],
+    queryKey: ["allPosts"],
     queryFn: getAllPosts,
     initialPageParam: 1,
     getNextPageParam: (lastPage) => lastPage.nextPage,
