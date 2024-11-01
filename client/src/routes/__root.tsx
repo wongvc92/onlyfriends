@@ -14,7 +14,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 function RootComponent() {
   const auth = useAuth();
   return (
-    <div className="container mx-auto">
+    <div>
       <Outlet />
 
       <TanStackRouterDevtools position="bottom-right" />

@@ -1,6 +1,7 @@
 import { Button } from "../ui/button";
 import { useRouter } from "@tanstack/react-router";
 import { useState } from "react";
+import { MdOutlineLogout } from "react-icons/md";
 
 const LogoutButton = () => {
   const router = useRouter();
@@ -25,8 +26,8 @@ const LogoutButton = () => {
     window.location.href = "/login";
   };
   return (
-    <Button type="button" onClick={onSubmit} disabled={isPending}>
-      Logout
+    <Button type="button" onClick={onSubmit} disabled={isPending} className="w-fit rounded-full" variant="secondary">
+      <MdOutlineLogout /> <span className="hidden xl:block">Logout</span>
     </Button>
   );
 };
