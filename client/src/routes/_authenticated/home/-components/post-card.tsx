@@ -1,7 +1,6 @@
 import { useAuth } from "@/auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { fetchPostsByUserId } from "@/data/postsByUserId";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { formatDistanceToNowStrict } from "date-fns";
 import React, { useEffect } from "react";
@@ -10,6 +9,8 @@ import { FaRegHeart } from "react-icons/fa";
 import { PiShareFatBold } from "react-icons/pi";
 import { FaRegComment } from "react-icons/fa";
 import PostACtion from "./post-action";
+import { getAllPosts } from "@/data/getAllPosts";
+import { DotFilledIcon } from "@radix-ui/react-icons";
 
 const PostCard = () => {
   const { user } = useAuth();
@@ -17,7 +18,7 @@ const PostCard = () => {
   const { ref, inView } = useInView();
   const { status, data, error, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage } = useInfiniteQuery({
     queryKey: ["posts"],
-    queryFn: fetchPostsByUserId,
+    queryFn: getAllPosts,
     initialPageParam: 1,
     getNextPageParam: (lastPage) => lastPage.nextPage,
   });
@@ -66,8 +67,15 @@ const PostCard = () => {
                     <AvatarImage src="https://github.com/shadcn.png" />
                     <AvatarFallback>CN</AvatarFallback>
                   </Avatar>
-                  <CardTitle className="text-muted-foreground">@{user?.username}</CardTitle>
-                  <CardDescription> {getrelativeTime(post.created_at)}</CardDescription>
+                  <CardTitle>
+                    <div className="flex flex-wrap items-center gap-1">
+                      <p className="line-clamp-2">{post.name}</p>
+                      <p className="text-muted-foreground font-light">@{post.username}</p>
+                      <DotFilledIcon />
+                      <p className="text-muted-foreground font-light">{getrelativeTime(post.created_at)}</p>
+                    </div>
+                  </CardTitle>
+
                   <div className="ml-auto">
                     <PostACtion postId={post.id} />
                   </div>
