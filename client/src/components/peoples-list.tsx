@@ -25,7 +25,10 @@ const PeoplesList = () => {
           <div key={people.id} className="flex items-center justify-between">
             <div className="flex items-start gap-2">
               <img src="https://github.com/shadcn.png" alt={`${people.username}-image`} className="w-10 h-10 rounded-full object-cover" />
-              <p>@{people.username}</p>
+              <div>
+                <p className="font-bold">{people.name}</p>
+                <p className="font-light text-muted-foreground">@{people.username}</p>
+              </div>
             </div>
             <Button type="button" className="rounded-full" size="sm">
               Follow
