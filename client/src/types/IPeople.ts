@@ -3,4 +3,5 @@ export interface IPeople {
   username: string;
   name: string;
   bio: string;
+  friendship_status: string;
 }

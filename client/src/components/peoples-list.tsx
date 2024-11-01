@@ -2,9 +2,13 @@ import { getPeoples } from "@/data/getPeoples";
 import { useQuery } from "@tanstack/react-query";
 import Spinner from "./ui/spinner";
 import { Button } from "./ui/button";
+import AddFriendButton from "./add-friend-button";
+import UnfriendButton from "./unfriend-button";
 
 const PeoplesList = () => {
   const { data: peoples, isLoading, error } = useQuery({ queryKey: ["peoples"], queryFn: getPeoples });
+
+  console.log("peoples", peoples);
 
   if (isLoading) {
     return (
@@ -19,7 +23,7 @@ const PeoplesList = () => {
   }
   return (
     <div className="border rounded-md p-2 space-y-4 ">
-      <div>Who to follow</div>
+      <div>People you might know</div>
       <div className="space-y-4">
         {peoples?.map((people) => (
           <div key={people.id} className="flex items-center justify-between">
@@ -30,9 +34,7 @@ const PeoplesList = () => {
                 <p className="font-light text-muted-foreground">@{people.username}</p>
               </div>
             </div>
-            <Button type="button" className="rounded-full" size="sm">
-              Follow
-            </Button>
+            {people.friendship_status === "pending" ? <UnfriendButton peopleId={people.id} /> : <AddFriendButton peopleId={people.id} />}
           </div>
         ))}
       </div>

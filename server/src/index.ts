@@ -9,6 +9,7 @@ import cookieParser from "cookie-parser";
 import postRoutes from "./routes/postsRoutes";
 import profileRoutes from "./routes/profileRoutes";
 import peopleRouters from "./routes/peopleRoutes";
+import friendRoutes from "./routes/friendRoutes";
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -31,6 +32,7 @@ app.use(authRoutes);
 app.use(postRoutes);
 app.use(profileRoutes);
 app.use(peopleRouters);
+app.use(friendRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

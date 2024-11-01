@@ -11,14 +11,21 @@ export const getPeoples = async (req: Request, res: Response) => {
 
   try {
     const peoplesResult = await pool.query(
-      `SELECT 
-       users.id,
-       users.username,
-       profiles.name,
-       profiles.bio
-       FROM users
-       LEFT JOIN profiles ON users.id = profiles.user_id
-       WHERE users.id !=$1`,
+      `
+      SELECT 
+        users.id,
+        users.username,
+        profiles.name,
+        profiles.bio,
+        friends.status AS friendship_status
+      FROM users
+      LEFT JOIN profiles ON users.id = profiles.user_id
+      LEFT JOIN friends 
+        ON (users.id = friends.friend_id AND friends.user_id = $1)
+        OR (users.id = friends.user_id AND friends.friend_id = $1)
+      WHERE users.id != $1
+        AND (friends.status IS NULL OR friends.status = 'pending')
+      `,
       [currentUser.id]
     );
 
