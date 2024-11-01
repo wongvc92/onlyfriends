@@ -90,3 +90,47 @@ export const deletePost = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const getAllPosts = async (req: Request, res: Response) => {
+  try {
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10; // Increase limit if fetching all posts
+    const offset = (page - 1) * limit;
+
+    // Query the total count of all posts for pagination
+    const totalPostsResult = await pool.query("SELECT COUNT(*) FROM posts");
+    const totalPosts = parseInt(totalPostsResult.rows[0].count);
+    const totalPages = Math.ceil(totalPosts / limit);
+
+    const postsResult = await pool.query(
+      `
+      SELECT 
+        posts.*,
+        users.username,
+        profiles.name,
+        profiles.bio,
+        profiles.location,
+        profiles.website
+      FROM posts
+      JOIN users ON posts.user_id = users.id
+      LEFT JOIN profiles ON profiles.user_id = users.id
+      ORDER BY posts.created_at DESC
+      LIMIT $1 OFFSET $2
+    `,
+      [limit, offset]
+    );
+
+    const posts = postsResult.rows;
+
+    res.status(200).json({
+      data: posts,
+      currentPage: page,
+      nextPage: page < totalPages ? page + 1 : null,
+      totalPages,
+      totalPosts,
+    });
+  } catch (error) {
+    console.log("Internal server error", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
