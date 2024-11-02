@@ -1,6 +1,4 @@
 import { createFileRoute, Link, Outlet, useParams, useRouterState } from "@tanstack/react-router";
-
-import PostCard from "./-components/post-card";
 import ProfileInfo from "./-components/profile-info";
 
 export const Route = createFileRoute("/_authenticated/$username/_layout")({
