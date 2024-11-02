@@ -39,14 +39,24 @@ export const addProfile = async (req: Request, res: Response) => {
 };
 
 export const getProfile = async (req: Request, res: Response) => {
-  const user = req.user as JwtPayload;
-  if (!user) {
-    res.status(401).json({ message: "user not found" });
+  const username = req.params.username;
+
+  if (!username) {
+    res.status(401).json({ message: "Username is required" });
     return;
   }
-
   try {
-    const profileResults = await pool.query("SELECT * FROM profiles WHERE user_id=$1", [user.id]);
+    const profileResults = await pool.query(
+      `
+      SELECT 
+      profiles.* ,
+      users.username
+      FROM profiles 
+      JOIN users ON profiles.user_id = users.id
+      WHERE username = $1
+      `,
+      [username]
+    );
     const profile = profileResults.rows[0];
     res.status(200).json({ profile });
   } catch (error) {

@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { getProfile } from "@/data/getProfile";
+import { getProfileByUsername } from "@/data/getProfile";
 import { profileSchema, TProfileSchema } from "@/validation/profileSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -14,7 +14,7 @@ import { toast } from "sonner";
 const EditProfileForm = () => {
   const queryClient = useQueryClient();
   const { username } = useParams({ strict: false });
-  const { data } = useQuery({ queryKey: ["profiles"], queryFn: getProfile });
+  const { data } = useQuery({ queryKey: ["profiles"], queryFn: () => getProfileByUsername(username!) });
 
   const form = useForm<TProfileSchema>({
     resolver: zodResolver(profileSchema),

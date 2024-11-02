@@ -6,7 +6,7 @@ const postRoutes = Router();
 
 postRoutes.post("/api/post", authenticateJWT, addPost);
 postRoutes.delete("/api/post", authenticateJWT, deletePost);
-postRoutes.get("/api/posts/username/:username", authenticateJWT, getPost);
+postRoutes.get("/api/posts/individual/:username", authenticateJWT, getPost);
 postRoutes.get("/api/posts/all", authenticateJWT, getAllPosts);
 
 export default postRoutes;

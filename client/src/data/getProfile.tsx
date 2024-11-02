@@ -1,7 +1,7 @@
-import { TProfileSchema } from "@/validation/profileSchema";
+import { IProfile } from "@/types/IProfiles";
 
-export const getProfile = async () => {
-  const url = new URL("http://localhost:5001/api/profiles");
+export const getProfileByUsername = async (username: string) => {
+  const url = new URL(`http://localhost:5001/api/profiles/${username}`);
   const res = await fetch(url, {
     method: "GET",
     credentials: "include",
@@ -10,6 +10,6 @@ export const getProfile = async () => {
     throw new Error("Failed to fetch profile");
   }
   const data = await res.json();
-  const profile: TProfileSchema = data.profile;
+  const profile: IProfile = data.profile;
   return profile;
 };

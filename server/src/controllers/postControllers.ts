@@ -34,6 +34,7 @@ export const getPost = async (req: Request, res: Response) => {
       res.status(401).json({ message: "username is required" });
       return;
     }
+
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 10; // Increase limit if fetching all posts
     const offset = (page - 1) * limit;

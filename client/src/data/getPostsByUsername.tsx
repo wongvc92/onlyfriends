@@ -12,7 +12,7 @@ export const getPostsByUsername = async ({
   nextPage: number;
 }> => {
   const LIMIT = 3;
-  const response = await fetch(`http://localhost:5001/api/posts/username/${username}?page=${pageParam}&limit=${LIMIT}`, {
+  const response = await fetch(`http://localhost:5001/api/posts/individual/${username}?page=${pageParam}&limit=${LIMIT}`, {
     method: "GET",
     credentials: "include",
   });

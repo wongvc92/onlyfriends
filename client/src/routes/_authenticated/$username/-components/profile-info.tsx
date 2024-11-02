@@ -1,18 +1,19 @@
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/auth";
 import { Button } from "@/components/ui/button";
 import { Link, useParams } from "@tanstack/react-router";
-import { TProfileSchema } from "@/validation/profileSchema";
 import { useQuery } from "@tanstack/react-query";
-import { getProfile } from "@/data/getProfile";
+import { getProfileByUsername } from "@/data/getProfile";
 
 const ProfileInfo = () => {
-  const { user } = useAuth();
+  const auth = useAuth();
   const { username } = useParams({ strict: false });
+  console.log("username", username);
 
-  const { data } = useQuery({ queryKey: ["profiles"], queryFn: getProfile });
+  const { data: profile } = useQuery({ queryKey: [`profiles-${username}`], queryFn: () => getProfileByUsername(username!) });
 
+  console.log("profile", profile);
   return (
     <div>
       <div className="h-[150px] md:h-[200px] w-full relative">
@@ -27,17 +28,17 @@ const ProfileInfo = () => {
           <div className="space-y-2">
             <div className="flex justify-between items-center">
               <CardTitle className="flex flex-wrap items-center gap-1">
-                <p>{data?.name}</p>
-                <p className="text-muted-foreground text-xs">@{user?.username}</p>
+                <p>{profile?.name}</p>
+                <p className="text-muted-foreground text-xs">@{profile?.username || username}</p>
               </CardTitle>
-              <Link to={data ? `/${username}/edit` : `/${username}/add`}>
+              <Link to={profile ? `/${username}/edit` : `/${username}/add`} className={`${profile?.id === auth.user?.id ? "flex" : "hidden"}`}>
                 <Button className="rounded-full" variant="outline">
-                  {data ? "Edit profile" : "Add profile"}
+                  {profile ? "Edit profile" : "Add profile"}
                 </Button>
               </Link>
             </div>
 
-            <CardDescription className="line-clamp-2">{data?.bio || ""}</CardDescription>
+            <CardDescription className="line-clamp-2">{profile?.bio || ""}</CardDescription>
           </div>
         </CardHeader>
 

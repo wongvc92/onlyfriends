@@ -6,10 +6,11 @@ import { postSchema, TPostSchema } from "@/validation/postsSchema";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "@/auth";
 
 const PostForm = () => {
   const queryClient = useQueryClient();
-
+  const auth = useAuth();
   const form = useForm<TPostSchema>({
     resolver: zodResolver(postSchema),
     mode: "all",
@@ -19,7 +20,6 @@ const PostForm = () => {
   });
 
   const addPost = async () => {
-    console.log(`form.getValues("post")`, form.getValues().post);
     const res = await fetch("http://localhost:5001/api/post", {
       method: "POST",
       credentials: "include",
@@ -40,7 +40,7 @@ const PostForm = () => {
     onSuccess: () => {
       // Invalidate and refetch
       queryClient.invalidateQueries({ queryKey: ["allPosts"] });
-      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: [`posts-${auth.user?.username!}`] });
     },
   });
 

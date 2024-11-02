@@ -17,7 +17,7 @@ const PostCard = () => {
 
   const { ref, inView } = useInView();
   const { status, data, error, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage } = useInfiniteQuery({
-    queryKey: ["posts"],
+    queryKey: [`posts-${username}`],
     queryFn: ({ pageParam }) => getPostsByUsername({ pageParam, username: username as string }),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => lastPage.nextPage,
