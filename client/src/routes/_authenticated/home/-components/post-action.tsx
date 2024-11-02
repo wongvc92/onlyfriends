@@ -34,6 +34,7 @@ const PostACtion = ({ post }: { post: IPost }) => {
     mutationFn: deletePost,
     onSuccess: () => {
       // Invalidate and refetch
+      queryClient.invalidateQueries({ queryKey: ["allPosts"] });
       queryClient.invalidateQueries({ queryKey: ["posts"] });
     },
   });

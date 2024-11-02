@@ -29,29 +29,47 @@ export const addPost = async (req: Request, res: Response) => {
 
 export const getPost = async (req: Request, res: Response) => {
   try {
-    const user = req.user as JwtPayload;
-    const userId = user?.id;
-    if (!userId) {
-      res.status(401).json({ message: "userId are required" });
+    const username = req.params.username;
+    if (!username) {
+      res.status(401).json({ message: "username is required" });
       return;
     }
-
     const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 3;
+    const limit = parseInt(req.query.limit as string) || 10; // Increase limit if fetching all posts
     const offset = (page - 1) * limit;
 
-    // Query the total count of posts for the user to calculate total pages
-    const totalPostsResult = await pool.query("SELECT COUNT(*) FROM posts WHERE user_id = $1", [userId]);
+    // Query the total count of all posts for pagination
+    const totalPostsResult = await pool.query(
+      `SELECT COUNT(*) 
+      FROM posts
+      JOIN users ON posts.user_id = users.id
+      WHERE users.username = $1
+      `,
+      [username]
+    );
     const totalPosts = parseInt(totalPostsResult.rows[0].count);
     const totalPages = Math.ceil(totalPosts / limit);
 
-    const postsResult = await pool.query("SELECT * FROM posts WHERE user_id = $1 ORDER BY created_at DESC LIMIT $2 OFFSET $3", [
-      userId,
-      limit,
-      offset,
-    ]);
+    const postsResult = await pool.query(
+      `
+      SELECT 
+        posts.*,
+        users.username,
+        profiles.name,
+        profiles.bio,
+        profiles.location,
+        profiles.website
+      FROM posts
+      JOIN users ON posts.user_id = users.id
+      LEFT JOIN profiles ON profiles.user_id = users.id
+      WHERE users.username = $1
+      ORDER BY posts.created_at DESC
+      LIMIT $2 OFFSET $3
+    `,
+      [username, limit, offset]
+    );
 
-    const posts = postsResult.rows.map(({ user_id, ...rest }) => rest);
+    const posts = postsResult.rows;
 
     res.status(200).json({
       data: posts,

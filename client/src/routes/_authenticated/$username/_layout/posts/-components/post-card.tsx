@@ -1,24 +1,24 @@
-import { useAuth } from "@/auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { fetchPostsByUserId } from "@/data/postsByUserId";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { getPostsByUsername } from "@/data/getPostsByUsername";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { formatDistanceToNowStrict } from "date-fns";
 import React, { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import { FaRegHeart } from "react-icons/fa";
 import { PiShareFatBold } from "react-icons/pi";
-
 import { FaRegComment } from "react-icons/fa";
-import PostACtion from "../../../-components/post-action";
+import PostACtion from "./post-action";
+import { DotFilledIcon } from "@radix-ui/react-icons";
+import { useParams } from "@tanstack/react-router";
 
 const PostCard = () => {
-  const { user } = useAuth();
-  console.log("useAuth", user);
+  const { username } = useParams({ strict: false });
+
   const { ref, inView } = useInView();
   const { status, data, error, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage } = useInfiniteQuery({
     queryKey: ["posts"],
-    queryFn: fetchPostsByUserId,
+    queryFn: ({ pageParam }) => getPostsByUsername({ pageParam, username: username as string }),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => lastPage.nextPage,
   });
@@ -67,14 +67,19 @@ const PostCard = () => {
                     <AvatarImage src="https://github.com/shadcn.png" />
                     <AvatarFallback>CN</AvatarFallback>
                   </Avatar>
-                  <CardTitle className="text-muted-foreground">@{user?.username}</CardTitle>
-                  <CardDescription> {getrelativeTime(post.created_at)}</CardDescription>
+                  <CardTitle>
+                    <div className="flex flex-wrap items-center gap-1">
+                      <p className="line-clamp-2">{post.name}</p>
+                      <p className="text-muted-foreground font-light">@{post.username}</p>
+                      <DotFilledIcon />
+                      <p className="text-muted-foreground font-light">{getrelativeTime(post.created_at)}</p>
+                    </div>
+                  </CardTitle>
                   <div className="ml-auto">
-                    <PostACtion postId={post.id} />
+                    <PostACtion post={post} />
                   </div>
                 </div>
               </CardHeader>
-
               <CardContent>{post.post}</CardContent>
               <CardFooter className="flex items-center justify-between md:justify-start md:gap-10">
                 <FaRegComment />

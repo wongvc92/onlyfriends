@@ -1,16 +1,18 @@
 import { IPost } from "@/types/IPost";
 
-export const fetchPostsByUserId = async ({
+export const getPostsByUsername = async ({
   pageParam,
+  username,
 }: {
   pageParam: number;
+  username: string;
 }): Promise<{
   data: IPost[];
   currentPage: number;
   nextPage: number;
 }> => {
   const LIMIT = 3;
-  const response = await fetch(`http://localhost:5001/api/posts?page=${pageParam}&limit=${LIMIT}`, {
+  const response = await fetch(`http://localhost:5001/api/posts/username/${username}?page=${pageParam}&limit=${LIMIT}`, {
     method: "GET",
     credentials: "include",
   });

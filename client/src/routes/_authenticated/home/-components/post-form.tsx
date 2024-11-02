@@ -39,6 +39,7 @@ const PostForm = () => {
     mutationFn: addPost,
     onSuccess: () => {
       // Invalidate and refetch
+      queryClient.invalidateQueries({ queryKey: ["allPosts"] });
       queryClient.invalidateQueries({ queryKey: ["posts"] });
     },
   });
