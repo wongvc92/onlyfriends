@@ -10,6 +10,7 @@ import postRoutes from "./routes/postsRoutes";
 import profileRoutes from "./routes/profileRoutes";
 import peopleRouters from "./routes/peopleRoutes";
 import friendRoutes from "./routes/friendRoutes";
+import likeRoutes from "./routes/likeRoutes";
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -33,6 +34,7 @@ app.use(postRoutes);
 app.use(profileRoutes);
 app.use(peopleRouters);
 app.use(friendRoutes);
+app.use(likeRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

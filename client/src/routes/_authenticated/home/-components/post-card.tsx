@@ -12,6 +12,8 @@ import PostACtion from "./post-action";
 import { getAllPosts } from "@/data/getAllPosts";
 import { DotFilledIcon } from "@radix-ui/react-icons";
 import { Link } from "@tanstack/react-router";
+import LikeButton from "@/components/like-button";
+import Likes from "@/components/Likes";
 
 const PostCard = () => {
   const { user } = useAuth();
@@ -87,8 +89,8 @@ const PostCard = () => {
 
               <CardContent>{post.post}</CardContent>
               <CardFooter className="flex items-center justify-between md:justify-start md:gap-10">
+                <Likes post={post}/>
                 <FaRegComment />
-                <FaRegHeart />
                 <PiShareFatBold />
               </CardFooter>
             </Card>

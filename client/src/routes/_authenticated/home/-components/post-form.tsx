@@ -37,12 +37,12 @@ const PostForm = () => {
 
   const { mutate, isPending } = useMutation({
     mutationFn: addPost,
-    onSuccess: () =>
-      Promise.all([
-        // Invalidate and refetch
-        queryClient.invalidateQueries({ queryKey: [`posts-${auth.user?.username!}`] }),
-        queryClient.invalidateQueries({ queryKey: ["allPosts"] }),
-      ]),
+    onSuccess: async () => {
+      // Invalidate and refetch
+      await queryClient.invalidateQueries({ queryKey: [`posts-${auth.user?.username!}`] });
+      await queryClient.invalidateQueries({ queryKey: ["allPosts"] });
+      queryClient.refetchQueries({ queryKey: [`posts-${auth.user?.username!}`] });
+    },
   });
 
   const handleEnterPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {

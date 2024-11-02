@@ -32,12 +32,11 @@ const PostACtion = ({ post }: { post: IPost }) => {
 
   const { mutate, isPending } = useMutation({
     mutationFn: deletePost,
-    onSuccess: () =>
-      Promise.all([
-        // Invalidate and refetch
-        queryClient.invalidateQueries({ queryKey: [`posts-${auth.user?.username!}`] }),
-        queryClient.invalidateQueries({ queryKey: ["allPosts"] }),
-      ]),
+    onSuccess: async () => {
+      // Invalidate and refetch
+      await queryClient.invalidateQueries({ queryKey: [`posts-${auth.user?.username!}`] });
+      await queryClient.invalidateQueries({ queryKey: ["allPosts"] });
+    },
   });
 
   const onDelete = () => {
