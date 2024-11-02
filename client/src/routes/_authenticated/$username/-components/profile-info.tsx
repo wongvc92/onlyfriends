@@ -1,10 +1,12 @@
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/auth";
 import { Button } from "@/components/ui/button";
 import { Link, useParams } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { getProfileByUsername } from "@/data/getProfile";
+import { CalendarIcon, Link1Icon } from "@radix-ui/react-icons";
+import { format } from "date-fns";
 
 const ProfileInfo = () => {
   const auth = useAuth();
@@ -31,7 +33,10 @@ const ProfileInfo = () => {
                 <p>{profile?.name}</p>
                 <p className="text-muted-foreground text-xs">@{profile?.username || username}</p>
               </CardTitle>
-              <Link to={profile ? `/${username}/edit` : `/${username}/add`} className={`${profile?.id === auth.user?.id ? "flex" : "hidden"}`}>
+              <Link
+                to={profile ? `/${username}/edit` : `/${username}/add`}
+                className={`${profile !== undefined && profile.username === auth.user?.username ? "flex" : username === auth.user?.username ? "flex" : "hidden"}`}
+              >
                 <Button className="rounded-full" variant="outline">
                   {profile ? "Edit profile" : "Add profile"}
                 </Button>
@@ -42,7 +47,22 @@ const ProfileInfo = () => {
           </div>
         </CardHeader>
 
-        {/* <CardContent>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veniam, placeat.</CardContent> */}
+        <CardContent className="text-xs space-y-2">
+          <div className="flex items-center gap-2">
+            {profile?.website && (
+              <>
+                <Link1Icon />
+                <a href={profile.website} target="_blank" rel="noopener noreferrer" className="font-normal text-sky-500 hover:underline">
+                  {profile.website}
+                </a>
+              </>
+            )}
+          </div>
+          <div className="flex items-center gap-2">
+            <CalendarIcon />
+            {profile?.joined_date && `Joined ${format(new Date(profile.joined_date), "MMMM yyyy")}`}
+          </div>
+        </CardContent>
       </Card>
     </div>
   );

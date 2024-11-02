@@ -50,7 +50,8 @@ export const getProfile = async (req: Request, res: Response) => {
       `
       SELECT 
       profiles.* ,
-      users.username
+      users.username,
+      users.created_at as joined_date
       FROM profiles 
       JOIN users ON profiles.user_id = users.id
       WHERE username = $1

@@ -3,6 +3,7 @@ export interface IProfile {
   user_id: string;
   name: string;
   bio: string;
+  joined_date: Date;
   location: string;
   website: string;
   created_at: Date;
