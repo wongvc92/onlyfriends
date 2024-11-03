@@ -1,9 +1,11 @@
 import { getPeoples } from "@/data/getPeoples";
 import { useQuery } from "@tanstack/react-query";
-
 import AddFriendButton from "./add-friend-button";
 import Spinner from "../ui/spinner";
 import { Button } from "../ui/button";
+import ProfileImage from "../profile/profile-image";
+import ProfileName from "../profile/profile-name";
+import ProfileUsername from "../profile/profile-username";
 
 const PeoplesList = () => {
   const { data: peoples, isLoading, error } = useQuery({ queryKey: ["peoples"], queryFn: getPeoples });
@@ -26,12 +28,12 @@ const PeoplesList = () => {
       <div>People you might know</div>
       <div className="space-y-4">
         {peoples?.map((people) => (
-          <div key={people.id} className="flex items-center justify-between">
+          <div key={people.id} className="flex items-start justify-between gap-1">
             <div className="flex items-start gap-2">
-              <img src="https://github.com/shadcn.png" alt={`${people.username}-image`} className="w-10 h-10 rounded-full object-cover" />
+              <ProfileImage image="https://github.com/shadcn.png" username={people.username} classname="w-10 h-10" />
               <div>
-                <p className="font-bold">{people.name}</p>
-                <p className="font-light text-muted-foreground">@{people.username}</p>
+                <ProfileName name={people.name} classname="font-bold text-sm" />
+                <ProfileUsername username={people.username} classname="font-light text-muted-foreground text-xs" />
               </div>
             </div>
             <AddFriendButton peopleId={people.id} />

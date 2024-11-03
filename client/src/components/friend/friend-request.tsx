@@ -3,6 +3,9 @@ import { getFriendsRequest } from "@/data/getFriendsRequests";
 import ApproveFriendButton from "./approve-friend-button";
 import Spinner from "../ui/spinner";
 import { Button } from "../ui/button";
+import ProfileImage from "../profile/profile-image";
+import ProfileName from "../profile/profile-name";
+import ProfileUsername from "../profile/profile-username";
 
 const FriendRequest = () => {
   const { data: friendsRequests, isLoading, error } = useQuery({ queryKey: ["friends"], queryFn: getFriendsRequest });
@@ -27,10 +30,10 @@ const FriendRequest = () => {
         {friendsRequests?.map((friendRequest) => (
           <div key={friendRequest.id} className="flex items-center justify-between">
             <div className="flex items-start gap-2">
-              <img src="https://github.com/shadcn.png" alt={`${friendRequest.username}-image`} className="w-10 h-10 rounded-full object-cover" />
+              <ProfileImage image="https://github.com/shadcn.png" username={friendRequest.username} classname="w-10 h-10" />
               <div>
-                <p className="font-bold">{friendRequest.name}</p>
-                <p className="font-light text-muted-foreground">@{friendRequest.username}</p>
+                <ProfileName name={friendRequest.name} classname="font-bold text-sm" />
+                <ProfileUsername username={friendRequest.username} classname="font-light text-muted-foreground text-xs" />
               </div>
             </div>
             {<ApproveFriendButton friendRequestId={friendRequest.id} />}
