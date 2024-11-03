@@ -3,7 +3,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import React, { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import { getAllPosts } from "@/data/getAllPosts";
-import PostCard from "@/components/post-card";
+import PostCard from "@/components/post/post-card";
 
 const PostList = () => {
   const { user } = useAuth();

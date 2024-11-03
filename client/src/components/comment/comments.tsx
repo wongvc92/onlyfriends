@@ -6,7 +6,7 @@ import { IPost } from "@/types/IPost";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../ui/card";
 import { DotFilledIcon } from "@radix-ui/react-icons";
 import { getrelativeTime } from "@/utils/getrelativeTime";
-import PostACtion from "../post-action";
+import PostACtion from "../post/post-action";
 import PostComment from "./post-comment";
 import CommentList from "./comment-list";
 import { useQuery } from "@tanstack/react-query";
@@ -14,7 +14,7 @@ import { getCommentCountByPostId } from "@/data/getCommentCountByPostId";
 import ProfileName from "../profile/profile-name";
 import ProfileUsername from "../profile/profile-username";
 import ProfileImage from "../profile/profile-image";
-import Likes from "../Likes";
+import Likes from "../post/Likes";
 import { PiShareFatBold } from "react-icons/pi";
 
 const Comments = ({ post }: { post: IPost }) => {

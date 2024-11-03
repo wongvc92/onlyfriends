@@ -1,5 +1,5 @@
 import { IPost } from "@/types/IPost";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { HeartFilledIcon } from "@radix-ui/react-icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 

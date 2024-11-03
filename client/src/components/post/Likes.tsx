@@ -3,7 +3,7 @@ import LikeButton from "./like-button";
 import { useQuery } from "@tanstack/react-query";
 import { getLikeByPostId } from "@/data/getLikeByPostId";
 import UnLikeButton from "./unlike-button";
-import Spinner from "./ui/spinner";
+import Spinner from "../ui/spinner";
 
 const Likes = ({ post }: { post: IPost }) => {
   const { data, isLoading, error } = useQuery({ queryKey: [`likes-${post.id}`], queryFn: () => getLikeByPostId(post.id) });

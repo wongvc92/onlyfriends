@@ -3,7 +3,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import React, { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import { useParams } from "@tanstack/react-router";
-import PostCard from "@/components/post-card";
+import PostCard from "@/components/post/post-card";
 
 const PostList = () => {
   const { username } = useParams({ strict: false });
@@ -32,7 +32,7 @@ const PostList = () => {
       {data.pages.map((page, pageIndex) => (
         <React.Fragment key={pageIndex}>
           {page.data.map((post) => (
-            <PostCard post={post} key={post.id}/>
+            <PostCard post={post} key={post.id} />
           ))}
         </React.Fragment>
       ))}

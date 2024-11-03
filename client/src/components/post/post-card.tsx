@@ -7,7 +7,7 @@ import { Link } from "@tanstack/react-router";
 import { getrelativeTime } from "@/utils/getrelativeTime";
 import { IPost } from "@/types/IPost";
 import PostACtion from "./post-action";
-import Comments from "./comment/comments";
+import Comments from "../comment/comments";
 
 const PostCard = ({ post }: { post: IPost }) => {
   return (
