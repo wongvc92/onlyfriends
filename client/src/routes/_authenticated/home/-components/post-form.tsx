@@ -33,6 +33,7 @@ const PostForm = () => {
       return;
     }
     toast.success("Successfully post");
+    form.reset();
   };
 
   const { mutate, isPending } = useMutation({
@@ -66,10 +67,11 @@ const PostForm = () => {
             </FormItem>
           )}
         />
-
-        <Button type="submit" className="w-fit" disabled={isPending}>
-          Post
-        </Button>
+        <div className="flex justify-end">
+          <Button type="submit" className="w-fit" disabled={isPending || form.getValues().post === ""}>
+            Post
+          </Button>
+        </div>
       </form>
     </Form>
   );
