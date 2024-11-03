@@ -1,10 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import AddFriendButton from "./add-friend-button";
-import { Button } from "./ui/button";
-import Spinner from "./ui/spinner";
-import UnfriendButton from "./unfriend-button";
 import { getFriendsRequest } from "@/data/getFriendsRequests";
 import ApproveFriendButton from "./approve-friend-button";
+import Spinner from "../ui/spinner";
+import { Button } from "../ui/button";
 
 const FriendRequest = () => {
   const { data: friendsRequests, isLoading, error } = useQuery({ queryKey: ["friends"], queryFn: getFriendsRequest });

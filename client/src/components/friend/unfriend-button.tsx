@@ -1,8 +1,8 @@
 import { toast } from "sonner";
-import { Button } from "./ui/button";
-import Spinner from "./ui/spinner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import AddFriendButton from "./add-friend-button";
+import { Button } from "../ui/button";
+import Spinner from "../ui/spinner";
 
 const UnfriendButton = ({ peopleId }: { peopleId: string }) => {
   const queryClient = useQueryClient();

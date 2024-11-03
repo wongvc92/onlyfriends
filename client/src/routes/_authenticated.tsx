@@ -4,8 +4,8 @@ import { Link, Outlet, redirect, useRouter } from "@tanstack/react-router";
 import { createFileRoute, useRouterState } from "@tanstack/react-router";
 import { IoHomeOutline } from "react-icons/io5";
 import { CgProfile } from "react-icons/cg";
-import PeoplesList from "@/components/peoples-list";
-import FriendRequest from "@/components/friend-request";
+import PeoplesList from "@/components/friend/peoples-list";
+import FriendRequest from "@/components/friend/friend-request";
 export const Route = createFileRoute("/_authenticated")({
   beforeLoad: async ({ location, context }) => {
     if (!context.auth.isAuthenticated) {

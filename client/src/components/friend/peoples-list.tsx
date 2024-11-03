@@ -1,9 +1,9 @@
 import { getPeoples } from "@/data/getPeoples";
 import { useQuery } from "@tanstack/react-query";
-import Spinner from "./ui/spinner";
-import { Button } from "./ui/button";
+
 import AddFriendButton from "./add-friend-button";
-import UnfriendButton from "./unfriend-button";
+import Spinner from "../ui/spinner";
+import { Button } from "../ui/button";
 
 const PeoplesList = () => {
   const { data: peoples, isLoading, error } = useQuery({ queryKey: ["peoples"], queryFn: getPeoples });

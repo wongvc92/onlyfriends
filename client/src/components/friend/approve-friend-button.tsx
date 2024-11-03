@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Button } from "./ui/button";
-import Spinner from "./ui/spinner";
+import { Button } from "../ui/button";
+import Spinner from "../ui/spinner";
 
 const ApproveFriendButton = ({ friendRequestId }: { friendRequestId: string }) => {
   console.log("friendRequestId", friendRequestId);
