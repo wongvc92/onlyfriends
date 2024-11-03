@@ -1,16 +1,15 @@
-import { getPostsByUsername } from "@/data/getPostsByUsername";
+import { getCommentsByPostId } from "@/data/getCommentsByPostId";
+import { IPost } from "@/types/IPost";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import React, { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
-import { useParams } from "@tanstack/react-router";
-import PostCard from "@/components/post-card";
+import CommentCard from "./comment-card";
 
-const PostList = () => {
-  const { username } = useParams({ strict: false });
+const CommentList = ({ post }: { post: IPost }) => {
   const { ref, inView } = useInView();
   const { status, data, error, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage } = useInfiniteQuery({
-    queryKey: [`posts-${username!}`],
-    queryFn: ({ pageParam }) => getPostsByUsername({ pageParam, username: username as string }),
+    queryKey: [`comments-${post.id!}`],
+    queryFn: ({ pageParam }) => getCommentsByPostId({ pageParam, postId: post.id }),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => lastPage.nextPage,
   });
@@ -21,18 +20,14 @@ const PostList = () => {
     }
   }, [fetchNextPage, inView]);
 
-  if (status === "pending") return <h1>Loading...</h1>;
-
-  if (status === "error") return <h1>{`An error has occurred: " + ${error.message}`}</h1>;
-
-  console.log("data", data.pages[0]);
   return (
     <div className="flex flex-col gap-2">
-      <div>{isFetching && !isFetchingNextPage ? "updating..." : null}</div>
-      {data.pages.map((page, pageIndex) => (
+      {data?.pages.map((page, pageIndex) => (
         <React.Fragment key={pageIndex}>
-          {page.data.map((post) => (
-            <PostCard post={post} key={post.id}/>
+          {page.data.map((comment) => (
+            <div key={comment.id} className="flex start gap-2 py-2 md:w-[800px]">
+              <CommentCard comment={comment} key={comment.id} />
+            </div>
           ))}
         </React.Fragment>
       ))}
@@ -45,4 +40,4 @@ const PostList = () => {
   );
 };
 
-export default PostList;
+export default CommentList;

@@ -20,13 +20,15 @@ const Modal: React.FC<ModalProps> = ({ title, description, isOpen, children, onC
 
   return (
     <Dialog open={isOpen} onOpenChange={onChange}>
-      <DialogContent className={cn("max-h-[90vh] max-w-[80vw] rounded-md", classname)}>
+      <DialogContent className={cn("max-h-[95vh] max-w-[95vw] rounded-md", classname)}>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
-
-        <DialogFooter>{children}</DialogFooter>
+        {children}
+        <DialogFooter>
+          <div></div>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

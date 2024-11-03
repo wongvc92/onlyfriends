@@ -33,7 +33,7 @@ const PostList = () => {
       {data.pages.map((page, pageIndex) => (
         <React.Fragment key={pageIndex}>
           {page.data.map((post) => (
-            <PostCard post={post} />
+            <PostCard post={post} key={post.id} />
           ))}
         </React.Fragment>
       ))}

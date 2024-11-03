@@ -2,12 +2,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { DotFilledIcon } from "@radix-ui/react-icons";
 import Likes from "./Likes";
-import { FaRegComment } from "react-icons/fa";
 import { PiShareFatBold } from "react-icons/pi";
 import { Link } from "@tanstack/react-router";
 import { getrelativeTime } from "@/utils/getrelativeTime";
 import { IPost } from "@/types/IPost";
 import PostACtion from "./post-action";
+import Comments from "./comment/comments";
 
 const PostCard = ({ post }: { post: IPost }) => {
   return (
@@ -38,7 +38,7 @@ const PostCard = ({ post }: { post: IPost }) => {
       <CardContent>{post.post}</CardContent>
       <CardFooter className="flex items-center justify-between md:justify-start md:gap-10">
         <Likes post={post} />
-        <FaRegComment />
+        <Comments post={post} />
         <PiShareFatBold />
       </CardFooter>
     </Card>

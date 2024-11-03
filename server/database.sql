@@ -52,3 +52,16 @@ CREATE TABLE likes (
 );
 
 CREATE INDEX idx_post_user ON likes (post_id, user_id);
+
+CREATE TABLE comments (
+    id SERIAL PRIMARY KEY,
+    comment VARCHAR(255) NOT NULL,
+    post_id integer NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_comments_post_id ON comments (post_id);
+CREATE INDEX idx_comments_user_id ON comments (user_id);
+CREATE INDEX idx_comments_post_user ON comments (post_id, user_id);
