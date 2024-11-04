@@ -1,5 +1,7 @@
 import { IComment } from "@/types/IComment";
 
+const BASE_URL = import.meta.env.VITE_SERVER_URL!;
+
 export const getCommentsByPostId = async ({
   pageParam,
   postId,
@@ -13,7 +15,7 @@ export const getCommentsByPostId = async ({
   totalComments: number;
 }> => {
   const LIMIT = 3;
-  const url = `http://localhost:5001/api/comments/${postId}?page=${pageParam}&limit=${LIMIT}`;
+  const url = `${BASE_URL}/api/comments/${postId}?page=${pageParam}&limit=${LIMIT}`;
 
   const res = await fetch(url, {
     method: "GET",

@@ -60,6 +60,7 @@ function Layout() {
               );
             })}
             <LogoutButton />
+            <p className="text-xs">@{user?.username}</p>
           </nav>
         </aside>
 

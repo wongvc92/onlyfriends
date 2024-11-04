@@ -14,7 +14,7 @@ import likeRoutes from "./routes/likeRoutes";
 import commentRoutes from "./routes/commentRoutes";
 
 const app = express();
-const PORT = process.env.PORT || 5001;
+const PORT = 5003;
 
 app.use(
   cors({

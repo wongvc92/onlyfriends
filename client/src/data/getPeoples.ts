@@ -1,7 +1,9 @@
 import { IPeople } from "@/types/IPeople";
 
+const BASE_URL = import.meta.env.VITE_SERVER_URL!;
+
 export const getPeoples = async () => {
-  const url = "http://localhost:5001/api/peoples";
+  const url = `${BASE_URL}/api/peoples`;
 
   const res = await fetch(url, {
     method: "GET",

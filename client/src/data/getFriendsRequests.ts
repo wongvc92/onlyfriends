@@ -1,8 +1,9 @@
 import { IFriendsRequest } from "@/types/IFriendsRequest";
-import { IPeople } from "@/types/IPeople";
+
+const BASE_URL = import.meta.env.VITE_SERVER_URL!;
 
 export const getFriendsRequest = async () => {
-  const url = "http://localhost:5001/api/friends/requests";
+  const url = `${BASE_URL}/api/friends/requests`;
 
   const res = await fetch(url, {
     method: "GET",

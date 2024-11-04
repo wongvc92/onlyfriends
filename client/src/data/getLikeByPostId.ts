@@ -1,5 +1,6 @@
+const BASE_URL = import.meta.env.VITE_SERVER_URL!;
 export const getLikeByPostId = async (postId: number): Promise<{ isLiked: boolean; likesCount: number }> => {
-  const url = `http://localhost:5001/api/likes/${postId}`;
+  const url = `${BASE_URL}/api/likes/${postId}`;
 
   const res = await fetch(url, {
     method: "GET",

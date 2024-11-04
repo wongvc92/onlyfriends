@@ -1,7 +1,7 @@
 import { IProfile } from "@/types/IProfiles";
-
+const BASE_URL = import.meta.env.VITE_SERVER_URL!;
 export const getProfileByUsername = async (username: string) => {
-  const url = new URL(`http://localhost:5001/api/profiles/${username}`);
+  const url = `${BASE_URL}/api/profiles/${username}`;
   const res = await fetch(url, {
     method: "GET",
     credentials: "include",

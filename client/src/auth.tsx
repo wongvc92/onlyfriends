@@ -2,8 +2,10 @@ import React, { createContext, useEffect } from "react";
 import { IUserClient } from "./types/ICheckAuth";
 import { useQuery } from "@tanstack/react-query";
 
+const BASE_URL = import.meta.env.VITE_SERVER_URL!;
+
 export const checkIfAuthenticated = async () => {
-  const response = await fetch("/api/check-auth", {
+  const response = await fetch(`${BASE_URL}/api/check-auth`, {
     method: "GET",
     credentials: "include",
   });
@@ -16,7 +18,7 @@ export const checkIfAuthenticated = async () => {
 };
 
 const refreshAccessToken = async () => {
-  const response = await fetch("/api/refresh-token", {
+  const response = await fetch(`${BASE_URL}/api/refresh-token`, {
     method: "POST",
     credentials: "include", // Include cookies to send the refresh token
   });

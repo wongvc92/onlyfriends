@@ -1,9 +1,9 @@
-import { getPostsByUsername } from "@/data/getPostsByUsername";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import React, { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import { useParams } from "@tanstack/react-router";
 import PostCard from "@/components/post/post-card";
+import { getPostsByUsername } from "@/data/getPostsByUsername";
 
 const PostList = () => {
   const { username } = useParams({ strict: false });

@@ -26,6 +26,7 @@ CREATE TABLE profiles (
 
 CREATE TABLE friends (
     id SERIAL PRIMARY KEY,
+    initiated_by UUID NOT NULL,
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     friend_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     status VARCHAR(20) NOT NULL DEFAULT 'pending',

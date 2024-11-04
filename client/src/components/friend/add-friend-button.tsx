@@ -1,13 +1,15 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import UnfriendButton from "./unfriend-button";
 import { Button } from "../ui/button";
 import Spinner from "../ui/spinner";
+import CancelAddFriendButton from "./cancel-add-friend-button";
+
+const BASE_URL = import.meta.env.VITE_SERVER_URL!;
 
 const AddFriendButton = ({ peopleId }: { peopleId: string }) => {
   const queryClient = useQueryClient();
   const followPeople = async () => {
-    const url = "http://localhost:5001/api/friends";
+    const url = `${BASE_URL}/api/friends`;
     const res = await fetch(url, {
       method: "POST",
       credentials: "include",
@@ -26,6 +28,7 @@ const AddFriendButton = ({ peopleId }: { peopleId: string }) => {
     onSuccess: () => {
       setTimeout(() => {
         queryClient.invalidateQueries({ queryKey: ["peoples"] });
+        queryClient.invalidateQueries({ queryKey: [`friendStatus-${peopleId}`] });
       }, 60000); // 60,000 milliseconds = 1 minute
       toast.success("Friend request sent");
     },
@@ -50,7 +53,7 @@ const AddFriendButton = ({ peopleId }: { peopleId: string }) => {
           "Add Friend"
         )}
       </Button>
-      {isSuccess && <UnfriendButton peopleId={peopleId} />}
+      {isSuccess && <CancelAddFriendButton peopleId={peopleId} />}
     </>
   );
 };

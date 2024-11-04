@@ -1,4 +1,3 @@
-import { getPeoples } from "@/data/getPeoples";
 import { useQuery } from "@tanstack/react-query";
 import AddFriendButton from "./add-friend-button";
 import Spinner from "../ui/spinner";
@@ -6,11 +5,10 @@ import { Button } from "../ui/button";
 import ProfileImage from "../profile/profile-image";
 import ProfileName from "../profile/profile-name";
 import ProfileUsername from "../profile/profile-username";
+import { getPeoples } from "@/data/getPeoples";
 
 const PeoplesList = () => {
   const { data: peoples, isLoading, error } = useQuery({ queryKey: ["peoples"], queryFn: getPeoples });
-
-  console.log("peoples", peoples);
 
   if (isLoading) {
     return (

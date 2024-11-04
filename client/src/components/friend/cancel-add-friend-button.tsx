@@ -1,13 +1,12 @@
 import { toast } from "sonner";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import AddFriendButton from "./add-friend-button";
 import { Button } from "../ui/button";
 import Spinner from "../ui/spinner";
 
 const BASE_URL = import.meta.env.VITE_SERVER_URL!;
 
-const UnfriendButton = ({ peopleId }: { peopleId: string }) => {
-  const queryClient = useQueryClient();
+const CancelAddFriendButton = ({ peopleId }: { peopleId: string }) => {
   const unfriendPeople = async () => {
     const url = `${BASE_URL}/api/friends/${peopleId}`;
     const res = await fetch(url, {
@@ -24,10 +23,8 @@ const UnfriendButton = ({ peopleId }: { peopleId: string }) => {
   };
   const { mutate, isPending, isError, isSuccess } = useMutation({
     mutationFn: unfriendPeople,
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["peoples"] });
-      await queryClient.invalidateQueries({ queryKey: [`friendStatus-${peopleId}`] });
-      toast.success("Removed friend from list");
+    onSuccess: () => {
+      toast.success("Cancelled friend request");
     },
     onError: () => {
       toast.error("Please try again later");
@@ -41,13 +38,20 @@ const UnfriendButton = ({ peopleId }: { peopleId: string }) => {
 
   return (
     <>
-      <Button type="button" className={`rounded-full ${isSuccess ? "hidden" : "block"}`} size="sm" onClick={onUnfriendPeople} disabled={isPending}>
+      <Button
+        type="button"
+        variant="secondary"
+        className={`rounded-full ${isSuccess ? "hidden" : "block"}`}
+        size="sm"
+        onClick={onUnfriendPeople}
+        disabled={isPending}
+      >
         {isPending ? (
           <div className="flex items-center gap-1">
-            <Spinner color="white" size="4" />
+            <Spinner color="white" size="4" /> Cancelling...
           </div>
         ) : (
-          "Unfriend"
+          "Cancel request"
         )}
       </Button>
       {isSuccess && <AddFriendButton peopleId={peopleId} />}
@@ -55,4 +59,4 @@ const UnfriendButton = ({ peopleId }: { peopleId: string }) => {
   );
 };
 
-export default UnfriendButton;
+export default CancelAddFriendButton;

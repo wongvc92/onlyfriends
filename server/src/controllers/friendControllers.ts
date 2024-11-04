@@ -18,7 +18,18 @@ export const addFriends = async (req: Request, res: Response) => {
   }
 
   try {
-    await pool.query(`INSERT INTO friends (user_id, friend_id) values ($1, $2)`, [currentUser.id, peopleId]);
+    const existingRequest = await pool.query(`SELECT * FROM friends WHERE (user_id = $1 AND friend_id = $2) OR (user_id = $2 AND friend_id = $1)`, [
+      currentUser.id,
+      peopleId,
+    ]);
+
+    if (existingRequest.rowCount && existingRequest.rowCount > 0) {
+      res.status(400).json({ message: "Friend request already exists" });
+      return;
+    }
+
+    // Insert the friend request
+    await pool.query(`INSERT INTO friends (user_id, friend_id, initiated_by) VALUES ($1, $2, $3)`, [currentUser.id, peopleId, currentUser.id]);
 
     res.status(200).json({ message: "Successfully add friend!" });
   } catch (error) {
@@ -98,5 +109,48 @@ export const editFriendStatus = async (req: Request, res: Response) => {
   } catch (error) {
     console.log("Internal server serror", error);
     res.status(500).json({ message: "Failed edit friend status" });
+  }
+};
+
+export const getFriendStatusByPeopleId = async (req: Request, res: Response) => {
+  const currentUser = req.user as JwtPayload;
+  if (!currentUser) {
+    res.status(401).json({ message: "userId is needed" });
+    return;
+  }
+  console.log("currentUser.id", currentUser.id);
+  const peopleId = req.params.peopleId;
+  console.log("getFriendStatusByPeopleId", peopleId);
+  if (!peopleId) {
+    res.status(401).json({ message: "peopleId is needed" });
+    return;
+  }
+  try {
+    const friendStatusResult = await pool.query(
+      `
+    SELECT * 
+    FROM friends
+    WHERE 
+    (friend_id = $1 AND user_id = $2) 
+    OR 
+    (friend_id = $2 AND user_id = $1)
+    `,
+      [peopleId, currentUser.id]
+    );
+
+    const friendStatus = friendStatusResult.rows[0];
+
+    let isFriend;
+
+    if (friendStatus === undefined) {
+      isFriend = false;
+    } else {
+      isFriend = true;
+    }
+
+    res.status(200).json({ isFriend, friendStatus });
+  } catch (error) {
+    console.log("Internal server serror", error);
+    res.status(500).json({ message: "Failed fetch friend status" });
   }
 };

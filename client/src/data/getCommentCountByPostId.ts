@@ -1,5 +1,6 @@
+const BASE_URL = import.meta.env.VITE_SERVER_URL!;
 export const getCommentCountByPostId = async (commentId: number): Promise<{ count: number }> => {
-  const url = `http://localhost:5001/api/comments/count/${commentId}`;
+  const url = `${BASE_URL}/api/comments/count/${commentId}`;
 
   const res = await fetch(url, {
     method: "GET",
