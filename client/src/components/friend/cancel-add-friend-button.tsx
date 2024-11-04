@@ -12,9 +12,6 @@ const CancelAddFriendButton = ({ peopleId }: { peopleId: string }) => {
     const res = await fetch(url, {
       method: "DELETE",
       credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
     });
 
     if (!res.ok) {

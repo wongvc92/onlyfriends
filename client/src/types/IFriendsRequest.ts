@@ -1,5 +1,5 @@
 export interface IFriendsRequest {
-  id: string;
+  id: number;
   location: string;
   user_id: string;
   username: string;

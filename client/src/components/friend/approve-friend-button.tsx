@@ -5,7 +5,7 @@ import Spinner from "../ui/spinner";
 
 const BASE_URL = import.meta.env.VITE_SERVER_URL!;
 
-const ApproveFriendButton = ({ friendRequestId }: { friendRequestId: number }) => {
+const ApproveFriendButton = ({ friendRequestId, peopleId }: { peopleId?: string; friendRequestId: number }) => {
   const queryClient = useQueryClient();
   const approveFriend = async () => {
     const url = `${BASE_URL}/api/friends/${friendRequestId}`;
@@ -28,6 +28,7 @@ const ApproveFriendButton = ({ friendRequestId }: { friendRequestId: number }) =
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["friends"] });
       queryClient.invalidateQueries({ queryKey: ["peoples"] });
+      queryClient.invalidateQueries({ queryKey: [`friendStatus-${peopleId}`] });
     },
     onError: () => {
       toast.error("Please try again later");

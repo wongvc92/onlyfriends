@@ -12,6 +12,7 @@ const FriendStatus = ({ peopleId }: { peopleId: string }) => {
   const { username } = useParams({ strict: false });
   const { user } = useAuth();
 
+  console.log("FriendStatus", data);
   if (!data) return null;
 
   const isInitiator = data.friendStatus?.initiated_by === user?.id;
@@ -29,7 +30,7 @@ const FriendStatus = ({ peopleId }: { peopleId: string }) => {
         return (
           <div className="flex flex-col pl-2 space-y-2 justify-end">
             <p className="text-xs text-muted-foreground text-right">@{username} sent you friend request</p>
-            <ApproveFriendButton friendRequestId={data.friendStatus?.id} />
+            <ApproveFriendButton friendRequestId={data.friendStatus?.request_id} peopleId={peopleId} />
           </div>
         );
       }

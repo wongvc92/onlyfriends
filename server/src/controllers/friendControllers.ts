@@ -45,13 +45,21 @@ export const deleteFriends = async (req: Request, res: Response) => {
   }
 
   const peopleId = req.params.peopleId;
-  if (!isUuid(peopleId)) {
-    res.status(401).json({ message: "Please profile correct peopleId" });
+  if (!peopleId) {
+    res.status(401).json({ message: "peopleId is needed" });
     return;
   }
 
+  console.log("peopleId", peopleId);
   try {
-    await pool.query(`DELETE FROM friends WHERE friend_id = $1`, [peopleId]);
+    await pool.query(
+      `
+        DELETE FROM friends WHERE    
+        (friend_id = $1 AND user_id = $2) 
+        OR 
+        (friend_id = $2 AND user_id = $1)`,
+      [peopleId, currentUser.id]
+    );
 
     res.status(200).json({ message: "Successfully remove friend!" });
   } catch (error) {
@@ -98,13 +106,13 @@ export const getFriendsRequest = async (req: Request, res: Response) => {
 
 export const editFriendStatus = async (req: Request, res: Response) => {
   try {
-    const friendId = req.params.friendRequestId;
-    if (!friendId) {
-      res.status(401).json({ message: "Please provide friend Id" });
+    const friendRequestId = req.params.friendRequestId;
+    if (!friendRequestId) {
+      res.status(401).json({ message: "Please provide friend RequestId" });
       return;
     }
 
-    await pool.query("UPDATE friends SET status = $1 WHERE id=$2", ["accepted", friendId]);
+    await pool.query("UPDATE friends SET status = $1 WHERE id=$2", ["accepted", friendRequestId]);
     res.status(200).json({ message: "Succesfully edit status" });
   } catch (error) {
     console.log("Internal server serror", error);
@@ -128,7 +136,8 @@ export const getFriendStatusByPeopleId = async (req: Request, res: Response) => 
   try {
     const friendStatusResult = await pool.query(
       `
-    SELECT * 
+    SELECT *,
+    id AS request_id
     FROM friends
     WHERE 
     (friend_id = $1 AND user_id = $2) 
