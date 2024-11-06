@@ -26,6 +26,8 @@ const UnfriendButton = ({ peopleId }: { peopleId: string }) => {
     mutationFn: unfriendPeople,
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["peoples"] });
+      await queryClient.invalidateQueries({ queryKey: ["friends-pending"] });
+      await queryClient.invalidateQueries({ queryKey: ["friends-accepted"] });
       await queryClient.invalidateQueries({ queryKey: [`friendStatus-${peopleId}`] });
       toast.success("Removed friend from list");
     },

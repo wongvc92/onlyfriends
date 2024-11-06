@@ -30,7 +30,7 @@ const FriendStatus = ({ peopleId }: { peopleId: string }) => {
         return (
           <div className="flex flex-col pl-2 space-y-2 justify-end">
             <p className="text-xs text-muted-foreground text-right">@{username} sent you friend request</p>
-            <ApproveFriendButton friendRequestId={data.friendStatus?.request_id} peopleId={peopleId} />
+            <ApproveFriendButton friendRequestId={data.friendStatus?.request_id} />
           </div>
         );
       }

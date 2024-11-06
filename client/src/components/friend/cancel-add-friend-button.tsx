@@ -1,5 +1,5 @@
 import { toast } from "sonner";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import AddFriendButton from "./add-friend-button";
 import { Button } from "../ui/button";
 import Spinner from "../ui/spinner";
@@ -7,6 +7,7 @@ import Spinner from "../ui/spinner";
 const BASE_URL = import.meta.env.VITE_SERVER_URL!;
 
 const CancelAddFriendButton = ({ peopleId }: { peopleId: string }) => {
+  const queryClient = useQueryClient();
   const unfriendPeople = async () => {
     const url = `${BASE_URL}/api/friends/${peopleId}`;
     const res = await fetch(url, {
@@ -20,8 +21,9 @@ const CancelAddFriendButton = ({ peopleId }: { peopleId: string }) => {
   };
   const { mutate, isPending, isError, isSuccess } = useMutation({
     mutationFn: unfriendPeople,
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success("Cancelled friend request");
+      await queryClient.invalidateQueries({ queryKey: ["friends-sentRequest"] });
     },
     onError: () => {
       toast.error("Please try again later");

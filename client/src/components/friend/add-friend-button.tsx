@@ -3,10 +3,12 @@ import { toast } from "sonner";
 import { Button } from "../ui/button";
 import Spinner from "../ui/spinner";
 import CancelAddFriendButton from "./cancel-add-friend-button";
+import { useParams } from "@tanstack/react-router";
 
 const BASE_URL = import.meta.env.VITE_SERVER_URL!;
 
 const AddFriendButton = ({ peopleId }: { peopleId: string }) => {
+  const { username } = useParams({ strict: false });
   const queryClient = useQueryClient();
   const followPeople = async () => {
     const url = `${BASE_URL}/api/friends`;
@@ -28,7 +30,9 @@ const AddFriendButton = ({ peopleId }: { peopleId: string }) => {
     onSuccess: () => {
       setTimeout(() => {
         queryClient.invalidateQueries({ queryKey: ["peoples"] });
+        queryClient.invalidateQueries({ queryKey: [`profiles-${username}`] });
         queryClient.invalidateQueries({ queryKey: [`friendStatus-${peopleId}`] });
+        queryClient.invalidateQueries({ queryKey: ["friends-sentRequest"] });
       }, 60000); // 60,000 milliseconds = 1 minute
       toast.success("Friend request sent");
     },

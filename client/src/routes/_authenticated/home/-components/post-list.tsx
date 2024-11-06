@@ -7,7 +7,7 @@ import PostCard from "@/components/post/post-card";
 
 const PostList = () => {
   const { user } = useAuth();
-  console.log("useAuth", user);
+
   const { ref, inView } = useInView();
   const { status, data, error, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage } = useInfiniteQuery({
     queryKey: ["allPosts"],

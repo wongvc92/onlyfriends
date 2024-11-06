@@ -17,19 +17,26 @@ import { Route as LoginImport } from './routes/login'
 import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as IndexImport } from './routes/index'
 import { Route as AuthenticatedHomeIndexImport } from './routes/_authenticated/home/index'
+import { Route as AuthenticatedFriendsIndexImport } from './routes/_authenticated/friends/index'
 import { Route as AuthenticatedUsernameIndexImport } from './routes/_authenticated/$username/index'
 import { Route as authVerifyEmailIndexImport } from './routes/(auth)/verify-email/index'
 import { Route as authResetIndexImport } from './routes/(auth)/reset/index'
 import { Route as authRegisterIndexImport } from './routes/(auth)/register/index'
 import { Route as authNewPasswordIndexImport } from './routes/(auth)/new-password/index'
+import { Route as AuthenticatedFriendsLayoutImport } from './routes/_authenticated/friends/_layout'
 import { Route as AuthenticatedUsernameLayoutImport } from './routes/_authenticated/$username/_layout'
 import { Route as AuthenticatedUsernameEditIndexImport } from './routes/_authenticated/$username/edit/index'
 import { Route as AuthenticatedUsernameAddIndexImport } from './routes/_authenticated/$username/add/index'
+import { Route as AuthenticatedFriendsLayoutPendingRequestIndexImport } from './routes/_authenticated/friends/_layout/pending-request/index'
+import { Route as AuthenticatedFriendsLayoutListIndexImport } from './routes/_authenticated/friends/_layout/list/index'
+import { Route as AuthenticatedFriendsLayoutFriendRequestIndexImport } from './routes/_authenticated/friends/_layout/friend-request/index'
+import { Route as AuthenticatedFriendsLayoutFindIndexImport } from './routes/_authenticated/friends/_layout/find/index'
 import { Route as AuthenticatedUsernameLayoutPostsIndexImport } from './routes/_authenticated/$username/_layout/posts/index'
 import { Route as AuthenticatedUsernameLayoutMediaIndexImport } from './routes/_authenticated/$username/_layout/media/index'
 
 // Create Virtual Routes
 
+const AuthenticatedFriendsImport = createFileRoute('/_authenticated/friends')()
 const AuthenticatedUsernameImport = createFileRoute(
   '/_authenticated/$username',
 )()
@@ -53,6 +60,12 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const AuthenticatedFriendsRoute = AuthenticatedFriendsImport.update({
+  id: '/friends',
+  path: '/friends',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
 const AuthenticatedUsernameRoute = AuthenticatedUsernameImport.update({
   id: '/$username',
   path: '/$username',
@@ -63,6 +76,12 @@ const AuthenticatedHomeIndexRoute = AuthenticatedHomeIndexImport.update({
   id: '/home/',
   path: '/home/',
   getParentRoute: () => AuthenticatedRoute,
+} as any)
+
+const AuthenticatedFriendsIndexRoute = AuthenticatedFriendsIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedFriendsRoute,
 } as any)
 
 const AuthenticatedUsernameIndexRoute = AuthenticatedUsernameIndexImport.update(
@@ -97,6 +116,13 @@ const authNewPasswordIndexRoute = authNewPasswordIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const AuthenticatedFriendsLayoutRoute = AuthenticatedFriendsLayoutImport.update(
+  {
+    id: '/_layout',
+    getParentRoute: () => AuthenticatedFriendsRoute,
+  } as any,
+)
+
 const AuthenticatedUsernameLayoutRoute =
   AuthenticatedUsernameLayoutImport.update({
     id: '/_layout',
@@ -115,6 +141,34 @@ const AuthenticatedUsernameAddIndexRoute =
     id: '/add/',
     path: '/add/',
     getParentRoute: () => AuthenticatedUsernameRoute,
+  } as any)
+
+const AuthenticatedFriendsLayoutPendingRequestIndexRoute =
+  AuthenticatedFriendsLayoutPendingRequestIndexImport.update({
+    id: '/pending-request/',
+    path: '/pending-request/',
+    getParentRoute: () => AuthenticatedFriendsLayoutRoute,
+  } as any)
+
+const AuthenticatedFriendsLayoutListIndexRoute =
+  AuthenticatedFriendsLayoutListIndexImport.update({
+    id: '/list/',
+    path: '/list/',
+    getParentRoute: () => AuthenticatedFriendsLayoutRoute,
+  } as any)
+
+const AuthenticatedFriendsLayoutFriendRequestIndexRoute =
+  AuthenticatedFriendsLayoutFriendRequestIndexImport.update({
+    id: '/friend-request/',
+    path: '/friend-request/',
+    getParentRoute: () => AuthenticatedFriendsLayoutRoute,
+  } as any)
+
+const AuthenticatedFriendsLayoutFindIndexRoute =
+  AuthenticatedFriendsLayoutFindIndexImport.update({
+    id: '/find/',
+    path: '/find/',
+    getParentRoute: () => AuthenticatedFriendsLayoutRoute,
   } as any)
 
 const AuthenticatedUsernameLayoutPostsIndexRoute =
@@ -170,6 +224,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUsernameLayoutImport
       parentRoute: typeof AuthenticatedUsernameRoute
     }
+    '/_authenticated/friends': {
+      id: '/_authenticated/friends'
+      path: '/friends'
+      fullPath: '/friends'
+      preLoaderRoute: typeof AuthenticatedFriendsImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/friends/_layout': {
+      id: '/_authenticated/friends/_layout'
+      path: '/friends'
+      fullPath: '/friends'
+      preLoaderRoute: typeof AuthenticatedFriendsLayoutImport
+      parentRoute: typeof AuthenticatedFriendsRoute
+    }
     '/(auth)/new-password/': {
       id: '/(auth)/new-password/'
       path: '/new-password'
@@ -205,6 +273,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUsernameIndexImport
       parentRoute: typeof AuthenticatedUsernameImport
     }
+    '/_authenticated/friends/': {
+      id: '/_authenticated/friends/'
+      path: '/'
+      fullPath: '/friends/'
+      preLoaderRoute: typeof AuthenticatedFriendsIndexImport
+      parentRoute: typeof AuthenticatedFriendsImport
+    }
     '/_authenticated/home/': {
       id: '/_authenticated/home/'
       path: '/home'
@@ -239,6 +314,34 @@ declare module '@tanstack/react-router' {
       fullPath: '/$username/posts'
       preLoaderRoute: typeof AuthenticatedUsernameLayoutPostsIndexImport
       parentRoute: typeof AuthenticatedUsernameLayoutImport
+    }
+    '/_authenticated/friends/_layout/find/': {
+      id: '/_authenticated/friends/_layout/find/'
+      path: '/find'
+      fullPath: '/friends/find'
+      preLoaderRoute: typeof AuthenticatedFriendsLayoutFindIndexImport
+      parentRoute: typeof AuthenticatedFriendsLayoutImport
+    }
+    '/_authenticated/friends/_layout/friend-request/': {
+      id: '/_authenticated/friends/_layout/friend-request/'
+      path: '/friend-request'
+      fullPath: '/friends/friend-request'
+      preLoaderRoute: typeof AuthenticatedFriendsLayoutFriendRequestIndexImport
+      parentRoute: typeof AuthenticatedFriendsLayoutImport
+    }
+    '/_authenticated/friends/_layout/list/': {
+      id: '/_authenticated/friends/_layout/list/'
+      path: '/list'
+      fullPath: '/friends/list'
+      preLoaderRoute: typeof AuthenticatedFriendsLayoutListIndexImport
+      parentRoute: typeof AuthenticatedFriendsLayoutImport
+    }
+    '/_authenticated/friends/_layout/pending-request/': {
+      id: '/_authenticated/friends/_layout/pending-request/'
+      path: '/pending-request'
+      fullPath: '/friends/pending-request'
+      preLoaderRoute: typeof AuthenticatedFriendsLayoutPendingRequestIndexImport
+      parentRoute: typeof AuthenticatedFriendsLayoutImport
     }
   }
 }
@@ -283,13 +386,52 @@ const AuthenticatedUsernameRouteWithChildren =
     AuthenticatedUsernameRouteChildren,
   )
 
+interface AuthenticatedFriendsLayoutRouteChildren {
+  AuthenticatedFriendsLayoutFindIndexRoute: typeof AuthenticatedFriendsLayoutFindIndexRoute
+  AuthenticatedFriendsLayoutFriendRequestIndexRoute: typeof AuthenticatedFriendsLayoutFriendRequestIndexRoute
+  AuthenticatedFriendsLayoutListIndexRoute: typeof AuthenticatedFriendsLayoutListIndexRoute
+  AuthenticatedFriendsLayoutPendingRequestIndexRoute: typeof AuthenticatedFriendsLayoutPendingRequestIndexRoute
+}
+
+const AuthenticatedFriendsLayoutRouteChildren: AuthenticatedFriendsLayoutRouteChildren =
+  {
+    AuthenticatedFriendsLayoutFindIndexRoute:
+      AuthenticatedFriendsLayoutFindIndexRoute,
+    AuthenticatedFriendsLayoutFriendRequestIndexRoute:
+      AuthenticatedFriendsLayoutFriendRequestIndexRoute,
+    AuthenticatedFriendsLayoutListIndexRoute:
+      AuthenticatedFriendsLayoutListIndexRoute,
+    AuthenticatedFriendsLayoutPendingRequestIndexRoute:
+      AuthenticatedFriendsLayoutPendingRequestIndexRoute,
+  }
+
+const AuthenticatedFriendsLayoutRouteWithChildren =
+  AuthenticatedFriendsLayoutRoute._addFileChildren(
+    AuthenticatedFriendsLayoutRouteChildren,
+  )
+
+interface AuthenticatedFriendsRouteChildren {
+  AuthenticatedFriendsLayoutRoute: typeof AuthenticatedFriendsLayoutRouteWithChildren
+  AuthenticatedFriendsIndexRoute: typeof AuthenticatedFriendsIndexRoute
+}
+
+const AuthenticatedFriendsRouteChildren: AuthenticatedFriendsRouteChildren = {
+  AuthenticatedFriendsLayoutRoute: AuthenticatedFriendsLayoutRouteWithChildren,
+  AuthenticatedFriendsIndexRoute: AuthenticatedFriendsIndexRoute,
+}
+
+const AuthenticatedFriendsRouteWithChildren =
+  AuthenticatedFriendsRoute._addFileChildren(AuthenticatedFriendsRouteChildren)
+
 interface AuthenticatedRouteChildren {
   AuthenticatedUsernameRoute: typeof AuthenticatedUsernameRouteWithChildren
+  AuthenticatedFriendsRoute: typeof AuthenticatedFriendsRouteWithChildren
   AuthenticatedHomeIndexRoute: typeof AuthenticatedHomeIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedUsernameRoute: AuthenticatedUsernameRouteWithChildren,
+  AuthenticatedFriendsRoute: AuthenticatedFriendsRouteWithChildren,
   AuthenticatedHomeIndexRoute: AuthenticatedHomeIndexRoute,
 }
 
@@ -302,16 +444,22 @@ export interface FileRoutesByFullPath {
   '': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
   '/$username': typeof AuthenticatedUsernameLayoutRouteWithChildren
+  '/friends': typeof AuthenticatedFriendsLayoutRouteWithChildren
   '/new-password': typeof authNewPasswordIndexRoute
   '/register': typeof authRegisterIndexRoute
   '/reset': typeof authResetIndexRoute
   '/verify-email': typeof authVerifyEmailIndexRoute
   '/$username/': typeof AuthenticatedUsernameIndexRoute
+  '/friends/': typeof AuthenticatedFriendsIndexRoute
   '/home': typeof AuthenticatedHomeIndexRoute
   '/$username/add': typeof AuthenticatedUsernameAddIndexRoute
   '/$username/edit': typeof AuthenticatedUsernameEditIndexRoute
   '/$username/media': typeof AuthenticatedUsernameLayoutMediaIndexRoute
   '/$username/posts': typeof AuthenticatedUsernameLayoutPostsIndexRoute
+  '/friends/find': typeof AuthenticatedFriendsLayoutFindIndexRoute
+  '/friends/friend-request': typeof AuthenticatedFriendsLayoutFriendRequestIndexRoute
+  '/friends/list': typeof AuthenticatedFriendsLayoutListIndexRoute
+  '/friends/pending-request': typeof AuthenticatedFriendsLayoutPendingRequestIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -319,6 +467,7 @@ export interface FileRoutesByTo {
   '': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
   '/$username': typeof AuthenticatedUsernameIndexRoute
+  '/friends': typeof AuthenticatedFriendsIndexRoute
   '/new-password': typeof authNewPasswordIndexRoute
   '/register': typeof authRegisterIndexRoute
   '/reset': typeof authResetIndexRoute
@@ -328,6 +477,10 @@ export interface FileRoutesByTo {
   '/$username/edit': typeof AuthenticatedUsernameEditIndexRoute
   '/$username/media': typeof AuthenticatedUsernameLayoutMediaIndexRoute
   '/$username/posts': typeof AuthenticatedUsernameLayoutPostsIndexRoute
+  '/friends/find': typeof AuthenticatedFriendsLayoutFindIndexRoute
+  '/friends/friend-request': typeof AuthenticatedFriendsLayoutFriendRequestIndexRoute
+  '/friends/list': typeof AuthenticatedFriendsLayoutListIndexRoute
+  '/friends/pending-request': typeof AuthenticatedFriendsLayoutPendingRequestIndexRoute
 }
 
 export interface FileRoutesById {
@@ -337,16 +490,23 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/_authenticated/$username': typeof AuthenticatedUsernameRouteWithChildren
   '/_authenticated/$username/_layout': typeof AuthenticatedUsernameLayoutRouteWithChildren
+  '/_authenticated/friends': typeof AuthenticatedFriendsRouteWithChildren
+  '/_authenticated/friends/_layout': typeof AuthenticatedFriendsLayoutRouteWithChildren
   '/(auth)/new-password/': typeof authNewPasswordIndexRoute
   '/(auth)/register/': typeof authRegisterIndexRoute
   '/(auth)/reset/': typeof authResetIndexRoute
   '/(auth)/verify-email/': typeof authVerifyEmailIndexRoute
   '/_authenticated/$username/': typeof AuthenticatedUsernameIndexRoute
+  '/_authenticated/friends/': typeof AuthenticatedFriendsIndexRoute
   '/_authenticated/home/': typeof AuthenticatedHomeIndexRoute
   '/_authenticated/$username/add/': typeof AuthenticatedUsernameAddIndexRoute
   '/_authenticated/$username/edit/': typeof AuthenticatedUsernameEditIndexRoute
   '/_authenticated/$username/_layout/media/': typeof AuthenticatedUsernameLayoutMediaIndexRoute
   '/_authenticated/$username/_layout/posts/': typeof AuthenticatedUsernameLayoutPostsIndexRoute
+  '/_authenticated/friends/_layout/find/': typeof AuthenticatedFriendsLayoutFindIndexRoute
+  '/_authenticated/friends/_layout/friend-request/': typeof AuthenticatedFriendsLayoutFriendRequestIndexRoute
+  '/_authenticated/friends/_layout/list/': typeof AuthenticatedFriendsLayoutListIndexRoute
+  '/_authenticated/friends/_layout/pending-request/': typeof AuthenticatedFriendsLayoutPendingRequestIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -356,22 +516,29 @@ export interface FileRouteTypes {
     | ''
     | '/login'
     | '/$username'
+    | '/friends'
     | '/new-password'
     | '/register'
     | '/reset'
     | '/verify-email'
     | '/$username/'
+    | '/friends/'
     | '/home'
     | '/$username/add'
     | '/$username/edit'
     | '/$username/media'
     | '/$username/posts'
+    | '/friends/find'
+    | '/friends/friend-request'
+    | '/friends/list'
+    | '/friends/pending-request'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | ''
     | '/login'
     | '/$username'
+    | '/friends'
     | '/new-password'
     | '/register'
     | '/reset'
@@ -381,6 +548,10 @@ export interface FileRouteTypes {
     | '/$username/edit'
     | '/$username/media'
     | '/$username/posts'
+    | '/friends/find'
+    | '/friends/friend-request'
+    | '/friends/list'
+    | '/friends/pending-request'
   id:
     | '__root__'
     | '/'
@@ -388,16 +559,23 @@ export interface FileRouteTypes {
     | '/login'
     | '/_authenticated/$username'
     | '/_authenticated/$username/_layout'
+    | '/_authenticated/friends'
+    | '/_authenticated/friends/_layout'
     | '/(auth)/new-password/'
     | '/(auth)/register/'
     | '/(auth)/reset/'
     | '/(auth)/verify-email/'
     | '/_authenticated/$username/'
+    | '/_authenticated/friends/'
     | '/_authenticated/home/'
     | '/_authenticated/$username/add/'
     | '/_authenticated/$username/edit/'
     | '/_authenticated/$username/_layout/media/'
     | '/_authenticated/$username/_layout/posts/'
+    | '/_authenticated/friends/_layout/find/'
+    | '/_authenticated/friends/_layout/friend-request/'
+    | '/_authenticated/friends/_layout/list/'
+    | '/_authenticated/friends/_layout/pending-request/'
   fileRoutesById: FileRoutesById
 }
 
@@ -449,6 +627,7 @@ export const routeTree = rootRoute
       "filePath": "_authenticated.tsx",
       "children": [
         "/_authenticated/$username",
+        "/_authenticated/friends",
         "/_authenticated/home/"
       ]
     },
@@ -473,6 +652,24 @@ export const routeTree = rootRoute
         "/_authenticated/$username/_layout/posts/"
       ]
     },
+    "/_authenticated/friends": {
+      "filePath": "_authenticated/friends",
+      "parent": "/_authenticated",
+      "children": [
+        "/_authenticated/friends/_layout",
+        "/_authenticated/friends/"
+      ]
+    },
+    "/_authenticated/friends/_layout": {
+      "filePath": "_authenticated/friends/_layout.tsx",
+      "parent": "/_authenticated/friends",
+      "children": [
+        "/_authenticated/friends/_layout/find/",
+        "/_authenticated/friends/_layout/friend-request/",
+        "/_authenticated/friends/_layout/list/",
+        "/_authenticated/friends/_layout/pending-request/"
+      ]
+    },
     "/(auth)/new-password/": {
       "filePath": "(auth)/new-password/index.tsx"
     },
@@ -488,6 +685,10 @@ export const routeTree = rootRoute
     "/_authenticated/$username/": {
       "filePath": "_authenticated/$username/index.tsx",
       "parent": "/_authenticated/$username"
+    },
+    "/_authenticated/friends/": {
+      "filePath": "_authenticated/friends/index.tsx",
+      "parent": "/_authenticated/friends"
     },
     "/_authenticated/home/": {
       "filePath": "_authenticated/home/index.tsx",
@@ -508,6 +709,22 @@ export const routeTree = rootRoute
     "/_authenticated/$username/_layout/posts/": {
       "filePath": "_authenticated/$username/_layout/posts/index.tsx",
       "parent": "/_authenticated/$username/_layout"
+    },
+    "/_authenticated/friends/_layout/find/": {
+      "filePath": "_authenticated/friends/_layout/find/index.tsx",
+      "parent": "/_authenticated/friends/_layout"
+    },
+    "/_authenticated/friends/_layout/friend-request/": {
+      "filePath": "_authenticated/friends/_layout/friend-request/index.tsx",
+      "parent": "/_authenticated/friends/_layout"
+    },
+    "/_authenticated/friends/_layout/list/": {
+      "filePath": "_authenticated/friends/_layout/list/index.tsx",
+      "parent": "/_authenticated/friends/_layout"
+    },
+    "/_authenticated/friends/_layout/pending-request/": {
+      "filePath": "_authenticated/friends/_layout/pending-request/index.tsx",
+      "parent": "/_authenticated/friends/_layout"
     }
   }
 }
