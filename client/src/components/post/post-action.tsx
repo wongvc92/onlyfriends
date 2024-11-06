@@ -10,12 +10,14 @@ import Spinner from "@/components/ui/spinner";
 import { IPost } from "@/types/IPost";
 import { useAuth } from "@/auth";
 
+const BASE_URL = import.meta.env.VITE_SERVER_URL!;
+
 const PostACtion = ({ post }: { post: IPost }) => {
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
   const auth = useAuth();
   const deletePost = async () => {
-    const res = await fetch(`/api/post?id=${post.id}`, {
+    const res = await fetch(`${BASE_URL}/api/post?id=${post.id}`, {
       method: "DELETE",
       credentials: "include",
     });

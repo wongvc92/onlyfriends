@@ -8,6 +8,8 @@ import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/auth";
 
+const BASE_URL = import.meta.env.VITE_SERVER_URL!;
+
 const PostForm = () => {
   const queryClient = useQueryClient();
   const auth = useAuth();
@@ -20,7 +22,7 @@ const PostForm = () => {
   });
 
   const addPost = async () => {
-    const res = await fetch("http://localhost:5001/api/post", {
+    const res = await fetch(`${BASE_URL}/api/post`, {
       method: "POST",
       credentials: "include",
       headers: {

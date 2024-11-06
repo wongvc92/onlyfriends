@@ -9,9 +9,9 @@ import { Textarea } from "../ui/textarea";
 import { commentSchema, TCommentSchema } from "@/validation/commentSchema";
 import { IPost } from "@/types/IPost";
 import Spinner from "../ui/spinner";
-import { BsSend, BsSendCheckFill } from "react-icons/bs";
 import { IoSend } from "react-icons/io5";
-import { Input } from "../ui/input";
+
+const BASE_URL = import.meta.env.VITE_SERVER_URL!;
 
 const PostComment = ({ post }: { post: IPost }) => {
   const queryClient = useQueryClient();
@@ -25,7 +25,7 @@ const PostComment = ({ post }: { post: IPost }) => {
   });
 
   const addComment = async () => {
-    const res = await fetch("http://localhost:5001/api/comments", {
+    const res = await fetch(`${BASE_URL}/api/comments`, {
       method: "POST",
       credentials: "include",
       headers: {

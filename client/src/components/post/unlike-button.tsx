@@ -3,11 +3,13 @@ import { Button } from "../ui/button";
 import { HeartFilledIcon } from "@radix-ui/react-icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
+const BASE_URL = import.meta.env.VITE_SERVER_URL!;
+
 const UnLikeButton = ({ post }: { post: IPost }) => {
   const queryClient = useQueryClient();
 
   const unlikePost = async () => {
-    const url = "http://localhost:5001/api/likes";
+    const url = `${BASE_URL}/api/likes`;
 
     const res = await fetch(url, {
       method: "DELETE",
