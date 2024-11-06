@@ -1,16 +1,16 @@
+import { useAuth } from "@/auth";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import React, { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
-import { useParams } from "@tanstack/react-router";
+import { getAllPosts } from "@/data/getAllPosts";
 import PostCard from "@/components/post/post-card";
-import { getPostsByUsername } from "@/data/getPostsByUsername";
+import Spinner from "@/components/ui/spinner";
 
-const PostList = () => {
-  const { username } = useParams({ strict: false });
+const AllPostList = () => {
   const { ref, inView } = useInView();
   const { status, data, error, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage } = useInfiniteQuery({
-    queryKey: [`posts-${username!}`],
-    queryFn: ({ pageParam }) => getPostsByUsername({ pageParam, username: username as string }),
+    queryKey: ["allPosts"],
+    queryFn: getAllPosts,
     initialPageParam: 1,
     getNextPageParam: (lastPage) => lastPage.nextPage,
   });
@@ -21,11 +21,10 @@ const PostList = () => {
     }
   }, [fetchNextPage, inView]);
 
-  if (status === "pending") return <h1>Loading...</h1>;
+  if (status === "pending") return <Spinner />;
 
   if (status === "error") return <h1>{`An error has occurred: " + ${error.message}`}</h1>;
 
-  console.log("data", data.pages[0]);
   return (
     <div className="flex flex-col gap-2">
       <div>{isFetching && !isFetchingNextPage ? "updating..." : null}</div>
@@ -36,7 +35,7 @@ const PostList = () => {
           ))}
         </React.Fragment>
       ))}
-      <div>
+      <div className="text-xs flex justify-center text-muted-foreground">
         <button ref={ref} onClick={() => fetchNextPage()} disabled={!hasNextPage || isFetchingNextPage}>
           {isFetchingNextPage ? "Loading more..." : hasNextPage ? "Load Newer" : "Nothing more to load"}
         </button>
@@ -45,4 +44,4 @@ const PostList = () => {
   );
 };
 
-export default PostList;
+export default AllPostList;

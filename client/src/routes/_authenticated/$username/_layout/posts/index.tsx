@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import PostList from "./-components/post-list";
+import PersonalPostList from "@/components/post/personal-post-list";
 
 export const Route = createFileRoute("/_authenticated/$username/_layout/posts/")({
-  component: PostList,
+  component: PersonalPostList,
 });

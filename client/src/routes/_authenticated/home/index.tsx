@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import PostForm from "./-components/post-form";
-import PostCard from "./-components/post-list";
+import PostForm from "@/components/post/post-form";
+import AllPostList from "@/components/post/all-post-list";
 
 export const Route = createFileRoute("/_authenticated/home/")({
   component: () => (
@@ -8,7 +8,7 @@ export const Route = createFileRoute("/_authenticated/home/")({
       <div className="w-full">
         <PostForm />
       </div>
-      <PostCard />
+      <AllPostList />
     </section>
   ),
 });
