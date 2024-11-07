@@ -12,7 +12,8 @@ import peopleRouters from "./routes/peopleRoutes";
 import friendRoutes from "./routes/friendRoutes";
 import likeRoutes from "./routes/likeRoutes";
 import commentRoutes from "./routes/commentRoutes";
-
+import imageRoutes from "./routes/imageRoutes";
+import { S3Client } from "@aws-sdk/client-s3";
 const app = express();
 const PORT = 5003;
 
@@ -24,8 +25,15 @@ app.use(
 );
 app.use(cookieParser());
 app.use(express.json());
-
 app.use(passport.initialize());
+
+export const s3Client = new S3Client({
+  region: process.env.AWS_REGION!,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+  },
+});
 
 app.use(loginRoutes);
 app.use(registerRoutes);
@@ -37,6 +45,7 @@ app.use(peopleRouters);
 app.use(friendRoutes);
 app.use(likeRoutes);
 app.use(commentRoutes);
+app.use(imageRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

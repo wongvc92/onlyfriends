@@ -20,16 +20,16 @@ export const addProfile = async (req: Request, res: Response) => {
     return;
   }
 
-  const { name, bio, website, location } = parsedResult.data;
-  console.log("parsedResult.data", data);
+  const { name, bio, website, location, display_image } = parsedResult.data;
 
   try {
-    await pool.query("INSERT INTO profiles (name, bio, website, location, user_id) values($1, $2, $3, $4, $5)", [
+    await pool.query("INSERT INTO profiles (name, bio, website, location, user_id, display_image) values($1, $2, $3, $4, $5, $6)", [
       name,
       bio,
       website,
       location,
       user.id,
+      display_image,
     ]);
     res.status(200).json({ message: "Successfully add profile!" });
   } catch (error) {
@@ -74,7 +74,7 @@ export const editProfile = async (req: Request, res: Response) => {
   }
 
   const profileId = req.params.profileId;
-  console.log("profileId", profileId);
+
   const data = req.body;
 
   const parsedResult = profileSchema.safeParse(data);
@@ -86,15 +86,17 @@ export const editProfile = async (req: Request, res: Response) => {
     return;
   }
 
-  const { name, bio, website, location } = parsedResult.data;
+  const { name, bio, website, location, display_image, banner_image } = parsedResult.data;
   console.log("parsedResult.data", data);
 
   try {
-    await pool.query("UPDATE profiles SET name = $1, bio = $2, website = $3, location = $4, updated_at = CURRENT_TIMESTAMP WHERE id = $5 ", [
+    await pool.query("UPDATE profiles SET name = $1, bio = $2, website = $3, location = $4, display_image = $5, banner_image = $6 WHERE id = $7", [
       name,
       bio,
       website,
       location,
+      display_image,
+      banner_image,
       profileId,
     ]);
     res.status(200).json({ message: "Successfully updated profile!" });

@@ -1,5 +1,4 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/auth";
 import { Button } from "@/components/ui/button";
 import { Link, useParams } from "@tanstack/react-router";
@@ -8,6 +7,9 @@ import { CalendarIcon, Link1Icon } from "@radix-ui/react-icons";
 import { format } from "date-fns";
 import FriendStatus from "@/components/friend/friend-status";
 import { getProfileByUsername } from "@/data/getProfile";
+import ProfileImage from "./profile-image";
+import ProfileName from "./profile-name";
+import ProfileUsername from "./profile-username";
 
 const ProfileInfo = () => {
   const auth = useAuth();
@@ -19,19 +21,21 @@ const ProfileInfo = () => {
       {profile && (
         <div>
           <div className="h-[150px] md:h-[200px] w-full relative">
-            <img src="https://github.com/shadcn.png" alt="banner" className="w-full h-full object-cover rounded-t-md" />
-            <Avatar className="absolute top-1/2 left-5 w-24 h-24 md:w-32 md:h-32 border-white shadow-lg border-4">
-              <AvatarImage src="https://github.com/shadcn.png" />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
+            <img src={profile.banner_image} alt="banner" className="w-full h-full object-cover rounded-t-md" />
+
+            <ProfileImage
+              image={profile.display_image}
+              username={profile.username}
+              classname="absolute top-1/2 left-5 w-24 h-24 md:w-32 md:h-32 border-white shadow-lg border-4"
+            />
           </div>
           <Card className="rounded-none rounded-b-md pt-8">
             <CardHeader>
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
                   <CardTitle className="flex flex-wrap items-center gap-1">
-                    <p>{profile.name}</p>
-                    <p className="text-muted-foreground text-xs">@{profile.username || username}</p>
+                    <ProfileName name={profile.name} />
+                    <ProfileUsername username={profile.username} classname="text-muted-foreground text-xs" />
                   </CardTitle>
                   {auth.user?.id !== profile.user_id && <FriendStatus peopleId={profile.user_id!} />}
 

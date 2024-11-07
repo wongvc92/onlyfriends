@@ -11,7 +11,7 @@ const ProfileImage = ({ username, image, classname }: ProfileImageProps) => {
   return (
     <Link to={`/${username}`}>
       <Avatar className={cn("w-8 h-8", classname)}>
-        <AvatarImage src={image} />
+        <AvatarImage src={image} className="object-cover" />
         <AvatarFallback className="capitalize">{username[0]}</AvatarFallback>
       </Avatar>
     </Link>

@@ -17,6 +17,8 @@ CREATE TABLE profiles (
     id SERIAL PRIMARY KEY,
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     name VARCHAR(255),
+    display_bannere VARCHAR(255),
+    display_image VARCHAR(255),
     bio VARCHAR(255),
     location VARCHAR(255),
     website VARCHAR(255),
