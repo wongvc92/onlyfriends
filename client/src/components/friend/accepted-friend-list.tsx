@@ -12,10 +12,6 @@ import { Link, useLocation } from "@tanstack/react-router";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 
 const AcceptedFriendList = () => {
-  const pathname = useLocation({
-    select: (location) => location.pathname,
-  });
-  console.log("pathname", pathname);
   const { ref, inView } = useInView();
   const { status, data, error, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage, isPending, isLoading } = useInfiniteQuery({
     queryKey: ["friends-accepted"],

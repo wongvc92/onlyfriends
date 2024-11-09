@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 interface ProfileImageProps {
   username: string;
-  image: string;
+  image?: string;
   classname?: string;
 }
 const ProfileImage = ({ username, image, classname }: ProfileImageProps) => {

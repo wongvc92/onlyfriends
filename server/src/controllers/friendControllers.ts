@@ -134,15 +134,22 @@ export const getAcceptedFriends = async (req: Request, res: Response) => {
   const page = parseInt(req.query.page as string, 10);
   const limit = parseInt(req.query.limit as string, 10);
   const offset = (page - 1) * limit;
-
+  const search = req.query.search as string | undefined;
   try {
     const totalCountResult = await pool.query(
       `
       SELECT COUNT(*)
       FROM friends
-      WHERE (friends.friend_id = $1 OR friends.user_id = $1) AND friends.status = 'accepted'
+      JOIN users ON users.id = CASE
+        WHEN friends.user_id = $1 THEN friends.friend_id
+        ELSE friends.user_id
+      END
+      LEFT JOIN profiles ON profiles.user_id = users.id
+      WHERE (friends.friend_id = $1 OR friends.user_id = $1)
+      AND friends.status = 'accepted'
+      AND ($2::text IS NULL OR users.username ILIKE '%' || $2 || '%' OR profiles.name ILIKE '%' || $2 || '%')
       `,
-      [currentUser.id]
+      [currentUser.id, search || null]
     );
     const totalCount = parseInt(totalCountResult.rows[0].total_count, 10);
 
@@ -158,6 +165,7 @@ export const getAcceptedFriends = async (req: Request, res: Response) => {
         users.username,
         profiles.name,
         profiles.bio,
+        profiles.display_image,
         profiles.location,
         profiles.website
       FROM friends
@@ -166,10 +174,12 @@ export const getAcceptedFriends = async (req: Request, res: Response) => {
         ELSE friends.user_id
       END
       LEFT JOIN profiles ON profiles.user_id = users.id
-      WHERE (friends.friend_id = $1 OR friends.user_id = $1) AND friends.status = 'accepted'
-      LIMIT $2 OFFSET $3
+      WHERE (friends.friend_id = $1 OR friends.user_id = $1) 
+      AND friends.status = 'accepted'
+      AND ($2::text IS NULL OR users.username ILIKE '%' || $2 || '%' OR profiles.name ILIKE '%' || $2 || '%')
+      LIMIT $3 OFFSET $4
       `,
-      [currentUser.id, limit, offset]
+      [currentUser.id, search || null, limit, offset]
     );
 
     const friendsRequests = friendsRequestsResult.rows;
