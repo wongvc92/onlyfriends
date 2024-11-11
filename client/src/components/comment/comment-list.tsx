@@ -4,12 +4,23 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import React, { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import CommentCard from "./comment-card";
+import Spinner from "../ui/spinner";
+import { Button } from "../ui/button";
 
 const CommentList = ({ post }: { post: IPost }) => {
   const { ref, inView } = useInView();
-  const { status, data, error, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage } = useInfiniteQuery({
-    queryKey: [`comments-${post.id!}`],
-    queryFn: ({ pageParam }) => getCommentsByPostId({ pageParam, postId: post.id }),
+  const {
+    status,
+    data,
+    error,
+    isFetching,
+    isFetchingNextPage,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["comments", post.id],
+    queryFn: ({ pageParam }) =>
+      getCommentsByPostId({ pageParam, postId: post.id }),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => lastPage.nextPage,
   });
@@ -25,16 +36,31 @@ const CommentList = ({ post }: { post: IPost }) => {
       {data?.pages.map((page, pageIndex) => (
         <React.Fragment key={pageIndex}>
           {page.data.map((comment) => (
-            <div key={comment.id} className="flex start gap-2 py-2 md:w-[800px]">
+            <div
+              key={comment.id}
+              className="flex start gap-2 py-2 md:w-[800px]"
+            >
               <CommentCard comment={comment} key={comment.id} />
             </div>
           ))}
         </React.Fragment>
       ))}
       <div>
-        <button ref={ref} onClick={() => fetchNextPage()} disabled={!hasNextPage || isFetchingNextPage}>
-          {isFetchingNextPage ? "Loading more..." : hasNextPage ? "Load Newer" : "Nothing more to load"}
-        </button>
+        <Button
+          ref={ref}
+          onClick={() => fetchNextPage()}
+          disabled={!hasNextPage || isFetchingNextPage}
+          variant="link"
+          className="text-muted-foreground text-xs"
+        >
+          {isFetchingNextPage ? (
+            <Spinner size="4" />
+          ) : hasNextPage ? (
+            <span className="underline">Load more</span>
+          ) : (
+            ""
+          )}
+        </Button>
       </div>
     </div>
   );

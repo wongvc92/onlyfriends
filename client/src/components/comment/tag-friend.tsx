@@ -9,13 +9,10 @@ import ProfileUsername from "../profile/profile-username";
 
 interface TagFriendProps {
   debouncedSearch: string;
-  position: {
-    top: number;
-    left: number;
-  };
+
   handleTaggedFriend: (username: string) => void;
 }
-const TagFriend: React.FC<TagFriendProps> = ({ debouncedSearch, position, handleTaggedFriend }) => {
+const TagFriend: React.FC<TagFriendProps> = ({ debouncedSearch,handleTaggedFriend }) => {
   const { ref, inView } = useInView();
   const { status, data, error, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage, isPending, isLoading } = useInfiniteQuery({
     queryKey: ["friends-accepted", debouncedSearch],

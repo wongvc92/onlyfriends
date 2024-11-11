@@ -20,7 +20,6 @@ const BASE_URL = import.meta.env.VITE_SERVER_URL!;
 const PostComment = ({ post }: { post: IPost }) => {
   const [atSymbolIndex, setAtSymbolIndex] = useState(0);
   const [search, setSearch] = useState("");
-  const [tagPosition, setTagPosition] = useState({ top: 0, left: 0 });
   const [isTagging, setIstagging] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const debouncedSearch = useDebounce(search, 1000);
@@ -50,7 +49,7 @@ const PostComment = ({ post }: { post: IPost }) => {
       toast.error("Something went wrong. Please try again.");
       return;
     }
-    toast.success("Successfully post");
+    toast.success(`Replied to @${post.username}`);
     form.reset();
   };
 
@@ -117,7 +116,7 @@ const PostComment = ({ post }: { post: IPost }) => {
           name="comment"
           render={({ field }) => (
             <FormItem>
-              {isTagging && <TagFriend debouncedSearch={debouncedSearch} position={tagPosition} handleTaggedFriend={handleTaggedFriend} />}
+              {isTagging && <TagFriend debouncedSearch={debouncedSearch} handleTaggedFriend={handleTaggedFriend} />}
               <FormControl>
                 <DynamicTextarea
                   {...field}

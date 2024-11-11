@@ -1,12 +1,21 @@
 import { Request, Response } from "express";
 import pool from "../config/db";
-import { sendEmailVerificationToken, sendTwoFactorTokenEmail } from "../services/emailServices";
-import { generateTwoFactorToken, generateVerificationToken } from "../services/authServices";
+import {
+  sendEmailVerificationToken,
+  sendTwoFactorTokenEmail,
+} from "../services/emailServices";
+import {
+  generateTwoFactorToken,
+  generateVerificationToken,
+} from "../services/authServices";
 import { IUser } from "../types/Users";
 import { ITwoFactorToken } from "../types/ITwoFactorToken";
 import { ITwoFactorConfirmation } from "../types/ITwoFactorConfirmation";
 import bcrypt from "bcryptjs";
 import jwt, { JwtPayload } from "jsonwebtoken";
+
+const secure = process.env.NODE_ENV! === "production";
+const sameSite = process.env.NODE_ENV! === "production" ? "strict" : "lax";
 
 export const loginUser = async (req: Request, res: Response) => {
   try {
@@ -17,7 +26,9 @@ export const loginUser = async (req: Request, res: Response) => {
       return;
     }
 
-    const userData = await pool.query("SELECT * from users where email=$1", [email]);
+    const userData = await pool.query("SELECT * from users where email=$1", [
+      email,
+    ]);
 
     if (userData.rows.length === 0) {
       res.status(400).json({ message: "User not found!" });
@@ -34,9 +45,15 @@ export const loginUser = async (req: Request, res: Response) => {
     }
 
     if (!existingUser.email_verified) {
-      const verificationToken = await generateVerificationToken(existingUser.email);
+      const verificationToken = await generateVerificationToken(
+        existingUser.email
+      );
       console.log("generateVerificationToken", verificationToken);
-      await sendEmailVerificationToken(verificationToken.email, existingUser.username, verificationToken.token);
+      await sendEmailVerificationToken(
+        verificationToken.email,
+        existingUser.username,
+        verificationToken.token
+      );
       res.status(200).json({ message: "Please check confirmation email." });
       return;
     }
@@ -44,7 +61,10 @@ export const loginUser = async (req: Request, res: Response) => {
     if (existingUser.is_two_factor_enabled && existingUser.email) {
       if (code) {
         console.log("code", code);
-        const twoFactorTokenData = await pool.query("SELECT * FROM two_factor_tokens WHERE email = $1", [existingUser.email]);
+        const twoFactorTokenData = await pool.query(
+          "SELECT * FROM two_factor_tokens WHERE email = $1",
+          [existingUser.email]
+        );
         const twoFactorToken: ITwoFactorToken = twoFactorTokenData.rows[0];
         console.log("twoFactorToken", twoFactorToken);
         if (!twoFactorToken) {
@@ -62,17 +82,32 @@ export const loginUser = async (req: Request, res: Response) => {
           return;
         }
 
-        await pool.query("DELETE FROM two_factor_tokens where id=$1", [twoFactorToken.id]);
-        const existingConfirmationData = await pool.query("SELECT * FROM two_factor_confirmations WHERE user_id = $1", [existingUser.id]);
-        const existingConfirmation: ITwoFactorConfirmation = existingConfirmationData.rows[0];
+        await pool.query("DELETE FROM two_factor_tokens where id=$1", [
+          twoFactorToken.id,
+        ]);
+        const existingConfirmationData = await pool.query(
+          "SELECT * FROM two_factor_confirmations WHERE user_id = $1",
+          [existingUser.id]
+        );
+        const existingConfirmation: ITwoFactorConfirmation =
+          existingConfirmationData.rows[0];
         if (existingConfirmation) {
-          await pool.query("DELETE FROM two_factor_confirmations WHERE id=$1", [existingConfirmation.id]);
+          await pool.query("DELETE FROM two_factor_confirmations WHERE id=$1", [
+            existingConfirmation.id,
+          ]);
         }
 
-        await pool.query("INSERT INTO two_factor_confirmations (user_id) values($1)", [existingUser.id]);
+        await pool.query(
+          "INSERT INTO two_factor_confirmations (user_id) values($1)",
+          [existingUser.id]
+        );
       } else {
         const twoFactorToken = await generateTwoFactorToken(existingUser.email);
-        await sendTwoFactorTokenEmail(existingUser.email, existingUser.username, twoFactorToken.token);
+        await sendTwoFactorTokenEmail(
+          existingUser.email,
+          existingUser.username,
+          twoFactorToken.token
+        );
         res.status(200).json({ twoFactor: true });
         return;
       }
@@ -80,7 +115,11 @@ export const loginUser = async (req: Request, res: Response) => {
 
     // Generate Access Token (short-lived)
     const accessToken = jwt.sign(
-      { id: existingUser.id, email: existingUser.email, username: existingUser.username },
+      {
+        id: existingUser.id,
+        email: existingUser.email,
+        username: existingUser.username,
+      },
       process.env.JWT_SECRET_KEY!,
       { expiresIn: "15m" } // 15 minutes
     );
@@ -95,8 +134,8 @@ export const loginUser = async (req: Request, res: Response) => {
     // Store the access token in an httpOnly cookie
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
-      secure: false, // set to false for local testing
-      sameSite: "lax",
+      secure, // set to false for local testing
+      sameSite,
       maxAge: 15 * 60 * 1000, // 15 minutes
       path: "/",
     });
@@ -104,8 +143,8 @@ export const loginUser = async (req: Request, res: Response) => {
     // Store the refresh token in an httpOnly cookie
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: false, // set to false for local testing
-      sameSite: "lax",
+      secure, // set to false for local testing
+      sameSite,
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       path: "/",
     });
@@ -123,36 +162,50 @@ export const loginUser = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.log("Internal server error, Failed login user :", error);
-    res.status(500).json({ message: "Internal server error, Failed login user" });
+    res
+      .status(500)
+      .json({ message: "Internal server error, Failed login user" });
   }
 };
 
 export const refreshAccessToken = (req: Request, res: Response) => {
-  console.log("refreshAccessToken hit");
-  const refreshToken = req.cookies.refreshToken;
-  console.log("refreshToken", refreshToken);
-  if (!refreshToken) {
-    res.status(400).json({ message: "Refresh token not found" });
+  try {
+    console.log("refreshAccessToken hit");
+    const refreshToken = req.cookies.refreshToken;
+    console.log("refreshToken", refreshToken);
+    if (!refreshToken) {
+      res.status(400).json({ message: "Refresh token not found" });
+      return;
+    }
+
+    const decoded = jwt.verify(
+      refreshToken,
+      process.env.REFRESH_TOKEN_SECRET!
+    ) as JwtPayload;
+
+    const newAccessToken = jwt.sign(
+      {
+        id: decoded.id,
+        email: decoded.email,
+        username: decoded.username,
+        image: decoded.image,
+      },
+      process.env.JWT_SECRET_KEY!,
+      { expiresIn: "15m" }
+    );
+
+    res.cookie("accessToken", newAccessToken, {
+      httpOnly: true,
+      secure, // set to false for local testing
+      sameSite,
+      maxAge: 15 * 60 * 1000,
+      path: "/",
+    });
+    res.status(200).json({ accessToken: newAccessToken });
+  } catch (error) {
+    console.log("Internal server error, Failed create refresh token :", error);
+    res
+      .status(500)
+      .json({ message: "Internal server error, Failed create refresh token." });
   }
-
-  const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET!) as JwtPayload;
-
-  const newAccessToken = jwt.sign(
-    {
-      id: decoded.id,
-      email: decoded.email,
-      username: decoded.username,
-      image: decoded.image,
-    },
-    process.env.JWT_SECRET_KEY!,
-    { expiresIn: "15m" }
-  );
-
-  res.cookie("accessToken", newAccessToken, {
-    httpOnly: true,
-    secure: false, // set to false for local testing
-    sameSite: "lax",
-    maxAge: 3600000, // 15 minutes
-    path: "/",
-  });
 };

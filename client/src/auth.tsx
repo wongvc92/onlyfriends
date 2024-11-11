@@ -55,21 +55,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Refresh token every 14 minutes (assuming a 15-minute expiry on the access token)
   useEffect(() => {
-    const refreshTokenInterval = setInterval(
-      async () => {
-        try {
+    let isMounted = true;
+  
+    const refreshTokenInterval = setInterval(async () => {
+      try {
+        if (isMounted) {
           await refreshAccessToken();
           await refetch(); // Refetch user data after refreshing the token
-        } catch (error) {
-          isAuthenticated = false;
-          console.error("Token refresh failed:", error);
         }
-      },
-      14 * 60 * 1000
-    ); // 14 minutes in milliseconds
-
-    return () => clearInterval(refreshTokenInterval); // Clear the interval on unmount
-  }, [refetch]);
+      } catch (error) {
+        isAuthenticated = false;
+        console.error("Token refresh failed:", error);
+      }
+    }, 14 * 60 * 1000); // 14 minutes in milliseconds
+  
+    return () => {
+      isMounted = false;
+      clearInterval(refreshTokenInterval); // Clear the interval on unmount
+    };
+  }, [refreshAccessToken, refetch]);
 
   return <AuthContext.Provider value={{ isAuthenticated, user, isLoading, error }}>{isLoading ? null : children}</AuthContext.Provider>;
 };

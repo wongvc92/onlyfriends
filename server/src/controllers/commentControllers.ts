@@ -14,7 +14,9 @@ export const addComment = async (req: Request, res: Response) => {
 
   const parsedResult = commentSchema.safeParse(data);
   if (!parsedResult.success) {
-    const err = parsedResult.error.issues.map((issue) => issue.message).join("- ");
+    const err = parsedResult.error.issues
+      .map((issue) => issue.message)
+      .join("- ");
     console.log("Failed parsed comment data", err);
     res.status(401).json({ message: "Please check form input" });
     return;
@@ -78,7 +80,13 @@ export const getCommentsByPostId = async (req: Request, res: Response) => {
 
     const comments = commentsResults.rows;
 
-    res.status(200).json({ data: comments, currentPage: page, nextPage: page < totalPages ? page + 1 : null, totalPages, totalComments });
+    res.status(200).json({
+      data: comments,
+      currentPage: page,
+      nextPage: page < totalPages ? page + 1 : null,
+      totalPages,
+      totalComments,
+    });
   } catch (error) {
     console.log("Failed get comments by postId", error);
     res.status(500).json({ message: "Internal server error" });
@@ -104,6 +112,29 @@ export const getCommentCountByPostId = async (req: Request, res: Response) => {
     const totalComments = parseInt(totalCommentResult.rows[0].count);
 
     res.status(200).json({ count: totalComments });
+  } catch (error) {
+    console.log("Failed get comments by postId", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const deleteComment = async (req: Request, res: Response) => {
+  const commentId = req.params.commentId;
+  if (!commentId) {
+    res.status(401).json({ message: "commentId is required." });
+    return;
+  }
+  console.log("commentID", commentId);
+  try {
+    await pool.query(
+      `
+        DELETE 
+        FROM comments 
+        WHERE id=$1
+      `,
+      [commentId]
+    );
+    res.status(200).json({ message: "Comment deleted." });
   } catch (error) {
     console.log("Failed get comments by postId", error);
     res.status(500).json({ message: "Internal server error" });

@@ -3,6 +3,7 @@ import ProfileImage from "../profile/profile-image";
 import ProfileName from "../profile/profile-name";
 import ProfileUsername from "../profile/profile-username";
 import { Link } from "@tanstack/react-router";
+import CommentAction from "./comment-action";
 
 const CommentCard = ({ comment }: { comment: IComment }) => {
   const renderCommentWithMentions = (text: string) => {
@@ -33,8 +34,9 @@ const CommentCard = ({ comment }: { comment: IComment }) => {
           <div className="flex items-center gap-2">
             <ProfileName name={comment.name} />
             <ProfileUsername username={comment.username} />
+            <CommentAction comment={comment}/>
           </div>
-          <p className="text-xs">{renderCommentWithMentions(comment.comment)}</p>
+          <p className="break-all text-sm">{renderCommentWithMentions(comment.comment)}</p>
         </div>
       </div>
     </div>
