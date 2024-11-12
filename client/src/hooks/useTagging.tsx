@@ -41,7 +41,6 @@ export const useTagging = () => {
       setAtSymbolIndex(0);
       setIstagging(false);
       textareaRef.current?.focus();
-      return newText;
     },
     [content, atSymbolIndex, search]
   );

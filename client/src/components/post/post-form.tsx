@@ -40,7 +40,7 @@ const PostForm = () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ post: form.getValues("post") }),
+      body: JSON.stringify({ post: tag.content }),
     });
     if (!res.ok) {
       toast.error("Something went wrong. Please try again.");
@@ -84,6 +84,7 @@ const PostForm = () => {
               <FormControl>
                 <DynamicTextarea
                   {...field}
+                  placeholder="Add a post..."
                   value={tag.content}
                   onChange={tag.handleInputChange}
                   disabled={isPending}
@@ -95,8 +96,7 @@ const PostForm = () => {
                 <TagFriend
                   debouncedSearch={tag.debouncedSearch}
                   handleTaggedFriend={(username: string) => {
-                    const newText = tag.handleTaggedFriend(username);
-                    form.setValue("post", newText);
+                    tag.handleTaggedFriend(username);
                   }}
                 />
               )}

@@ -45,7 +45,7 @@ const PostComment = ({ post }: { post: IPost }) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        comment: form.getValues().comment,
+        comment: tag.content,
         post_id: post.id,
       }),
     });
@@ -67,7 +67,7 @@ const PostComment = ({ post }: { post: IPost }) => {
       });
       await queryClient.invalidateQueries({ queryKey: ["allPosts"] });
       await queryClient.invalidateQueries({
-        queryKey: [`comments-${post.id!}`],
+        queryKey: ["comments", post.id],
       });
       await queryClient.invalidateQueries({
         queryKey: [`commentsCount-${post.id}`],
@@ -104,15 +104,15 @@ const PostComment = ({ post }: { post: IPost }) => {
                 <TagFriend
                   classname="-top-7"
                   debouncedSearch={tag.debouncedSearch}
-                  handleTaggedFriend={(username: string) => {
-                    const newText = tag.handleTaggedFriend(username);
-                    form.setValue("comment", newText); // Update form field with tagged content
-                  }}
+                  handleTaggedFriend={(username: string) =>
+                    tag.handleTaggedFriend(username)
+                  }
                 />
               )}
               <FormControl>
                 <DynamicTextarea
                   {...field}
+                  placeholder="Add a comment..."
                   value={tag.content}
                   disabled={isPending}
                   onKeyDown={handleKeyDown}
