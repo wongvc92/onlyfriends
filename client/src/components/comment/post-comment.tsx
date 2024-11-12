@@ -135,9 +135,7 @@ const PostComment = ({ post }: { post: IPost }) => {
           className="w-fit absolute right-6 bottom-3 rounded-full"
           onClick={onAddPost}
           disabled={
-            isPending ||
-            commentValue?.length === 0 ||
-            commentValue?.length > 255
+            isPending || tag.content.length === 0 || tag.content.length > 255
           }
           size="icon"
         >

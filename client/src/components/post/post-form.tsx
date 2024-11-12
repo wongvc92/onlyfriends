@@ -109,7 +109,9 @@ const PostForm = () => {
           <Button
             type="submit"
             className="w-fit"
-            disabled={isPending || form.getValues().post === ""}
+            disabled={
+              isPending || tag.content.length === 0 || tag.content.length > 255
+            }
           >
             Post
           </Button>
