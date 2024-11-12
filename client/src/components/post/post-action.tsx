@@ -1,5 +1,10 @@
 import { FaRegTrashCan } from "react-icons/fa6";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { BsThreeDots } from "react-icons/bs";
 import Modal from "@/components/ui/modal";
 import { useState } from "react";
@@ -9,10 +14,15 @@ import { toast } from "sonner";
 import Spinner from "@/components/ui/spinner";
 import { IPost } from "@/types/IPost";
 import { useAuth } from "@/auth";
+import { Pencil1Icon } from "@radix-ui/react-icons";
 
 const BASE_URL = import.meta.env.VITE_SERVER_URL!;
 
-const PostACtion = ({ post }: { post: IPost }) => {
+interface PostActionProps {
+  post: IPost;
+  setIsEdit: React.Dispatch<React.SetStateAction<boolean>>;
+}
+const PostACtion: React.FC<PostActionProps> = ({ post, setIsEdit }) => {
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
   const auth = useAuth();
@@ -36,7 +46,9 @@ const PostACtion = ({ post }: { post: IPost }) => {
     mutationFn: deletePost,
     onSuccess: async () => {
       // Invalidate and refetch
-      await queryClient.invalidateQueries({ queryKey: [`posts-${auth.user?.username!}`] });
+      await queryClient.invalidateQueries({
+        queryKey: [`posts-${auth.user?.username!}`],
+      });
       await queryClient.invalidateQueries({ queryKey: ["allPosts"] });
     },
   });
@@ -55,7 +67,12 @@ const PostACtion = ({ post }: { post: IPost }) => {
         classname="w-[400px]"
       >
         <div className="flex items-center gap-2 justify-end">
-          <Button type="button" variant="destructive" onClick={onDelete} className="rounded-full">
+          <Button
+            type="button"
+            variant="destructive"
+            onClick={onDelete}
+            className="rounded-full"
+          >
             {isPending ? (
               <div className="flex items-center gap-2">
                 <Spinner size="4" color="white" /> Deleting...
@@ -64,7 +81,12 @@ const PostACtion = ({ post }: { post: IPost }) => {
               "Yes"
             )}
           </Button>
-          <Button type="button" variant="outline" className="rounded-full" onClick={() => setIsOpen(false)}>
+          <Button
+            type="button"
+            variant="outline"
+            className="rounded-full"
+            onClick={() => setIsOpen(false)}
+          >
             Cancel
           </Button>
         </div>
@@ -74,9 +96,19 @@ const PostACtion = ({ post }: { post: IPost }) => {
           <BsThreeDots color="gray" />
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuItem onClick={() => setIsOpen(true)} className={`${post.user_id === auth.user?.id ? "flex" : "hidden"}`}>
+          <DropdownMenuItem
+            onClick={() => setIsOpen(true)}
+            className={`${post.user_id === auth.user?.id ? "flex" : "hidden"}`}
+          >
             <FaRegTrashCan />
             Delete
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => setIsEdit(true)}
+            className={`${post.user_id === auth.user?.id ? "flex" : "hidden"}`}
+          >
+            <Pencil1Icon />
+            Edit
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

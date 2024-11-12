@@ -1,28 +1,73 @@
 import { Request, Response } from "express";
 import pool from "../config/db";
 import { JwtPayload } from "jsonwebtoken";
+import { postSchema } from "../validation/postsSchema";
 
 export const addPost = async (req: Request, res: Response) => {
   try {
-    const { post } = req.body;
-    console.log(post);
     const user = req.user as JwtPayload;
     const userId = user.id;
 
-    console.log("userId", userId);
     if (!userId) {
       res.status(401).json({ message: "userId is required" });
       return;
     }
 
-    if (!post) {
-      res.status(400).json({ message: "Post content is required" });
+    const data = req.body;
+    const parsedResult = postSchema.safeParse(data);
+    if (!parsedResult.success) {
+      const err = parsedResult.error.issues
+        .map((issue) => issue.message)
+        .join("- ");
+      console.log("Failed parsed comment data", err);
+      res.status(401).json({ message: "Please check form input" });
       return;
     }
-    await pool.query("INSERT INTO posts (post, user_id) values ($1,$2)", [post, userId]);
+
+    const { post } = parsedResult.data;
+    await pool.query("INSERT INTO posts (post, user_id) values ($1,$2)", [
+      post,
+      userId,
+    ]);
     res.status(200).json({ message: post });
   } catch (error) {
     console.log("Internal server error", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const editPost = async (req: Request, res: Response) => {
+  try {
+    const postId = req.params.postId;
+    if (!postId) {
+      res.status(401).json({ message: "postId is required" });
+      return;
+    }
+    const data = req.body;
+
+    const parsedResult = postSchema.safeParse(data);
+    if (!parsedResult.success) {
+      const err = parsedResult.error.issues
+        .map((issue) => issue.message)
+        .join("- ");
+      console.log("Failed parsed comment data", err);
+      res.status(401).json({ message: "Please check form input" });
+      return;
+    }
+    const { post } = parsedResult.data;
+
+    await pool.query(
+      `
+      
+      UPDATE posts 
+      SET post = $1
+      WHERE id = $2
+      `,
+      [post, postId]
+    );
+    res.status(200).json({ message: "Post updated" });
+  } catch (error) {
+    console.log("Failed update post", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -101,7 +146,10 @@ export const deletePost = async (req: Request, res: Response) => {
       return;
     }
 
-    await pool.query("DELETE from posts WHERE id=$1 AND user_id=$2", [postId, userId]);
+    await pool.query("DELETE from posts WHERE id=$1 AND user_id=$2", [
+      postId,
+      userId,
+    ]);
 
     res.status(200).json({ message: "Post deleted!" });
   } catch (error) {

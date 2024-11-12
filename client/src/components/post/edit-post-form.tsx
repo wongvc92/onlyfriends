@@ -20,10 +20,17 @@ import { useAuth } from "@/auth";
 import DynamicTextarea from "../ui/dynamic-textarea";
 import { useTagging } from "@/hooks/useTagging";
 import TagFriend from "../comment/tag-friend";
+import { IPost } from "@/types/IPost";
+import Spinner from "../ui/spinner";
+import { useEffect } from "react";
 
 const BASE_URL = import.meta.env.VITE_SERVER_URL!;
 
-const PostForm = () => {
+interface EditPostFormProps {
+  post: IPost;
+  setIsEdit: React.Dispatch<React.SetStateAction<boolean>>;
+}
+const EditPostForm: React.FC<EditPostFormProps> = ({ post, setIsEdit }) => {
   const tag = useTagging();
 
   const queryClient = useQueryClient();
@@ -36,9 +43,12 @@ const PostForm = () => {
     },
   });
 
-  const addPost = async () => {
-    const res = await fetch(`${BASE_URL}/api/posts`, {
-      method: "POST",
+  useEffect(() => {
+    tag.setContent(post.post);
+  }, []);
+  const editPost = async () => {
+    const res = await fetch(`${BASE_URL}/api/posts/${post.id}`, {
+      method: "PUT",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
@@ -51,11 +61,12 @@ const PostForm = () => {
     }
     toast.success("Successfully post");
     tag.setContent("");
+    setIsEdit(false);
     form.reset();
   };
 
   const { mutate, isPending } = useMutation({
-    mutationFn: addPost,
+    mutationFn: editPost,
     onSuccess: async () => {
       // Invalidate and refetch
       await queryClient.invalidateQueries({
@@ -81,13 +92,11 @@ const PostForm = () => {
           name="post"
           render={({ field }) => (
             <FormItem className="relative">
-              <FormLabel className="text-muted-foreground">
-                What's on your mind?
-              </FormLabel>
+              <FormLabel className="text-muted-foreground">Edit post</FormLabel>
               <FormControl>
                 <DynamicTextarea
                   {...field}
-                  placeholder="Add a post..."
+                  placeholder="Edit post here..."
                   value={tag.content}
                   onChange={tag.handleInputChange}
                   disabled={isPending}
@@ -117,14 +126,15 @@ const PostForm = () => {
           </p>
           <Button
             type="submit"
-            className="w-fit"
+            className="w-fit flex items-center gap-2"
             disabled={
               isPending ||
               tag.content.length === 0 ||
               tag.content.length > contentMaxLimit
             }
           >
-            Post
+            {isPending && <Spinner size="2" />}
+            Edit
           </Button>
         </div>
       </form>
@@ -132,4 +142,4 @@ const PostForm = () => {
   );
 };
 
-export default PostForm;
+export default EditPostForm;
