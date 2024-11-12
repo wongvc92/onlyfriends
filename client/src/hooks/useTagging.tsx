@@ -51,6 +51,7 @@ export const useTagging = () => {
     isTagging,
     debouncedSearch,
     content,
+    setContent,
     handleInputChange,
     textareaRef,
   };

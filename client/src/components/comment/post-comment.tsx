@@ -54,6 +54,7 @@ const PostComment = ({ post }: { post: IPost }) => {
       return;
     }
     toast.success(`Replied to @${post.username}`);
+    tag.setContent("");
     form.reset();
   };
 

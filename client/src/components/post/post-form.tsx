@@ -47,6 +47,7 @@ const PostForm = () => {
       return;
     }
     toast.success("Successfully post");
+    tag.setContent("");
     form.reset();
   };
 
