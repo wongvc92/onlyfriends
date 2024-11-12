@@ -16,16 +16,25 @@ import {
   commentSchema,
   TCommentSchema,
 } from "@/validation/commentSchema";
-import { IPost } from "@/types/IPost";
 import Spinner from "../ui/spinner";
 import { IoSend } from "react-icons/io5";
 import TagFriend from "./tag-friend";
 import DynamicTextarea from "../ui/dynamic-textarea";
 import { useTagging } from "@/hooks/useTagging";
+import { IComment } from "@/types/IComment";
+import { useEffect } from "react";
 
 const BASE_URL = import.meta.env.VITE_SERVER_URL!;
 
-const PostComment = ({ post }: { post: IPost }) => {
+interface EditCommentProps {
+  comment: IComment;
+  setIsEdit: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const EditComment: React.FC<EditCommentProps> = ({
+  comment,
+  setIsEdit,
+}: EditCommentProps) => {
   const tag = useTagging();
 
   const queryClient = useQueryClient();
@@ -39,31 +48,36 @@ const PostComment = ({ post }: { post: IPost }) => {
     },
   });
 
-  const commentValue = form.watch("comment");
+  useEffect(() => {
+    form.reset({
+      comment: comment.comment,
+    });
+    tag.setContent(comment.comment); // Set the initial content for editing
+  }, []);
 
-  const addComment = async () => {
-    const res = await fetch(`${BASE_URL}/api/comments`, {
-      method: "POST",
+  const editComment = async () => {
+    const res = await fetch(`${BASE_URL}/api/comments/${comment.id}`, {
+      method: "PUT",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         comment: tag.content,
-        post_id: post.id,
+        post_id: comment.post_id,
       }),
     });
     if (!res.ok) {
       toast.error("Something went wrong. Please try again.");
       return;
     }
-    toast.success(`Replied to @${post.username}`);
+    setIsEdit(false);
     tag.setContent("");
     form.reset();
   };
 
   const { mutate, isPending } = useMutation({
-    mutationFn: addComment,
+    mutationFn: editComment,
     onSuccess: async () => {
       // Invalidate and refetch
       await queryClient.invalidateQueries({
@@ -71,10 +85,10 @@ const PostComment = ({ post }: { post: IPost }) => {
       });
       await queryClient.invalidateQueries({ queryKey: ["allPosts"] });
       await queryClient.invalidateQueries({
-        queryKey: ["comments", post.id],
+        queryKey: ["comments", comment.post_id],
       });
       await queryClient.invalidateQueries({
-        queryKey: ["commentsCount", post.id],
+        queryKey: ["commentsCount", comment.post_id],
       });
     },
   });
@@ -86,17 +100,14 @@ const PostComment = ({ post }: { post: IPost }) => {
     }
   };
 
-  const onAddPost = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const onEditComment = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     mutate();
   };
 
   return (
     <Form {...form}>
-      <form className="space-y-4 sticky bottom-0 bg-white z-10 py-4">
-        <p className="text-xs">
-          Reply to <span className="text-sky-500">@{post.username}</span>
-        </p>
+      <form className="relative w-[400px] py-4">
         <FormField
           name="comment"
           render={({ field }) => (
@@ -119,7 +130,7 @@ const PostComment = ({ post }: { post: IPost }) => {
                   onKeyDown={handleKeyDown}
                   onChange={tag.handleInputChange}
                   ref={tag.textareaRef}
-                  className="pb-8"
+                  className="pb-8 bg-white"
                 />
               </FormControl>
 
@@ -141,7 +152,7 @@ const PostComment = ({ post }: { post: IPost }) => {
           <Button
             type="button"
             variant="link"
-            onClick={onAddPost}
+            onClick={onEditComment}
             disabled={
               isPending ||
               tag.content.length === 0 ||
@@ -163,4 +174,4 @@ const PostComment = ({ post }: { post: IPost }) => {
   );
 };
 
-export default PostComment;
+export default EditComment;

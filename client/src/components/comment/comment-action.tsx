@@ -15,10 +15,20 @@ import Spinner from "@/components/ui/spinner";
 import { IPost } from "@/types/IPost";
 import { useAuth } from "@/auth";
 import { IComment } from "@/types/IComment";
+import { CgEditContrast } from "react-icons/cg";
+import { Pencil1Icon } from "@radix-ui/react-icons";
 
 const BASE_URL = import.meta.env.VITE_SERVER_URL!;
 
-const CommentAction = ({ comment }: { comment: IComment }) => {
+interface CommentActionProps {
+  setIsEdit: React.Dispatch<React.SetStateAction<boolean>>;
+  comment: IComment;
+}
+
+const CommentAction: React.FC<CommentActionProps> = ({
+  comment,
+  setIsEdit,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
   const auth = useAuth();
@@ -81,7 +91,7 @@ const CommentAction = ({ comment }: { comment: IComment }) => {
             type="button"
             variant="outline"
             className="rounded-full"
-            onClick={() => setIsOpen(false)}
+            onClick={() => setIsEdit(false)}
           >
             Cancel
           </Button>
@@ -98,6 +108,13 @@ const CommentAction = ({ comment }: { comment: IComment }) => {
           >
             <FaRegTrashCan />
             Delete
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => setIsEdit(true)}
+            className={`${comment.user_id === auth.user?.id ? "flex" : "hidden"}`}
+          >
+            <Pencil1Icon />
+            Edit
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

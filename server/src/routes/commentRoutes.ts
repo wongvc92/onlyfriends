@@ -3,6 +3,7 @@ import { authenticateJWT } from "../config/authMiddleware";
 import {
   addComment,
   deleteComment,
+  editComment,
   getCommentCountByPostId,
   getCommentsByPostId,
 } from "../controllers/commentControllers";
@@ -15,6 +16,7 @@ commentRoutes.get(
   authenticateJWT,
   getCommentsByPostId
 );
+commentRoutes.put("/api/comments/:commentId", authenticateJWT, editComment);
 commentRoutes.delete(
   "/api/comments/:commentId",
   authenticateJWT,

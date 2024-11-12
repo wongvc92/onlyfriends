@@ -124,7 +124,7 @@ export const deleteComment = async (req: Request, res: Response) => {
     res.status(401).json({ message: "commentId is required." });
     return;
   }
-  console.log("commentID", commentId);
+
   try {
     await pool.query(
       `
@@ -136,7 +136,42 @@ export const deleteComment = async (req: Request, res: Response) => {
     );
     res.status(200).json({ message: "Comment deleted." });
   } catch (error) {
-    console.log("Failed get comments by postId", error);
+    console.log("Failed delete comment", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const editComment = async (req: Request, res: Response) => {
+  const commentId = req.params.commentId;
+  if (!commentId) {
+    res.status(401).json({ message: "commentId is required." });
+    return;
+  }
+  const data = req.body;
+
+  const parsedResult = commentSchema.safeParse(data);
+
+  if (!parsedResult.success) {
+    const err = parsedResult.error.issues
+      .map((issue) => `${issue.path}-${issue.message}`)
+      .join("- ");
+    console.log("Failed parsed comment data", err);
+    res.status(401).json({ message: "Please check form input" });
+    return;
+  }
+  const { comment } = data;
+  try {
+    await pool.query(
+      `
+        UPDATE comments 
+        set comment = $1
+        WHERE id=$2
+      `,
+      [comment, commentId]
+    );
+    res.status(200).json({ message: "Comment edited." });
+  } catch (error) {
+    console.log("Failed edit comment", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
