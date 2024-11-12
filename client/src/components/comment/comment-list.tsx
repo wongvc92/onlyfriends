@@ -45,7 +45,7 @@ const CommentList = ({ post }: { post: IPost }) => {
           ))}
         </React.Fragment>
       ))}
-      <div>
+      <div className="text-xs flex justify-center text-muted-foreground">
         <Button
           ref={ref}
           onClick={() => fetchNextPage()}
@@ -58,7 +58,7 @@ const CommentList = ({ post }: { post: IPost }) => {
           ) : hasNextPage ? (
             <span className="underline">Load more</span>
           ) : (
-            ""
+            "Nothing more to load"
           )}
         </Button>
       </div>

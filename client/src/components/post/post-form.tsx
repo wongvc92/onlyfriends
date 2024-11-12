@@ -1,16 +1,28 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { postSchema, TPostSchema } from "@/validation/postsSchema";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/auth";
+import DynamicTextarea from "../ui/dynamic-textarea";
+import { useTagging } from "@/hooks/useTagging";
+import TagFriend from "../comment/tag-friend";
 
 const BASE_URL = import.meta.env.VITE_SERVER_URL!;
 
 const PostForm = () => {
+  const tag = useTagging();
+
   const queryClient = useQueryClient();
   const auth = useAuth();
   const form = useForm<TPostSchema>({
@@ -42,9 +54,13 @@ const PostForm = () => {
     mutationFn: addPost,
     onSuccess: async () => {
       // Invalidate and refetch
-      await queryClient.invalidateQueries({ queryKey: [`posts-${auth.user?.username!}`] });
+      await queryClient.invalidateQueries({
+        queryKey: [`posts-${auth.user?.username!}`],
+      });
       await queryClient.invalidateQueries({ queryKey: ["allPosts"] });
-      queryClient.refetchQueries({ queryKey: [`posts-${auth.user?.username!}`] });
+      queryClient.refetchQueries({
+        queryKey: [`posts-${auth.user?.username!}`],
+      });
     },
   });
 
@@ -60,17 +76,41 @@ const PostForm = () => {
         <FormField
           name="post"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-muted-foreground">What's on your mind?</FormLabel>
+            <FormItem className="relative">
+              <FormLabel className="text-muted-foreground">
+                What's on your mind?
+              </FormLabel>
               <FormControl>
-                <Textarea {...field} disabled={isPending} onKeyDown={handleEnterPress} />
+                <DynamicTextarea
+                  {...field}
+                  value={tag.content}
+                  onChange={tag.handleInputChange}
+                  disabled={isPending}
+                  onKeyDown={handleEnterPress}
+                  ref={tag.textareaRef}
+                />
               </FormControl>
-              {form.formState.errors.post && <FormMessage>{form.formState.errors.post.message}</FormMessage>}
+              {tag.isTagging && (
+                <TagFriend
+                  debouncedSearch={tag.debouncedSearch}
+                  handleTaggedFriend={(username: string) => {
+                    const newText = tag.handleTaggedFriend(username);
+                    form.setValue("post", newText);
+                  }}
+                />
+              )}
+              {form.formState.errors.post && (
+                <FormMessage>{form.formState.errors.post.message}</FormMessage>
+              )}
             </FormItem>
           )}
         />
         <div className="flex justify-end">
-          <Button type="submit" className="w-fit" disabled={isPending || form.getValues().post === ""}>
+          <Button
+            type="submit"
+            className="w-fit"
+            disabled={isPending || form.getValues().post === ""}
+          >
             Post
           </Button>
         </div>

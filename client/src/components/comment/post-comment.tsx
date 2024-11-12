@@ -3,26 +3,27 @@ import { useAuth } from "@/auth";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "../ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "../ui/form";
 import { Button } from "../ui/button";
 import { commentSchema, TCommentSchema } from "@/validation/commentSchema";
 import { IPost } from "@/types/IPost";
 import Spinner from "../ui/spinner";
 import { IoSend } from "react-icons/io5";
-import { useRef, useState } from "react";
 import TagFriend from "./tag-friend";
-import useDebounce from "@/hooks/useDebounce";
-
 import DynamicTextarea from "../ui/dynamic-textarea";
+import { useTagging } from "@/hooks/useTagging";
 
 const BASE_URL = import.meta.env.VITE_SERVER_URL!;
 
 const PostComment = ({ post }: { post: IPost }) => {
-  const [atSymbolIndex, setAtSymbolIndex] = useState(0);
-  const [search, setSearch] = useState("");
-  const [isTagging, setIstagging] = useState(false);
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-  const debouncedSearch = useDebounce(search, 1000);
+  const tag = useTagging();
+
   const queryClient = useQueryClient();
   const auth = useAuth();
 
@@ -43,7 +44,10 @@ const PostComment = ({ post }: { post: IPost }) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ comment: form.getValues().comment, post_id: post.id }),
+      body: JSON.stringify({
+        comment: form.getValues().comment,
+        post_id: post.id,
+      }),
     });
     if (!res.ok) {
       toast.error("Something went wrong. Please try again.");
@@ -57,10 +61,16 @@ const PostComment = ({ post }: { post: IPost }) => {
     mutationFn: addComment,
     onSuccess: async () => {
       // Invalidate and refetch
-      await queryClient.invalidateQueries({ queryKey: [`posts-${auth.user?.username!}`] });
+      await queryClient.invalidateQueries({
+        queryKey: [`posts-${auth.user?.username!}`],
+      });
       await queryClient.invalidateQueries({ queryKey: ["allPosts"] });
-      await queryClient.invalidateQueries({ queryKey: [`comments-${post.id!}`] });
-      await queryClient.invalidateQueries({ queryKey: [`commentsCount-${post.id}`] });
+      await queryClient.invalidateQueries({
+        queryKey: [`comments-${post.id!}`],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: [`commentsCount-${post.id}`],
+      });
     },
   });
 
@@ -76,39 +86,12 @@ const PostComment = ({ post }: { post: IPost }) => {
     mutate();
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const text = e.target.value;
-
-    form.setValue("comment", text);
-    const atSymbolIndex = text.lastIndexOf("@");
-
-    if (atSymbolIndex !== -1) {
-      setAtSymbolIndex(atSymbolIndex);
-      const potentialQuery = text.slice(atSymbolIndex + 1);
-      setSearch(potentialQuery);
-      setIstagging(true);
-    } else {
-      setSearch("");
-    }
-  };
-
-  const handleTaggedFriend = (username: string) => {
-    const text = form.getValues().comment;
-    const newText = text.slice(0, atSymbolIndex) + `@${username} ` + text.slice(atSymbolIndex + search.length + 1);
-
-    // Update the comment field with the new text
-    form.setValue("comment", newText);
-
-    // Clear the search and atSymbolIndex states
-    setSearch("");
-    setAtSymbolIndex(0);
-    setIstagging(false);
-    textareaRef.current?.focus();
-  };
-
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(addComment)} className="space-y-4 sticky bottom-0 bg-white z-10 py-4">
+      <form
+        onSubmit={form.handleSubmit(addComment)}
+        className="space-y-4 sticky bottom-0 bg-white z-10 py-4"
+      >
         <p className="text-xs">
           Reply to <span className="text-sky-500">@{post.username}</span>
         </p>
@@ -116,19 +99,33 @@ const PostComment = ({ post }: { post: IPost }) => {
           name="comment"
           render={({ field }) => (
             <FormItem>
-              {isTagging && <TagFriend debouncedSearch={debouncedSearch} handleTaggedFriend={handleTaggedFriend} />}
+              {tag.isTagging && (
+                <TagFriend
+                  classname="-top-7"
+                  debouncedSearch={tag.debouncedSearch}
+                  handleTaggedFriend={(username: string) => {
+                    const newText = tag.handleTaggedFriend(username);
+                    form.setValue("comment", newText); // Update form field with tagged content
+                  }}
+                />
+              )}
               <FormControl>
                 <DynamicTextarea
                   {...field}
+                  value={tag.content}
                   disabled={isPending}
                   onKeyDown={handleKeyDown}
-                  onChange={handleInputChange}
-                  ref={textareaRef}
+                  onChange={tag.handleInputChange}
+                  ref={tag.textareaRef}
                   className="pb-8"
                 />
               </FormControl>
 
-              {form.formState.errors.comment && <FormMessage>{form.formState.errors.comment.message}</FormMessage>}
+              {form.formState.errors.comment && (
+                <FormMessage>
+                  {form.formState.errors.comment.message}
+                </FormMessage>
+              )}
             </FormItem>
           )}
         />
@@ -137,7 +134,11 @@ const PostComment = ({ post }: { post: IPost }) => {
           variant="link"
           className="w-fit absolute right-6 bottom-3 rounded-full"
           onClick={onAddPost}
-          disabled={isPending || commentValue?.length === 0 || commentValue?.length > 255}
+          disabled={
+            isPending ||
+            commentValue?.length === 0 ||
+            commentValue?.length > 255
+          }
           size="icon"
         >
           {isPending ? (
