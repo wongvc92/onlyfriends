@@ -48,26 +48,26 @@ const CommentList = ({ post }: { post: IPost }) => {
                 <CommentCard comment={comment} key={comment.id} />
               </div>
             ))}
-            <div className="text-xs flex justify-center text-muted-foreground">
-              <Button
-                ref={ref}
-                onClick={() => fetchNextPage()}
-                disabled={!hasNextPage || isFetchingNextPage}
-                variant="link"
-                className="text-muted-foreground text-xs"
-              >
-                {isFetchingNextPage ? (
-                  <Spinner size="4" />
-                ) : hasNextPage ? (
-                  <span className="underline">Load more</span>
-                ) : (
-                  "Nothing more to load"
-                )}
-              </Button>
-            </div>
           </React.Fragment>
         ))
       )}
+      <div className="text-xs flex justify-center text-muted-foreground">
+        <Button
+          ref={ref}
+          onClick={() => fetchNextPage()}
+          disabled={!hasNextPage || isFetchingNextPage}
+          variant="link"
+          className="text-muted-foreground text-xs"
+        >
+          {isFetchingNextPage ? (
+            <Spinner size="4" />
+          ) : hasNextPage ? (
+            <span className="underline">Load more</span>
+          ) : (
+            "Nothing more to load"
+          )}
+        </Button>
+      </div>
     </div>
   );
 };

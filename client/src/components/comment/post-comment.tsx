@@ -11,7 +11,11 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Button } from "../ui/button";
-import { commentSchema, TCommentSchema } from "@/validation/commentSchema";
+import {
+  commentMaxLimit,
+  commentSchema,
+  TCommentSchema,
+} from "@/validation/commentSchema";
 import { IPost } from "@/types/IPost";
 import Spinner from "../ui/spinner";
 import { IoSend } from "react-icons/io5";
@@ -130,24 +134,33 @@ const PostComment = ({ post }: { post: IPost }) => {
             </FormItem>
           )}
         />
-        <Button
-          type="button"
-          variant="link"
-          className="w-fit absolute right-6 bottom-3 rounded-full"
-          onClick={onAddPost}
-          disabled={
-            isPending || tag.content.length === 0 || tag.content.length > 255
-          }
-          size="icon"
-        >
-          {isPending ? (
-            <div className="flex items-center gap-2">
-              <Spinner size="4" color="black" />
-            </div>
-          ) : (
-            <IoSend size="4" />
-          )}
-        </Button>
+
+        <div className="flex items-center justify-end  gap-2 absolute right-3 bottom-3 rounded-full">
+          <p
+            className={`text-xs ${tag.content.length > 0 ? "block" : "hidden"} ${tag.content.length > commentMaxLimit ? "text-red-500" : "text-muted-foreground"}`}
+          >
+            {tag.content.length}/{commentMaxLimit}
+          </p>
+          <Button
+            type="button"
+            variant="link"
+            onClick={onAddPost}
+            disabled={
+              isPending ||
+              tag.content.length === 0 ||
+              tag.content.length > commentMaxLimit
+            }
+            size="icon"
+          >
+            {isPending ? (
+              <div className="flex items-center gap-2">
+                <Spinner size="4" color="black" />
+              </div>
+            ) : (
+              <IoSend size="4" />
+            )}
+          </Button>
+        </div>
       </form>
     </Form>
   );

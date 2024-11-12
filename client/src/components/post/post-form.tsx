@@ -9,7 +9,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { postSchema, TPostSchema } from "@/validation/postsSchema";
+import {
+  contentMaxLimit,
+  postSchema,
+  TPostSchema,
+} from "@/validation/postsSchema";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -106,12 +110,19 @@ const PostForm = () => {
             </FormItem>
           )}
         />
-        <div className="flex justify-end">
+        <div className="flex justify-end items-center gap-2">
+          <p
+            className={`text-xs ${tag.content.length > 0 ? "block" : "hidden"} ${tag.content.length > contentMaxLimit ? "text-red-500" : "text-muted-foreground"}`}
+          >
+            {tag.content.length}/{contentMaxLimit}
+          </p>
           <Button
             type="submit"
             className="w-fit"
             disabled={
-              isPending || tag.content.length === 0 || tag.content.length > 255
+              isPending ||
+              tag.content.length === 0 ||
+              tag.content.length > contentMaxLimit
             }
           >
             Post

@@ -4,7 +4,7 @@ import useDebounce from "./useDebounce";
 export const useTagging = () => {
   const [atSymbolIndex, setAtSymbolIndex] = useState(0);
   const [search, setSearch] = useState("");
-  const [isTagging, setIstagging] = useState(false);
+  const [isTagging, setIsTagging] = useState(false);
   const [content, setContent] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const debouncedSearch = useDebounce(search, 1000);
@@ -16,14 +16,18 @@ export const useTagging = () => {
 
       const atSymbolIndex = text.lastIndexOf("@");
 
-      if (atSymbolIndex !== -1) {
+      if (
+        atSymbolIndex !== -1 &&
+        !text.slice(atSymbolIndex + 1).includes(" ")
+      ) {
+        // Only set search if there's no space after "@"
         setAtSymbolIndex(atSymbolIndex);
         const potentialQuery = text.slice(atSymbolIndex + 1);
         setSearch(potentialQuery);
-        setIstagging(true);
+        setIsTagging(true);
       } else {
         setSearch("");
-        setIstagging(true);
+        setIsTagging(false);
       }
     },
     []
@@ -39,7 +43,7 @@ export const useTagging = () => {
       // Clear the search and atSymbolIndex states
       setSearch("");
       setAtSymbolIndex(0);
-      setIstagging(false);
+      setIsTagging(false);
       textareaRef.current?.focus();
     },
     [content, atSymbolIndex, search]
