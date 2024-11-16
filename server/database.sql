@@ -46,6 +46,15 @@ CREATE TABLE posts (
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE
 );
 
+CREATE TABLE post_images(
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    post_id integer NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+    url VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
 CREATE TABLE likes (
     id SERIAL PRIMARY KEY,
     post_id integer NOT NULL REFERENCES posts(id) ON DELETE CASCADE,

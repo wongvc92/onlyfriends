@@ -3,9 +3,10 @@ import Modal from "@/components/ui/modal";
 import { Slider } from "@/components/ui/slider";
 import { Dispatch, SetStateAction } from "react";
 import { useImageCropContext } from "@/providers/image-crop-provider";
-import Spinner from "../ui/spinner";
+
 import { useImageUploadManager } from "@/hooks/useImageUploadManager";
 import Cropper from "./cropper";
+import Spinner from "@/components/ui/spinner";
 
 interface CropImageProps {
   isOpen: boolean;

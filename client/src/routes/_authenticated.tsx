@@ -1,13 +1,12 @@
-import { checkIfAuthenticated, useAuth } from "@/auth";
+import { useAuth } from "@/auth";
 import LogoutButton from "@/components/auth/logout-button";
-import { Link, Outlet, redirect, useLocation, useRouter } from "@tanstack/react-router";
+import { Link, Outlet, redirect, useLocation } from "@tanstack/react-router";
 import { createFileRoute, useRouterState } from "@tanstack/react-router";
 import { IoHomeOutline } from "react-icons/io5";
 import { CgProfile } from "react-icons/cg";
 import PeoplesList from "@/components/friend/peoples-list";
 import { FaUserFriends } from "react-icons/fa";
 import FriendRequestList from "@/components/friend/friend-request-list";
-import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated")({
   beforeLoad: async ({ location, context }) => {
@@ -56,7 +55,8 @@ function Layout() {
               const {
                 location: { pathname },
               } = useRouterState();
-              const isActive = nav.path.split("/")[1] === pathname.split("/")[1];
+              const isActive =
+                nav.path.split("/")[1] === pathname.split("/")[1];
               return (
                 <Link
                   key={nav.label}
@@ -75,18 +75,22 @@ function Layout() {
         </aside>
 
         {/* grid 2 */}
-        <div className="p-4 sm:col-span-6 md:col-span-6 lg:col-span-4">
+        <div className="py-4 sm:col-span-6 md:col-span-6 lg:col-span-4">
           <Outlet />
         </div>
 
         {/* grid 3 */}
         <div className="hidden lg:block sm:col-span-3  md:h-screen sticky top-0 p-4 border-l">
           <div className="flex flex-col gap-4">
-            <div className={`border rounded-md p-2 space-y-4 ${pathname === "/friends/find" ? "hidden" : "block"}`}>
+            <div
+              className={`border rounded-md p-2 space-y-4 ${pathname === "/friends/find" ? "hidden" : "block"}`}
+            >
               <div>People you might know</div>
               <PeoplesList />
             </div>
-            <div className={`border rounded-md p-2 space-y-4 ${pathname === "/friends/friend-request" ? "hidden" : "block"}`}>
+            <div
+              className={`border rounded-md p-2 space-y-4 ${pathname === "/friends/friend-request" ? "hidden" : "block"}`}
+            >
               <div>Friends request</div>
               <FriendRequestList />
             </div>

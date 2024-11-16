@@ -31,7 +31,7 @@ const CommentCard = ({ comment }: { comment: IComment }) => {
   };
 
   return (
-    <div className="w-full border-none">
+    <div className="border-none">
       <div className="flex gap-2">
         <div className="flex gap-2">
           <ProfileImage
@@ -40,7 +40,7 @@ const CommentCard = ({ comment }: { comment: IComment }) => {
           />
         </div>
 
-        <div className="bg-muted p-2 rounded-md space-y-1">
+        <div className="bg-muted p-2 rounded-md space-y-1 ">
           <div className="flex items-center gap-2">
             <ProfileName name={comment.name} />
             <ProfileUsername username={comment.username} />
@@ -49,7 +49,7 @@ const CommentCard = ({ comment }: { comment: IComment }) => {
           {isEdit ? (
             <EditComment comment={comment} setIsEdit={setIsEdit} />
           ) : (
-            <p className="break-all text-sm">
+            <p className="text-sm break-words">
               {renderCommentWithMentions(comment.comment)}
             </p>
           )}

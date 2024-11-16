@@ -32,7 +32,7 @@ const CommentList = ({ post }: { post: IPost }) => {
   }, [fetchNextPage, inView]);
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 p-4 ">
       {data?.pages[0].data.length === 0 ? (
         <p className="text-sm text-muted-foreground text-center">
           No comment yet. Be the first to comment.
@@ -41,10 +41,7 @@ const CommentList = ({ post }: { post: IPost }) => {
         data?.pages.map((page, pageIndex) => (
           <React.Fragment key={pageIndex}>
             {page.data.map((comment) => (
-              <div
-                key={comment.id}
-                className="flex start gap-2 py-2 md:w-[800px]"
-              >
+              <div key={comment.id} className="flex start gap-2 py-2 ">
                 <CommentCard comment={comment} key={comment.id} />
               </div>
             ))}

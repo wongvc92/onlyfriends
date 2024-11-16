@@ -5,5 +5,10 @@ export interface IPost {
   updated_at: Date;
   user_id: string;
   username: string;
+  display_image: string;
   name: string;
+  images?: {
+    id: string;
+    url: string;
+  }[];
 }

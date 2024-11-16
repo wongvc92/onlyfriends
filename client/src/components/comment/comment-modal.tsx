@@ -20,6 +20,7 @@ import Modal from "../ui/modal";
 import { IPost } from "@/types/IPost";
 import { FaRegComment } from "react-icons/fa";
 import { Button } from "../ui/button";
+import ImageSlider from "../image/image-slider";
 
 interface CommentModalProps {
   isOpen: boolean;
@@ -38,52 +39,9 @@ const CommentModal: React.FC<CommentModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={() => setIsOpen(false)}
-      classname="overflow-y-scroll md:w-fit px-2 pb-0"
+      classname="h-[90vh] overflow-y-scroll"
     >
-      <Card>
-        <CardHeader>
-          <div className="flex gap-1 items-start">
-            <ProfileImage
-              image="http://sadasdasdasd.com"
-              username={post.username}
-            />
-            <CardTitle>
-              <div className="flex flex-wrap items-center gap-1">
-                <ProfileName name={post.name} />
-                <ProfileUsername username={post.username} />
-                <DotFilledIcon />
-                <p className="text-muted-foreground font-light">
-                  {getrelativeTime(post.created_at)}
-                </p>
-              </div>
-            </CardTitle>
-            <div className="ml-auto">
-              <PostACtion post={post} />
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>{post.post}</CardContent>
-        <CardFooter className="flex items-center justify-between md:justify-start md:gap-10">
-          <Likes post={post} />
-          <div className="flex items-center">
-            <Button
-              type="button"
-              size="icon"
-              variant="link"
-              onClick={() => setIsOpen(!isOpen)}
-              disabled={isOpen}
-            >
-              <FaRegComment />
-              <span className="text-xs text-muted-foreground">
-                {commentCount || 0}
-              </span>
-            </Button>
-          </div>
-          <PiShareFatBold />
-        </CardFooter>
-      </Card>
-      <CommentList post={post} />
-      <PostComment post={post} />
+
     </Modal>
   );
 };

@@ -1,4 +1,10 @@
-import { createFileRoute, Link, Outlet, useParams, useRouterState } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  Link,
+  Outlet,
+  useParams,
+  useRouterState,
+} from "@tanstack/react-router";
 import ProfileInfo from "@/components/profile/profile-info";
 
 export const Route = createFileRoute("/_authenticated/$username/_layout")({
@@ -24,14 +30,19 @@ function Layout() {
         <ProfileInfo />
       </section>
       <div className="sticky top-0 z-10 bg-white">
-        <nav className="flex items-center gap-2 text-lg border-b p-2 capitalize">
+        <nav className="flex items-center gap-2 text-lg border-b p-4 capitalize">
           {NAV_LINKS.map((nav) => {
             const {
               location: { pathname },
             } = useRouterState();
             const isActive = pathname === nav.path;
             return (
-              <Link key={nav.label} to={nav.path} className={`text-right ${isActive && "font-bold"}`} activeOptions={{ exact: true }}>
+              <Link
+                key={nav.label}
+                to={nav.path}
+                className={`text-right ${isActive && "font-bold"}`}
+                activeOptions={{ exact: true }}
+              >
                 {nav.label}
               </Link>
             );

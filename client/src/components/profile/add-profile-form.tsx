@@ -1,5 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ImageCropProvider } from "@/providers/image-crop-provider";
@@ -10,8 +17,8 @@ import { useRouter } from "@tanstack/react-router";
 import { useParams } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import ImageUploader from "../image/image-uploader";
 import { useState } from "react";
+import ImageUploader from "../image/react-easy-crop/image-uploader";
 
 const BASE_URL = import.meta.env.VITE_SERVER_URL!;
 
@@ -79,7 +86,11 @@ const AddProfileForm = () => {
       <form onSubmit={form.handleSubmit(() => mutate())} className="space-y-4">
         <div className="flex justify-between items-center">
           <h3 className="font-semibold">Add Profile</h3>
-          <Button type="submit" className="w-fit rounded-full shadow-lg" disabled={isPending}>
+          <Button
+            type="submit"
+            className="w-fit rounded-full shadow-lg"
+            disabled={isPending}
+          >
             Save
           </Button>
         </div>
@@ -88,13 +99,23 @@ const AddProfileForm = () => {
           name="banner_image"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-muted-foreground">Banner Image</FormLabel>
+              <FormLabel className="text-muted-foreground">
+                Banner Image
+              </FormLabel>
               <FormControl>
                 <ImageCropProvider aspect={4 / 2} cropShape="rect">
-                  <ImageUploader onChange={field.onChange} value={field.value} key={"banner_image"} />
+                  <ImageUploader
+                    onChange={field.onChange}
+                    value={field.value}
+                    key={"banner_image"}
+                  />
                 </ImageCropProvider>
               </FormControl>
-              {form.formState.errors.banner_image && <FormMessage>{form.formState.errors.banner_image.message}</FormMessage>}
+              {form.formState.errors.banner_image && (
+                <FormMessage>
+                  {form.formState.errors.banner_image.message}
+                </FormMessage>
+              )}
             </FormItem>
           )}
         />
@@ -103,13 +124,24 @@ const AddProfileForm = () => {
           name="display_image"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-muted-foreground">Display Image</FormLabel>
+              <FormLabel className="text-muted-foreground">
+                Display Image
+              </FormLabel>
               <FormControl>
                 <ImageCropProvider aspect={1} cropShape="round">
-                  <ImageUploader onChange={field.onChange} value={field.value} imageShape="rounded-full" key={"display_image"} />
+                  <ImageUploader
+                    onChange={field.onChange}
+                    value={field.value}
+                    imageShape="rounded-full"
+                    key={"display_image"}
+                  />
                 </ImageCropProvider>
               </FormControl>
-              {form.formState.errors.display_image && <FormMessage>{form.formState.errors.display_image.message}</FormMessage>}
+              {form.formState.errors.display_image && (
+                <FormMessage>
+                  {form.formState.errors.display_image.message}
+                </FormMessage>
+              )}
             </FormItem>
           )}
         />
@@ -122,7 +154,9 @@ const AddProfileForm = () => {
               <FormControl>
                 <Input {...field} disabled={isPending} />
               </FormControl>
-              {form.formState.errors.name && <FormMessage>{form.formState.errors.name.message}</FormMessage>}
+              {form.formState.errors.name && (
+                <FormMessage>{form.formState.errors.name.message}</FormMessage>
+              )}
             </FormItem>
           )}
         />
@@ -153,10 +187,14 @@ const AddProfileForm = () => {
                   style={{ overflow: "hidden" }}
                 />
               </FormControl>
-              <div className={`flex justify-end text-muted-foreground text-xs ${form.formState.errors.bio && "text-red-500"}`}>
+              <div
+                className={`flex justify-end text-muted-foreground text-xs ${form.formState.errors.bio && "text-red-500"}`}
+              >
                 {form.getValues("bio")?.length}/255
               </div>
-              {form.formState.errors.bio && <FormMessage>{form.formState.errors.bio.message}</FormMessage>}
+              {form.formState.errors.bio && (
+                <FormMessage>{form.formState.errors.bio.message}</FormMessage>
+              )}
             </FormItem>
           )}
         />
@@ -168,7 +206,11 @@ const AddProfileForm = () => {
               <FormControl>
                 <Input {...field} disabled={isPending} />
               </FormControl>
-              {form.formState.errors.location && <FormMessage>{form.formState.errors.location.message}</FormMessage>}
+              {form.formState.errors.location && (
+                <FormMessage>
+                  {form.formState.errors.location.message}
+                </FormMessage>
+              )}
             </FormItem>
           )}
         />
@@ -180,7 +222,11 @@ const AddProfileForm = () => {
               <FormControl>
                 <Input {...field} disabled={isPending} />
               </FormControl>
-              {form.formState.errors.website && <FormMessage>{form.formState.errors.website.message}</FormMessage>}
+              {form.formState.errors.website && (
+                <FormMessage>
+                  {form.formState.errors.website.message}
+                </FormMessage>
+              )}
             </FormItem>
           )}
         />
