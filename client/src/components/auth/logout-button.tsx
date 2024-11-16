@@ -26,8 +26,14 @@ const LogoutButton = () => {
     window.location.href = "/login";
   };
   return (
-    <Button type="button" onClick={onSubmit} disabled={isPending} className="w-fit rounded-full" variant="secondary">
-      <MdOutlineLogout /> <span className="hidden xl:block">Logout</span>
+    <Button
+      type="button"
+      onClick={onSubmit}
+      disabled={isPending}
+      className="w-fit rounded-full"
+      variant="secondary"
+    >
+      <MdOutlineLogout /> <span className="hidden sm:block">Logout</span>
     </Button>
   );
 };
