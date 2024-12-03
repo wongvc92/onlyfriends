@@ -6,7 +6,7 @@ interface ProfileNameProps {
 }
 
 const ProfileName = ({ name, classname }: ProfileNameProps) => {
-  return <p className={cn("text-xs font-semibold", classname)}>{name}</p>;
+  return <p className={cn("font-semibold", classname)}>{name}</p>;
 };
 
 export default ProfileName;

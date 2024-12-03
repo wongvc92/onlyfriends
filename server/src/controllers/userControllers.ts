@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { IUser, IUserClient } from "../types/Users";
 
-export const checkAuth = async (req: Request, res: Response) => {
+export const getUser = async (req: Request, res: Response) => {
   if (req.user) {
     const user = req.user as IUser;
 

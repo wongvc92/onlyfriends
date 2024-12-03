@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { checkAuth } from "../controllers/checkAuthControllers";
-import { authenticateJWT } from "../config/authMiddleware";
+import { getUser } from "../controllers/userControllers";
+import { authenticateJWT } from "../middleware/authenticateJWT";
 import { refreshAccessToken } from "../controllers/loginControllers";
 
 const authRoutes = Router();
-authRoutes.get("/api/check-auth", authenticateJWT, checkAuth);
+authRoutes.get("/api/user", authenticateJWT, getUser);
 authRoutes.post("/api/refresh-token", refreshAccessToken);
 export default authRoutes;

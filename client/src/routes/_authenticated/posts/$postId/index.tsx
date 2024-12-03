@@ -2,7 +2,6 @@ import CommentList from "@/components/comment/comment-list";
 import PostComment from "@/components/comment/post-comment";
 import PostCard from "@/components/post/post-card";
 import Spinner from "@/components/ui/spinner";
-import { getCommentCountByPostId } from "@/data/getCommentCountByPostId";
 import { getPostByPostId } from "@/data/getPostByPostId";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useParams } from "@tanstack/react-router";
@@ -23,11 +22,6 @@ function PostPage() {
     queryKey: ["post", postId],
     queryFn: () => getPostByPostId(postId),
     retry: false,
-  });
-
-  const { data: commentCount } = useQuery({
-    queryKey: ["commentsCount", postId],
-    queryFn: () => getCommentCountByPostId(postId),
   });
 
   if (isLoading) {

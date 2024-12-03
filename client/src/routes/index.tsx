@@ -1,4 +1,3 @@
-import { checkIfAuthenticated } from "@/auth";
 // import { LoginForm } from "@/components/auth/login-form";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 

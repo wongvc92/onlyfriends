@@ -23,7 +23,9 @@ const CancelAddFriendButton = ({ peopleId }: { peopleId: string }) => {
     mutationFn: unfriendPeople,
     onSuccess: async () => {
       toast.success("Cancelled friend request");
-      await queryClient.invalidateQueries({ queryKey: ["friends-sentRequest"] });
+      await queryClient.invalidateQueries({
+        queryKey: ["friends-sentRequest"],
+      });
     },
     onError: () => {
       toast.error("Please try again later");
@@ -39,7 +41,7 @@ const CancelAddFriendButton = ({ peopleId }: { peopleId: string }) => {
     <>
       <Button
         type="button"
-        variant="secondary"
+        variant="default"
         className={`rounded-full ${isSuccess ? "hidden" : "block"}`}
         size="sm"
         onClick={onUnfriendPeople}

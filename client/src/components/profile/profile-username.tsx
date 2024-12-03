@@ -7,7 +7,11 @@ interface ProfileUsernameProps {
 }
 const ProfileUsername = ({ username, classname }: ProfileUsernameProps) => {
   const { username: paramsUsername } = useParams({ strict: false });
-  return <p className={cn("text-xs font-light text-muted-foreground", classname)}>@{username || paramsUsername}</p>;
+  return (
+    <p className={cn("font-light text-muted-foreground", classname)}>
+      @{username || paramsUsername}
+    </p>
+  );
 };
 
 export default ProfileUsername;

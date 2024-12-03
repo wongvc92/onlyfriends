@@ -77,3 +77,22 @@ CREATE TABLE comments (
 CREATE INDEX idx_comments_post_id ON comments (post_id);
 CREATE INDEX idx_comments_user_id ON comments (user_id);
 CREATE INDEX idx_comments_post_user ON comments (post_id, user_id);
+
+
+
+CREATE TABLE conversations (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    sender_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    recipient_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE messages (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    conversation_id UUID NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
+    sender_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    recipient_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    text TEXT,
+    is_read BOOLEAN DEFAULT false,
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

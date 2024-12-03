@@ -1,6 +1,10 @@
 import { Router } from "express";
-import { addProfile, editProfile, getProfile } from "../controllers/profileControllers";
-import { authenticateJWT } from "../config/authMiddleware";
+import {
+  addProfile,
+  editProfile,
+  getProfile,
+} from "../controllers/profileControllers";
+import { authenticateJWT } from "../middleware/authenticateJWT";
 
 const profileRoutes = Router();
 
