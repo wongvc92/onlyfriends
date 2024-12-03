@@ -1,9 +1,16 @@
 import { Router } from "express";
-import { deleteImageFromS3, generatePresignedUrl } from "../controllers/s3Controllers";
-import { authenticateJWT } from "../config/authMiddleware";
+import {
+  deleteImageFromS3,
+  generatePresignedUrl,
+} from "../controllers/s3Controllers";
+import { authenticateJWT } from "../middleware/authenticateJWT";
 
 const imageRoutes = Router();
 
-imageRoutes.post("/api/generate-upload-url", authenticateJWT, generatePresignedUrl);
+imageRoutes.post(
+  "/api/generate-upload-url",
+  authenticateJWT,
+  generatePresignedUrl
+);
 imageRoutes.delete("/api/delete-image", authenticateJWT, deleteImageFromS3);
 export default imageRoutes;

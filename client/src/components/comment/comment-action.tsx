@@ -13,7 +13,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import Spinner from "@/components/ui/spinner";
 import { IPost } from "@/types/IPost";
-import { useAuth } from "@/auth";
+import { useAuth } from "@/context/auth";
 import { IComment } from "@/types/IComment";
 import { CgEditContrast } from "react-icons/cg";
 import { Pencil1Icon } from "@radix-ui/react-icons";

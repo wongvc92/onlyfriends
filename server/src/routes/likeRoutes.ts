@@ -1,6 +1,10 @@
 import { Router } from "express";
-import { getLikeByPostId, likePost, unlikePost } from "../controllers/likeControllers";
-import { authenticateJWT } from "../config/authMiddleware";
+import {
+  getLikeByPostId,
+  likePost,
+  unlikePost,
+} from "../controllers/likeControllers";
+import { authenticateJWT } from "../middleware/authenticateJWT";
 
 export const likeRoutes = Router();
 

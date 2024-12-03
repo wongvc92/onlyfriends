@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useAuth } from "@/auth";
+import { useAuth } from "@/context/auth";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
@@ -81,7 +81,7 @@ const EditComment: React.FC<EditCommentProps> = ({
     onSuccess: async () => {
       // Invalidate and refetch
       await queryClient.invalidateQueries({
-        queryKey: [`posts-${auth.user?.username!}`],
+        queryKey: [`posts-${auth.user?.username}`],
       });
       await queryClient.invalidateQueries({ queryKey: ["allPosts"] });
       await queryClient.invalidateQueries({

@@ -1,7 +1,12 @@
-import { Outlet, createRootRouteWithContext, useMatch, useRouterState } from "@tanstack/react-router";
+import {
+  Outlet,
+  createRootRouteWithContext,
+  useMatch,
+  useRouterState,
+} from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { QueryClient } from "@tanstack/react-query";
-import { IAuthContext, useAuth } from "@/auth";
+import { IAuthContext, useAuth } from "@/context/auth";
 
 interface MyRouterContext {
   auth: IAuthContext;
@@ -16,8 +21,8 @@ function RootComponent() {
   return (
     <div>
       <Outlet />
-
-      <TanStackRouterDevtools position="bottom-right" />
+{/* 
+      <TanStackRouterDevtools position="bottom-right" /> */}
     </div>
   );
 }

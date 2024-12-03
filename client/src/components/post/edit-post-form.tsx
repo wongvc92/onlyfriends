@@ -16,7 +16,7 @@ import {
 } from "@/validation/postsSchema";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useAuth } from "@/auth";
+import { useAuth } from "@/context/auth";
 import DynamicTextarea from "../ui/dynamic-textarea";
 import { useTagging } from "@/hooks/useTagging";
 import TagFriend from "../comment/tag-friend";

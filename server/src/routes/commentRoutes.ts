@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { authenticateJWT } from "../config/authMiddleware";
+import { authenticateJWT } from "../middleware/authenticateJWT";
 import {
   addComment,
   deleteComment,

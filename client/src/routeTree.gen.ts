@@ -16,6 +16,7 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as LoginImport } from './routes/login'
 import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as IndexImport } from './routes/index'
+import { Route as AuthenticatedMessagesIndexImport } from './routes/_authenticated/messages/index'
 import { Route as AuthenticatedHomeIndexImport } from './routes/_authenticated/home/index'
 import { Route as AuthenticatedFriendsIndexImport } from './routes/_authenticated/friends/index'
 import { Route as AuthenticatedUsernameIndexImport } from './routes/_authenticated/$username/index'
@@ -23,20 +24,26 @@ import { Route as authVerifyEmailIndexImport } from './routes/(auth)/verify-emai
 import { Route as authResetIndexImport } from './routes/(auth)/reset/index'
 import { Route as authRegisterIndexImport } from './routes/(auth)/register/index'
 import { Route as authNewPasswordIndexImport } from './routes/(auth)/new-password/index'
+import { Route as AuthenticatedMessagesLayoutImport } from './routes/_authenticated/messages/_layout'
 import { Route as AuthenticatedFriendsLayoutImport } from './routes/_authenticated/friends/_layout'
 import { Route as AuthenticatedUsernameLayoutImport } from './routes/_authenticated/$username/_layout'
 import { Route as AuthenticatedPostsPostIdIndexImport } from './routes/_authenticated/posts/$postId/index'
 import { Route as AuthenticatedUsernameEditIndexImport } from './routes/_authenticated/$username/edit/index'
 import { Route as AuthenticatedUsernameAddIndexImport } from './routes/_authenticated/$username/add/index'
+import { Route as AuthenticatedMessagesLayoutConversationsIndexImport } from './routes/_authenticated/messages/_layout/conversations/index'
 import { Route as AuthenticatedFriendsLayoutPendingRequestIndexImport } from './routes/_authenticated/friends/_layout/pending-request/index'
 import { Route as AuthenticatedFriendsLayoutListIndexImport } from './routes/_authenticated/friends/_layout/list/index'
 import { Route as AuthenticatedFriendsLayoutFriendRequestIndexImport } from './routes/_authenticated/friends/_layout/friend-request/index'
 import { Route as AuthenticatedFriendsLayoutFindIndexImport } from './routes/_authenticated/friends/_layout/find/index'
 import { Route as AuthenticatedUsernameLayoutPostsIndexImport } from './routes/_authenticated/$username/_layout/posts/index'
 import { Route as AuthenticatedUsernameLayoutMediaIndexImport } from './routes/_authenticated/$username/_layout/media/index'
+import { Route as AuthenticatedMessagesLayoutConversationsLayoutConversationIdIndexImport } from './routes/_authenticated/messages/_layout/conversations/_layout/$conversationId/index'
 
 // Create Virtual Routes
 
+const AuthenticatedMessagesImport = createFileRoute(
+  '/_authenticated/messages',
+)()
 const AuthenticatedFriendsImport = createFileRoute('/_authenticated/friends')()
 const AuthenticatedUsernameImport = createFileRoute(
   '/_authenticated/$username',
@@ -61,6 +68,12 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const AuthenticatedMessagesRoute = AuthenticatedMessagesImport.update({
+  id: '/messages',
+  path: '/messages',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
 const AuthenticatedFriendsRoute = AuthenticatedFriendsImport.update({
   id: '/friends',
   path: '/friends',
@@ -72,6 +85,14 @@ const AuthenticatedUsernameRoute = AuthenticatedUsernameImport.update({
   path: '/$username',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+
+const AuthenticatedMessagesIndexRoute = AuthenticatedMessagesIndexImport.update(
+  {
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedMessagesRoute,
+  } as any,
+)
 
 const AuthenticatedHomeIndexRoute = AuthenticatedHomeIndexImport.update({
   id: '/home/',
@@ -117,6 +138,12 @@ const authNewPasswordIndexRoute = authNewPasswordIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const AuthenticatedMessagesLayoutRoute =
+  AuthenticatedMessagesLayoutImport.update({
+    id: '/_layout',
+    getParentRoute: () => AuthenticatedMessagesRoute,
+  } as any)
+
 const AuthenticatedFriendsLayoutRoute = AuthenticatedFriendsLayoutImport.update(
   {
     id: '/_layout',
@@ -149,6 +176,13 @@ const AuthenticatedUsernameAddIndexRoute =
     id: '/add/',
     path: '/add/',
     getParentRoute: () => AuthenticatedUsernameRoute,
+  } as any)
+
+const AuthenticatedMessagesLayoutConversationsIndexRoute =
+  AuthenticatedMessagesLayoutConversationsIndexImport.update({
+    id: '/conversations/',
+    path: '/conversations/',
+    getParentRoute: () => AuthenticatedMessagesLayoutRoute,
   } as any)
 
 const AuthenticatedFriendsLayoutPendingRequestIndexRoute =
@@ -192,6 +226,15 @@ const AuthenticatedUsernameLayoutMediaIndexRoute =
     path: '/media/',
     getParentRoute: () => AuthenticatedUsernameLayoutRoute,
   } as any)
+
+const AuthenticatedMessagesLayoutConversationsLayoutConversationIdIndexRoute =
+  AuthenticatedMessagesLayoutConversationsLayoutConversationIdIndexImport.update(
+    {
+      id: '/conversations/_layout/$conversationId/',
+      path: '/conversations/$conversationId/',
+      getParentRoute: () => AuthenticatedMessagesLayoutRoute,
+    } as any,
+  )
 
 // Populate the FileRoutesByPath interface
 
@@ -246,6 +289,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFriendsLayoutImport
       parentRoute: typeof AuthenticatedFriendsRoute
     }
+    '/_authenticated/messages': {
+      id: '/_authenticated/messages'
+      path: '/messages'
+      fullPath: '/messages'
+      preLoaderRoute: typeof AuthenticatedMessagesImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/messages/_layout': {
+      id: '/_authenticated/messages/_layout'
+      path: '/messages'
+      fullPath: '/messages'
+      preLoaderRoute: typeof AuthenticatedMessagesLayoutImport
+      parentRoute: typeof AuthenticatedMessagesRoute
+    }
     '/(auth)/new-password/': {
       id: '/(auth)/new-password/'
       path: '/new-password'
@@ -294,6 +351,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/home'
       preLoaderRoute: typeof AuthenticatedHomeIndexImport
       parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/messages/': {
+      id: '/_authenticated/messages/'
+      path: '/'
+      fullPath: '/messages/'
+      preLoaderRoute: typeof AuthenticatedMessagesIndexImport
+      parentRoute: typeof AuthenticatedMessagesImport
     }
     '/_authenticated/$username/add/': {
       id: '/_authenticated/$username/add/'
@@ -357,6 +421,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/friends/pending-request'
       preLoaderRoute: typeof AuthenticatedFriendsLayoutPendingRequestIndexImport
       parentRoute: typeof AuthenticatedFriendsLayoutImport
+    }
+    '/_authenticated/messages/_layout/conversations/': {
+      id: '/_authenticated/messages/_layout/conversations/'
+      path: '/conversations'
+      fullPath: '/messages/conversations'
+      preLoaderRoute: typeof AuthenticatedMessagesLayoutConversationsIndexImport
+      parentRoute: typeof AuthenticatedMessagesLayoutImport
+    }
+    '/_authenticated/messages/_layout/conversations/_layout/$conversationId/': {
+      id: '/_authenticated/messages/_layout/conversations/_layout/$conversationId/'
+      path: '/conversations/$conversationId'
+      fullPath: '/messages/conversations/$conversationId'
+      preLoaderRoute: typeof AuthenticatedMessagesLayoutConversationsLayoutConversationIdIndexImport
+      parentRoute: typeof AuthenticatedMessagesLayoutImport
     }
   }
 }
@@ -438,9 +516,44 @@ const AuthenticatedFriendsRouteChildren: AuthenticatedFriendsRouteChildren = {
 const AuthenticatedFriendsRouteWithChildren =
   AuthenticatedFriendsRoute._addFileChildren(AuthenticatedFriendsRouteChildren)
 
+interface AuthenticatedMessagesLayoutRouteChildren {
+  AuthenticatedMessagesLayoutConversationsIndexRoute: typeof AuthenticatedMessagesLayoutConversationsIndexRoute
+  AuthenticatedMessagesLayoutConversationsLayoutConversationIdIndexRoute: typeof AuthenticatedMessagesLayoutConversationsLayoutConversationIdIndexRoute
+}
+
+const AuthenticatedMessagesLayoutRouteChildren: AuthenticatedMessagesLayoutRouteChildren =
+  {
+    AuthenticatedMessagesLayoutConversationsIndexRoute:
+      AuthenticatedMessagesLayoutConversationsIndexRoute,
+    AuthenticatedMessagesLayoutConversationsLayoutConversationIdIndexRoute:
+      AuthenticatedMessagesLayoutConversationsLayoutConversationIdIndexRoute,
+  }
+
+const AuthenticatedMessagesLayoutRouteWithChildren =
+  AuthenticatedMessagesLayoutRoute._addFileChildren(
+    AuthenticatedMessagesLayoutRouteChildren,
+  )
+
+interface AuthenticatedMessagesRouteChildren {
+  AuthenticatedMessagesLayoutRoute: typeof AuthenticatedMessagesLayoutRouteWithChildren
+  AuthenticatedMessagesIndexRoute: typeof AuthenticatedMessagesIndexRoute
+}
+
+const AuthenticatedMessagesRouteChildren: AuthenticatedMessagesRouteChildren = {
+  AuthenticatedMessagesLayoutRoute:
+    AuthenticatedMessagesLayoutRouteWithChildren,
+  AuthenticatedMessagesIndexRoute: AuthenticatedMessagesIndexRoute,
+}
+
+const AuthenticatedMessagesRouteWithChildren =
+  AuthenticatedMessagesRoute._addFileChildren(
+    AuthenticatedMessagesRouteChildren,
+  )
+
 interface AuthenticatedRouteChildren {
   AuthenticatedUsernameRoute: typeof AuthenticatedUsernameRouteWithChildren
   AuthenticatedFriendsRoute: typeof AuthenticatedFriendsRouteWithChildren
+  AuthenticatedMessagesRoute: typeof AuthenticatedMessagesRouteWithChildren
   AuthenticatedHomeIndexRoute: typeof AuthenticatedHomeIndexRoute
   AuthenticatedPostsPostIdIndexRoute: typeof AuthenticatedPostsPostIdIndexRoute
 }
@@ -448,6 +561,7 @@ interface AuthenticatedRouteChildren {
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedUsernameRoute: AuthenticatedUsernameRouteWithChildren,
   AuthenticatedFriendsRoute: AuthenticatedFriendsRouteWithChildren,
+  AuthenticatedMessagesRoute: AuthenticatedMessagesRouteWithChildren,
   AuthenticatedHomeIndexRoute: AuthenticatedHomeIndexRoute,
   AuthenticatedPostsPostIdIndexRoute: AuthenticatedPostsPostIdIndexRoute,
 }
@@ -462,6 +576,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/$username': typeof AuthenticatedUsernameLayoutRouteWithChildren
   '/friends': typeof AuthenticatedFriendsLayoutRouteWithChildren
+  '/messages': typeof AuthenticatedMessagesLayoutRouteWithChildren
   '/new-password': typeof authNewPasswordIndexRoute
   '/register': typeof authRegisterIndexRoute
   '/reset': typeof authResetIndexRoute
@@ -469,6 +584,7 @@ export interface FileRoutesByFullPath {
   '/$username/': typeof AuthenticatedUsernameIndexRoute
   '/friends/': typeof AuthenticatedFriendsIndexRoute
   '/home': typeof AuthenticatedHomeIndexRoute
+  '/messages/': typeof AuthenticatedMessagesIndexRoute
   '/$username/add': typeof AuthenticatedUsernameAddIndexRoute
   '/$username/edit': typeof AuthenticatedUsernameEditIndexRoute
   '/posts/$postId': typeof AuthenticatedPostsPostIdIndexRoute
@@ -478,6 +594,8 @@ export interface FileRoutesByFullPath {
   '/friends/friend-request': typeof AuthenticatedFriendsLayoutFriendRequestIndexRoute
   '/friends/list': typeof AuthenticatedFriendsLayoutListIndexRoute
   '/friends/pending-request': typeof AuthenticatedFriendsLayoutPendingRequestIndexRoute
+  '/messages/conversations': typeof AuthenticatedMessagesLayoutConversationsIndexRoute
+  '/messages/conversations/$conversationId': typeof AuthenticatedMessagesLayoutConversationsLayoutConversationIdIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -486,6 +604,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/$username': typeof AuthenticatedUsernameIndexRoute
   '/friends': typeof AuthenticatedFriendsIndexRoute
+  '/messages': typeof AuthenticatedMessagesIndexRoute
   '/new-password': typeof authNewPasswordIndexRoute
   '/register': typeof authRegisterIndexRoute
   '/reset': typeof authResetIndexRoute
@@ -500,6 +619,8 @@ export interface FileRoutesByTo {
   '/friends/friend-request': typeof AuthenticatedFriendsLayoutFriendRequestIndexRoute
   '/friends/list': typeof AuthenticatedFriendsLayoutListIndexRoute
   '/friends/pending-request': typeof AuthenticatedFriendsLayoutPendingRequestIndexRoute
+  '/messages/conversations': typeof AuthenticatedMessagesLayoutConversationsIndexRoute
+  '/messages/conversations/$conversationId': typeof AuthenticatedMessagesLayoutConversationsLayoutConversationIdIndexRoute
 }
 
 export interface FileRoutesById {
@@ -511,6 +632,8 @@ export interface FileRoutesById {
   '/_authenticated/$username/_layout': typeof AuthenticatedUsernameLayoutRouteWithChildren
   '/_authenticated/friends': typeof AuthenticatedFriendsRouteWithChildren
   '/_authenticated/friends/_layout': typeof AuthenticatedFriendsLayoutRouteWithChildren
+  '/_authenticated/messages': typeof AuthenticatedMessagesRouteWithChildren
+  '/_authenticated/messages/_layout': typeof AuthenticatedMessagesLayoutRouteWithChildren
   '/(auth)/new-password/': typeof authNewPasswordIndexRoute
   '/(auth)/register/': typeof authRegisterIndexRoute
   '/(auth)/reset/': typeof authResetIndexRoute
@@ -518,6 +641,7 @@ export interface FileRoutesById {
   '/_authenticated/$username/': typeof AuthenticatedUsernameIndexRoute
   '/_authenticated/friends/': typeof AuthenticatedFriendsIndexRoute
   '/_authenticated/home/': typeof AuthenticatedHomeIndexRoute
+  '/_authenticated/messages/': typeof AuthenticatedMessagesIndexRoute
   '/_authenticated/$username/add/': typeof AuthenticatedUsernameAddIndexRoute
   '/_authenticated/$username/edit/': typeof AuthenticatedUsernameEditIndexRoute
   '/_authenticated/posts/$postId/': typeof AuthenticatedPostsPostIdIndexRoute
@@ -527,6 +651,8 @@ export interface FileRoutesById {
   '/_authenticated/friends/_layout/friend-request/': typeof AuthenticatedFriendsLayoutFriendRequestIndexRoute
   '/_authenticated/friends/_layout/list/': typeof AuthenticatedFriendsLayoutListIndexRoute
   '/_authenticated/friends/_layout/pending-request/': typeof AuthenticatedFriendsLayoutPendingRequestIndexRoute
+  '/_authenticated/messages/_layout/conversations/': typeof AuthenticatedMessagesLayoutConversationsIndexRoute
+  '/_authenticated/messages/_layout/conversations/_layout/$conversationId/': typeof AuthenticatedMessagesLayoutConversationsLayoutConversationIdIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -537,6 +663,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/$username'
     | '/friends'
+    | '/messages'
     | '/new-password'
     | '/register'
     | '/reset'
@@ -544,6 +671,7 @@ export interface FileRouteTypes {
     | '/$username/'
     | '/friends/'
     | '/home'
+    | '/messages/'
     | '/$username/add'
     | '/$username/edit'
     | '/posts/$postId'
@@ -553,6 +681,8 @@ export interface FileRouteTypes {
     | '/friends/friend-request'
     | '/friends/list'
     | '/friends/pending-request'
+    | '/messages/conversations'
+    | '/messages/conversations/$conversationId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -560,6 +690,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/$username'
     | '/friends'
+    | '/messages'
     | '/new-password'
     | '/register'
     | '/reset'
@@ -574,6 +705,8 @@ export interface FileRouteTypes {
     | '/friends/friend-request'
     | '/friends/list'
     | '/friends/pending-request'
+    | '/messages/conversations'
+    | '/messages/conversations/$conversationId'
   id:
     | '__root__'
     | '/'
@@ -583,6 +716,8 @@ export interface FileRouteTypes {
     | '/_authenticated/$username/_layout'
     | '/_authenticated/friends'
     | '/_authenticated/friends/_layout'
+    | '/_authenticated/messages'
+    | '/_authenticated/messages/_layout'
     | '/(auth)/new-password/'
     | '/(auth)/register/'
     | '/(auth)/reset/'
@@ -590,6 +725,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$username/'
     | '/_authenticated/friends/'
     | '/_authenticated/home/'
+    | '/_authenticated/messages/'
     | '/_authenticated/$username/add/'
     | '/_authenticated/$username/edit/'
     | '/_authenticated/posts/$postId/'
@@ -599,6 +735,8 @@ export interface FileRouteTypes {
     | '/_authenticated/friends/_layout/friend-request/'
     | '/_authenticated/friends/_layout/list/'
     | '/_authenticated/friends/_layout/pending-request/'
+    | '/_authenticated/messages/_layout/conversations/'
+    | '/_authenticated/messages/_layout/conversations/_layout/$conversationId/'
   fileRoutesById: FileRoutesById
 }
 
@@ -651,6 +789,7 @@ export const routeTree = rootRoute
       "children": [
         "/_authenticated/$username",
         "/_authenticated/friends",
+        "/_authenticated/messages",
         "/_authenticated/home/",
         "/_authenticated/posts/$postId/"
       ]
@@ -694,6 +833,22 @@ export const routeTree = rootRoute
         "/_authenticated/friends/_layout/pending-request/"
       ]
     },
+    "/_authenticated/messages": {
+      "filePath": "_authenticated/messages",
+      "parent": "/_authenticated",
+      "children": [
+        "/_authenticated/messages/_layout",
+        "/_authenticated/messages/"
+      ]
+    },
+    "/_authenticated/messages/_layout": {
+      "filePath": "_authenticated/messages/_layout.tsx",
+      "parent": "/_authenticated/messages",
+      "children": [
+        "/_authenticated/messages/_layout/conversations/",
+        "/_authenticated/messages/_layout/conversations/_layout/$conversationId/"
+      ]
+    },
     "/(auth)/new-password/": {
       "filePath": "(auth)/new-password/index.tsx"
     },
@@ -717,6 +872,10 @@ export const routeTree = rootRoute
     "/_authenticated/home/": {
       "filePath": "_authenticated/home/index.tsx",
       "parent": "/_authenticated"
+    },
+    "/_authenticated/messages/": {
+      "filePath": "_authenticated/messages/index.tsx",
+      "parent": "/_authenticated/messages"
     },
     "/_authenticated/$username/add/": {
       "filePath": "_authenticated/$username/add/index.tsx",
@@ -753,6 +912,14 @@ export const routeTree = rootRoute
     "/_authenticated/friends/_layout/pending-request/": {
       "filePath": "_authenticated/friends/_layout/pending-request/index.tsx",
       "parent": "/_authenticated/friends/_layout"
+    },
+    "/_authenticated/messages/_layout/conversations/": {
+      "filePath": "_authenticated/messages/_layout/conversations/index.tsx",
+      "parent": "/_authenticated/messages/_layout"
+    },
+    "/_authenticated/messages/_layout/conversations/_layout/$conversationId/": {
+      "filePath": "_authenticated/messages/_layout/conversations/_layout/$conversationId/index.tsx",
+      "parent": "/_authenticated/messages/_layout"
     }
   }
 }

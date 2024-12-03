@@ -13,6 +13,7 @@ export const Route = createFileRoute("/_authenticated/$username/_layout")({
 
 function Layout() {
   const { username } = useParams({ strict: false });
+
   const NAV_LINKS = [
     {
       label: "posts",

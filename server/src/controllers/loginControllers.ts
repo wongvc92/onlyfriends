@@ -22,7 +22,7 @@ export const loginUser = async (req: Request, res: Response) => {
     const { email, password, code } = req.body;
 
     if (!email || !password) {
-      res.status(400).json({ message: "Please provide email or password!" });
+      res.status(401).json({ message: "Please provide email or password!" });
       return;
     }
 
@@ -31,7 +31,7 @@ export const loginUser = async (req: Request, res: Response) => {
     ]);
 
     if (userData.rows.length === 0) {
-      res.status(400).json({ message: "User not found!" });
+      res.status(401).json({ message: "User not found!" });
       return;
     }
 
@@ -68,17 +68,17 @@ export const loginUser = async (req: Request, res: Response) => {
         const twoFactorToken: ITwoFactorToken = twoFactorTokenData.rows[0];
         console.log("twoFactorToken", twoFactorToken);
         if (!twoFactorToken) {
-          res.status(400).json({ message: "Invalid code!" });
+          res.status(401).json({ message: "Invalid code!" });
           return;
         }
 
         if (twoFactorToken.token !== code) {
-          res.status(400).json({ message: "Invalid code!" });
+          res.status(401).json({ message: "Invalid code!" });
           return;
         }
         const hasExpired = new Date(twoFactorToken.expires) < new Date();
         if (hasExpired) {
-          res.status(400).json({ message: "Code expired" });
+          res.status(401).json({ message: "Code expired" });
           return;
         }
 
@@ -121,12 +121,16 @@ export const loginUser = async (req: Request, res: Response) => {
         username: existingUser.username,
       },
       process.env.JWT_SECRET_KEY!,
-      { expiresIn: "15m" } // 15 minutes
+      { expiresIn: "5m" } // 15 minutes
     );
 
     // Generate Refresh Token (longer-lived)
     const refreshToken = jwt.sign(
-      { id: existingUser.id },
+      {
+        id: existingUser.id,
+        email: existingUser.email,
+        username: existingUser.username,
+      },
       process.env.REFRESH_TOKEN_SECRET!,
       { expiresIn: "7d" } // 7 days
     );
@@ -136,7 +140,7 @@ export const loginUser = async (req: Request, res: Response) => {
       httpOnly: true,
       secure, // set to false for local testing
       sameSite,
-      maxAge: 15 * 60 * 1000, // 15 minutes
+      maxAge: 5 * 60 * 1000, // 15 minutes
       path: "/",
     });
 
@@ -170,11 +174,10 @@ export const loginUser = async (req: Request, res: Response) => {
 
 export const refreshAccessToken = (req: Request, res: Response) => {
   try {
-    console.log("refreshAccessToken hit");
     const refreshToken = req.cookies.refreshToken;
     console.log("refreshToken", refreshToken);
     if (!refreshToken) {
-      res.status(400).json({ message: "Refresh token not found" });
+      res.status(401).json({ message: "Refresh token not found" });
       return;
     }
 
@@ -191,14 +194,14 @@ export const refreshAccessToken = (req: Request, res: Response) => {
         image: decoded.image,
       },
       process.env.JWT_SECRET_KEY!,
-      { expiresIn: "15m" }
+      { expiresIn: "5m" }
     );
 
     res.cookie("accessToken", newAccessToken, {
       httpOnly: true,
       secure, // set to false for local testing
       sameSite,
-      maxAge: 15 * 60 * 1000,
+      maxAge: 5 * 60 * 1000,
       path: "/",
     });
     res.status(200).json({ accessToken: newAccessToken });
