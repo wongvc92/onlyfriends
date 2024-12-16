@@ -1,9 +1,10 @@
-import { getMessagesById } from "@/data/getMessagesById";
+import { getMessagesById } from "@/data/message/getMessagesById";
 import { useQuery } from "@tanstack/react-query";
+import { messageKeys } from "./messageKeys";
 
 export const useGetMessages = (conversationId?: string) => {
   return useQuery({
-    queryKey: ["messages", conversationId],
+    queryKey: messageKeys.list(conversationId as string),
     queryFn: () => getMessagesById(conversationId as string),
     enabled: !!conversationId,
   });

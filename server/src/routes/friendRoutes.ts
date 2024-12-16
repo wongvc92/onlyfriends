@@ -1,36 +1,14 @@
 import { Router } from "express";
-import { authenticateJWT } from "../middleware/authenticateJWT";
-import {
-  addFriends,
-  deleteFriends,
-  editFriendStatus,
-  getAcceptedFriends,
-  getFriendsRequest,
-  getFriendStatusByPeopleId,
-  getSentFriendRequests,
-} from "../controllers/friendControllers";
+import { friendControllers } from "../controllers/friend.controllers";
 
 const friendRoutes = Router();
 
-friendRoutes.post("/api/friends", authenticateJWT, addFriends);
-friendRoutes.delete("/api/friends/:peopleId", authenticateJWT, deleteFriends);
-
-friendRoutes.put(
-  "/api/friends/:friendRequestId",
-  authenticateJWT,
-  editFriendStatus
-);
-friendRoutes.get("/api/friends/requests", authenticateJWT, getFriendsRequest);
-friendRoutes.get(
-  "/api/friends/sent-requests",
-  authenticateJWT,
-  getSentFriendRequests
-);
-friendRoutes.get("/api/friends/accepted", authenticateJWT, getAcceptedFriends);
-friendRoutes.get(
-  "/api/friends/status/:peopleId",
-  authenticateJWT,
-  getFriendStatusByPeopleId
-);
+friendRoutes.post("/", friendControllers.createFriend);
+friendRoutes.delete("/:peopleId", friendControllers.deleteFriend);
+friendRoutes.put("/:friendRequestId", friendControllers.editFriendStatusById);
+friendRoutes.get("/requests", friendControllers.getFriendRequests);
+friendRoutes.get("/sent-requests", friendControllers.getSentFriendRequests);
+friendRoutes.get("/accepted", friendControllers.getAcceptedFriends);
+friendRoutes.get("/status/:peopleId", friendControllers.getFriendStatusByPeopleId);
 
 export default friendRoutes;

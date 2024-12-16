@@ -1,9 +1,11 @@
 import { Router } from "express";
-import { getUser } from "../controllers/userControllers";
 import { authenticateJWT } from "../middleware/authenticateJWT";
-import { refreshAccessToken } from "../controllers/loginControllers";
+import { authControllers } from "../controllers/auth.controllers";
 
 const authRoutes = Router();
-authRoutes.get("/api/user", authenticateJWT, getUser);
-authRoutes.post("/api/refresh-token", refreshAccessToken);
+authRoutes.get("/renew-access-token", authControllers.renewAccessToken);
+authRoutes.post("/login", authControllers.loginUser);
+authRoutes.post("/logout", authenticateJWT, authControllers.logoutUser);
+authRoutes.post("/register", authControllers.registerUser);
+authRoutes.post("/verify-email", authControllers.verifyEmailByToken);
 export default authRoutes;

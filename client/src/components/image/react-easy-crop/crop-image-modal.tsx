@@ -4,7 +4,7 @@ import { Slider } from "@/components/ui/slider";
 import { Dispatch, SetStateAction } from "react";
 import { useImageCropContext } from "@/providers/image-crop-provider";
 
-import { useImageUploadManager } from "@/hooks/useImageUploadManager";
+import { useImageUploadManager } from "@/hooks/common/useImageUploadManager";
 import Cropper from "./cropper";
 import Spinner from "@/components/ui/spinner";
 

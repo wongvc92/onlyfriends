@@ -1,5 +1,5 @@
 export interface IPost {
-  id: number;
+  id: string;
   post: string;
   created_at: Date;
   updated_at: Date;

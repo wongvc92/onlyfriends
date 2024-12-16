@@ -1,15 +1,27 @@
 import React, { forwardRef, useImperativeHandle, useRef } from "react";
-import { Textarea } from "./textarea";
+import { Textarea, TextareaProps } from "./textarea";
 
-interface DynamicTextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+interface DynamicTextareaProps extends TextareaProps {
   rows?: number;
 }
 
 const DynamicTextarea = forwardRef<HTMLTextAreaElement, DynamicTextareaProps>((props, ref) => {
-  const { rows, ...rest } = props;
+  const { rows = 1, onKeyDown, ...rest } = props; // Destructure onKeyDown to forward it
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
-  useImperativeHandle(ref, () => textareaRef.current as HTMLTextAreaElement);
+  // useImperativeHandle(
+  //   ref,
+  //   () =>
+  //     ({
+  //       ...(textareaRef.current || {}),
+  //       resetHeight: () => {
+  //         if (textareaRef.current) {
+  //           textareaRef.current.style.height = "auto";
+  //           textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+  //         }
+  //       },
+  //     }) as HTMLTextAreaElement & { resetHeight: () => void }
+  // );
 
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const target = e.target;
@@ -29,6 +41,7 @@ const DynamicTextarea = forwardRef<HTMLTextAreaElement, DynamicTextareaProps>((p
         }
       }}
       onInput={handleInput}
+      onKeyDown={onKeyDown}
       style={{ overflow: "hidden" }}
     />
   );

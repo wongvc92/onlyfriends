@@ -1,25 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
+import { profileKeys } from "./profileKeys";
+import apiClient from "@/utils/apiClient";
 import { IProfile } from "@/types/IProfiles";
-import { basePath } from "@/utils/utils";
 
-const getProfileByUsername = async (username: string) => {
-  const url = basePath(`/api/profiles/${username}`);
-
-  const res = await fetch(url, {
-    method: "GET",
-    credentials: "include",
-  });
-  if (!res.ok) {
-    throw new Error("Failed to fetch profile");
-  }
-  const data = await res.json();
-  const profile: IProfile = data.profile;
-  return profile;
+const getProfileByUsername = async (username: string): Promise<IProfile> => {
+  const url = `/api/profiles/${username}`;
+  const res = await apiClient.get(url);
+  return res.data.profile;
 };
 
-export const useGetProfile = (username?: string) => {
+export const useGetProfile = ({ username }: { username?: string }) => {
   return useQuery({
-    queryKey: ["peofiles", username],
+    queryKey: profileKeys.detail(username as string),
     queryFn: () => getProfileByUsername(username as string),
     enabled: !!username,
   });

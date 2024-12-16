@@ -1,45 +1,58 @@
-import { useSocketContext } from "@/context/socket";
 import { Button } from "../ui/button";
 import { useParams, useSearch } from "@tanstack/react-router";
 import { useAuth } from "@/context/auth";
 import { IoSend } from "react-icons/io5";
 import DynamicTextarea from "../ui/dynamic-textarea";
 import { useGetProfile } from "@/hooks/profile/useGetProfile";
+import { IPrivateMessage } from "@/types/IPrivateMessage";
 import { useCreateMessage } from "@/hooks/message/useCreateMessage";
+import { useState } from "react";
+import { messageSchema } from "@/validation/messageSchema";
+import { toast } from "sonner";
 
 const AddForm = () => {
-  const socket = useSocketContext();
-  const { conversationId } = useParams({ strict: false });
+  const { conversationId } = useParams({ from: "/_authenticated/messages/_layout/conversations/_layout/$conversationId/" });
   const auth = useAuth();
   const { username } = useSearch({ strict: false });
-  const { data: profile } = useGetProfile(username);
-  const { mutate } = useCreateMessage();
+  const { data: profile } = useGetProfile({ username });
+  const { mutate, isPending } = useCreateMessage();
+  const [inputValue, setInputValue] = useState("");
 
+  const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    e.preventDefault();
+    setInputValue(e.target.value);
+  };
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const formData = new FormData(e.currentTarget);
-    const text = formData.get("text") as string;
-
-    if (!auth.user?.id || !profile?.user_id || !conversationId) return;
-    const newMessage = {
-      text,
-      sender_id: auth.user.id,
-      recipient_id: profile.user_id,
+    const privivateMessage: IPrivateMessage = {
+      text: inputValue,
+      sender_id: auth.user?.id!,
+      recipient_id: profile?.user_id!,
       conversationId,
     };
-    mutate(newMessage);
-    if (socket && text.trim()) {
-      socket.emit("send_message", newMessage);
-      e.currentTarget.reset();
+
+    const parsedResult = messageSchema.safeParse(privivateMessage);
+    if (!parsedResult.success) {
+      console.log("error: ", parsedResult.error.errors.map((e) => `${e.path}-${e.message}`).join(", "));
+      toast.error("Please check input.");
+      return;
     }
+    mutate(
+      { privivateMessage: parsedResult.data as IPrivateMessage },
+      {
+        onSuccess: () => {
+          setInputValue("");
+        },
+      }
+    );
   };
 
   return (
     <form onSubmit={onSubmit}>
       <div className="relative">
-        <DynamicTextarea name="text" id="text" className="pr-20" />
-        <Button type="submit" className="absolute right-1 bottom-1">
+        <DynamicTextarea name="text" id="text" className="pr-20" value={inputValue} onChange={onChange} disabled={isPending} />
+        <Button type="submit" className="absolute right-1 bottom-1" disabled={isPending || inputValue.length === 0}>
           <IoSend />
         </Button>
       </div>

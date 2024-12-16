@@ -1,25 +1,20 @@
 import { NextFunction, Request, Response } from "express";
-import { jwtDecode } from "jwt-decode";
-import BadRequestError from "../error/BadRequestError";
+import AuthError from "../error/AuthError";
+import { jwtUtils } from "../utils/jwt";
+import { config } from "../config/app.config";
 
-export const authenticateJWT = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const authenticateJWT = (req: Request, res: Response, next: NextFunction) => {
   try {
-    const token = req.cookies.accessToken;
-    if (!token) {
-      throw new BadRequestError("Authentication token not found");
+    const accessToken = req.cookies.accessToken;
+    if (!accessToken) {
+      throw new AuthError("access token not found");
     }
 
-    const decoded = jwtDecode<{ id: string; username: string; email: string }>(
-      token
-    );
+    const decoded = jwtUtils.decodeToken({ requestToken: accessToken, tokenSecret: config.JWT.ACCESS_TOKEN_SECRET });
 
-    req.user = decoded;
+    req.user = decoded as { id: string; username: string; email: string };
     next();
   } catch (error) {
-    next();
+    next(error);
   }
 };

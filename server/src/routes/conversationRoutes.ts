@@ -1,12 +1,9 @@
 import express from "express";
-import {
-  createConversation,
-  getAllConversations,
-} from "../controllers/conversationControllers";
+import { conversationControllers } from "../controllers/conversation.controllers";
 
 const conversationRoutes = express.Router();
 
-conversationRoutes.post("/", createConversation);
-conversationRoutes.get("/", getAllConversations);
+conversationRoutes.post("/", conversationControllers.createConversation);
+conversationRoutes.get("/", conversationControllers.getAllConversations);
 
 export default conversationRoutes;

@@ -1,18 +1,24 @@
 import { ErrorRequestHandler } from "express";
 import CustomError from "../error/CustomError";
 import { ZodError } from "zod";
+import { HTTPSTATUS } from "../config/http.config";
 
-export const errorHandler: ErrorRequestHandler = (error, req, res, next) => {
-  console.error("Error stack:", error.stack);
+export const errorHandler: ErrorRequestHandler = (error, req, res, next): any => {
+  console.error("Error stack:", error.stack, req.path);
+  console.error("Error path:", req.path);
 
   if (error instanceof CustomError) {
     // Handle custom errors
-    res.status(error.statusCode).json({ message: error.message });
+    return res.status(error.statusCode).json({ message: error.message });
+  }
+
+  if (error instanceof SyntaxError) {
+    return res.status(HTTPSTATUS.BAD_REQUEST).json({ message: "Invalid JSON format" });
   }
 
   if (error instanceof ZodError) {
     // Handle zod errors
-    res.status(400).json({
+    return res.status(HTTPSTATUS.BAD_REQUEST).json({
       message: "Validation Error",
       errors: error.errors.map((e) => ({
         path: e.path,
@@ -21,7 +27,7 @@ export const errorHandler: ErrorRequestHandler = (error, req, res, next) => {
     });
   }
   // Handle generic errors
-  res.status(500).json({
+  return res.status(HTTPSTATUS.INTERNAL_SERVER_ERROR).json({
     message: error.message,
   });
 };

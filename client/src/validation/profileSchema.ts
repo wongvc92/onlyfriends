@@ -2,7 +2,7 @@ import { z } from "zod";
 import { allowedImageDomains } from "../lib/constant";
 
 export const profileSchema = z.object({
-  id: z.number().int().optional(),
+  id: z.string().uuid().optional(),
   name: z.string().max(255).optional().nullable(),
   bio: z.string().max(255, { message: "Bio must contain at most 255 character(s)" }).optional().nullable(),
   banner_image: z
@@ -19,7 +19,8 @@ export const profileSchema = z.object({
         }
       },
       { message: "Image URL must be from an allowed domain" }
-    ),
+    )
+    .catch(""),
   display_image: z
     .string()
     .url()
@@ -34,7 +35,8 @@ export const profileSchema = z.object({
         }
       },
       { message: "Image URL must be from an allowed domain" }
-    ),
+    )
+    .catch(""),
   location: z.string().max(255).optional().nullable(),
   website: z
     .string()

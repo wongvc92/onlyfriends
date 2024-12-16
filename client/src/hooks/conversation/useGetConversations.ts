@@ -1,28 +1,15 @@
 import { ConversationsSchema } from "@/routes/_authenticated/messages";
 import { Iconversation } from "@/types/IConversation";
-import { basePath, buildSearchParams } from "@/utils/utils";
+import apiClient from "@/utils/apiClient";
+import { basePath, buildSearchParams } from "@/utils/basePath";
 import { useQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
+import { conversationKeys } from "./conversationKeys";
 
-export const getAllConversations = async (
-  query?: string
-): Promise<Iconversation[]> => {
+export const getAllConversations = async (query?: string): Promise<Iconversation[]> => {
   const url = basePath("/api/conversations") + buildSearchParams({ query });
-
-  console.log("getAllConversations", url);
-
-  const res = await fetch(url, {
-    method: "GET",
-    credentials: "include",
-  });
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch profile");
-  }
-
-  const data = await res.json();
-  const conversations = data.conversations;
-
+  const res = await apiClient.get(url);
+  const { conversations } = res.data;
   return conversations;
 };
 
@@ -32,7 +19,7 @@ export const useGetConversations = () => {
   const { query } = routeSearch as ConversationsSchema;
 
   return useQuery({
-    queryKey: ["conversations", query],
+    queryKey: conversationKeys.list(query || ""),
     queryFn: () => getAllConversations(query),
   });
 };

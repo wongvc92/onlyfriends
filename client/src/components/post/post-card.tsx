@@ -1,12 +1,5 @@
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { DotFilledIcon } from "@radix-ui/react-icons";
-import Likes from "./Likes";
 import { PiShareFatBold } from "react-icons/pi";
 import { Link, useLocation } from "@tanstack/react-router";
 import { getrelativeTime } from "@/utils/getrelativeTime";
@@ -20,6 +13,7 @@ import ProfileImage from "../profile/profile-image";
 import ProfileName from "../profile/profile-name";
 import ProfileUsername from "../profile/profile-username";
 import { cn } from "@/lib/utils";
+import Likes from "./like-status";
 
 const PostCard = ({ post }: { post: IPost }) => {
   const [isEdit, setIsEdit] = useState(false);
@@ -29,15 +23,8 @@ const PostCard = ({ post }: { post: IPost }) => {
   });
 
   return (
-    <Card
-      key={post.id}
-      className="border-0 shadow-none px-0 border-b rounded-none"
-    >
-      <CardHeader
-        className={cn(
-          pathname === `/posts/${post.id}` && `sticky top-0 bg-white z-10`
-        )}
-      >
+    <Card key={post.id} className="border-0 shadow-none px-0 border-b rounded-none">
+      <CardHeader className={cn(pathname === `/posts/${post.id}` && `sticky top-0 bg-white z-10`)}>
         <div className="flex gap-1">
           <Link to={`/${post.username}`}>
             <ProfileImage image={post.display_image} username={post.username} />
@@ -46,9 +33,7 @@ const PostCard = ({ post }: { post: IPost }) => {
             <ProfileName name={post.name} />
             <ProfileUsername username={post.username} />
             <DotFilledIcon />
-            <p className="text-muted-foreground font-light">
-              {getrelativeTime(post.created_at)}
-            </p>
+            <p className="text-muted-foreground font-light">{getrelativeTime(post.created_at)}</p>
           </CardTitle>
           <Link to={`/posts/${post.id}`} className="flex-grow">
             <div className="flex-grow w-full border opacity-0">click here</div>
@@ -59,13 +44,7 @@ const PostCard = ({ post }: { post: IPost }) => {
         </div>
       </CardHeader>
 
-      <CardContent>
-        {isEdit ? (
-          <EditPostForm setIsEdit={setIsEdit} post={post} />
-        ) : (
-          <PostContent post={post} />
-        )}
-      </CardContent>
+      <CardContent>{isEdit ? <EditPostForm setIsEdit={setIsEdit} post={post} /> : <PostContent post={post} />}</CardContent>
       <CardFooter className="flex items-center justify-start gap-6">
         <Likes post={post} />
         <Comments post={post} />

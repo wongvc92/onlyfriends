@@ -1,7 +1,8 @@
 export interface IPeople {
   id: string;
+  display_image: string | null;
   username: string;
-  name: string;
-  bio: string;
-  friendship_status: string;
+  name: string | null;
+  bio: string | null;
+  friendship_status: string | null;
 }

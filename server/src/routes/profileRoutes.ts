@@ -1,15 +1,10 @@
 import { Router } from "express";
-import {
-  addProfile,
-  editProfile,
-  getProfile,
-} from "../controllers/profileControllers";
-import { authenticateJWT } from "../middleware/authenticateJWT";
+import { profileControllers } from "../controllers/profile.controllers";
 
 const profileRoutes = Router();
 
-profileRoutes.post("/api/profiles", authenticateJWT, addProfile);
-profileRoutes.get("/api/profiles/:username", authenticateJWT, getProfile);
-profileRoutes.put("/api/profiles/:profileId", authenticateJWT, editProfile);
+profileRoutes.post("/", profileControllers.createProfile);
+profileRoutes.get("/:username", profileControllers.getProfileByUsername);
+profileRoutes.put("/:profileId", profileControllers.editProfileById);
 
 export default profileRoutes;

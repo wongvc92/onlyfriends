@@ -1,4 +1,4 @@
-import { useImageUploadManager } from "@/hooks/useImageUploadManager";
+import { useImageUploadManager } from "@/hooks/common/useImageUploadManager";
 import { useRef, useState } from "react";
 import { PiXCircleBold } from "react-icons/pi";
 
@@ -15,19 +15,10 @@ interface ImageUploaderProps {
   value?: string;
   imageShape?: "rounded-full";
 }
-const ImageUploader: React.FC<ImageUploaderProps> = ({
-  onChange,
-  value,
-  imageShape,
-}) => {
+const ImageUploader: React.FC<ImageUploaderProps> = ({ onChange, value, imageShape }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const {
-    uploadSingleImage,
-    deleteSingleImage,
-    isPendingUpload,
-    isPendingDelete,
-  } = useImageUploadManager();
+  const { uploadSingleImage, deleteSingleImage, isPendingUpload, isPendingDelete } = useImageUploadManager();
   const { setImageToCrop, setImageToDelete, aspect } = useImageCropContext();
   const imageInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -68,9 +59,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
     onChange(imageUrl);
   };
 
-  const handleOpenCropModal = async (
-    e: React.MouseEvent<HTMLButtonElement>
-  ) => {
+  const handleOpenCropModal = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setIsOpen(true);
     if (!value) return;
@@ -81,42 +70,17 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
   };
   return (
     <>
-      <div
-        className={`relative  h-[200px] aspect-[${aspect}] flex justify-center items-center bg-muted`}
-      >
+      <div className={`relative  h-[200px] aspect-[${aspect}] flex justify-center items-center bg-muted`}>
         {isPendingUpload ? (
           <Spinner />
         ) : value ? (
           <>
-            <img
-              src={value}
-              className={`object-cover w-full h-full ${imageShape}`}
-            />
-            <Button
-              className="absolute -top-1 -right-1"
-              onClick={handleDeleteImage}
-              type="button"
-              size="icon"
-              variant="link"
-            >
-              {isPendingDelete ? (
-                <Spinner size="2" />
-              ) : (
-                <BsXCircleFill color="gray" />
-              )}
+            <img src={value} className={`object-cover w-full h-full ${imageShape}`} />
+            <Button className="absolute -top-1 -right-1" onClick={handleDeleteImage} type="button" size="icon" variant="link">
+              {isPendingDelete ? <Spinner size="2" /> : <BsXCircleFill color="gray" />}
             </Button>
-            <Button
-              className="absolute -top-1 -left-1"
-              onClick={handleOpenCropModal}
-              type="button"
-              size="icon"
-              variant="link"
-            >
-              {isPendingUpload ? (
-                <Spinner size="2" />
-              ) : (
-                <CropIcon color="gray" />
-              )}
+            <Button className="absolute -top-1 -left-1" onClick={handleOpenCropModal} type="button" size="icon" variant="link">
+              {isPendingUpload ? <Spinner size="2" /> : <CropIcon color="gray" />}
             </Button>
           </>
         ) : (
@@ -135,18 +99,8 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
         )}
       </div>
 
-      <input
-        ref={imageInputRef}
-        hidden
-        type="file"
-        accept="image/*"
-        onChange={handleFileChange}
-      />
-      <CropImageModal
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        onChange={onChange}
-      />
+      <input ref={imageInputRef} hidden type="file" accept="image/*" onChange={handleFileChange} />
+      <CropImageModal isOpen={isOpen} setIsOpen={setIsOpen} onChange={onChange} />
     </>
   );
 };

@@ -3,11 +3,9 @@ import MessageList from "@/components/message/message-list";
 import MessageProfile from "@/components/message/message-profile";
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute(
-  "/_authenticated/messages/_layout/conversations/_layout/$conversationId/"
-)({
+export const Route = createFileRoute("/_authenticated/messages/_layout/conversations/_layout/$conversationId/")({
   component: () => (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col bg-gray-50">
       {/* Profile at the top */}
       <MessageProfile />
 

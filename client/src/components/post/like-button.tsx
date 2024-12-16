@@ -1,49 +1,22 @@
 import { HeartIcon } from "@radix-ui/react-icons";
 import { Button } from "../ui/button";
 import { IPost } from "@/types/IPost";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-
-const BASE_URL = import.meta.env.VITE_SERVER_URL!;
+import { useCreateLike } from "@/hooks/post/useCreateLike";
 
 const LikeButton = ({ post }: { post: IPost }) => {
-  const queryClient = useQueryClient();
+  const { mutate, isPending } = useCreateLike({ postId: post.id });
 
-  const likePost = async () => {
-    const url = `${BASE_URL}/api/likes`;
-
-    const res = await fetch(url, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ postId: post.id }),
-    });
-
-    if (!res.ok) {
-      throw new Error("Failed like post");
-    }
-    return await res.json();
-  };
-
-  const { mutate, isPending } = useMutation({
-    mutationFn: likePost,
-    onSuccess: () =>
-      Promise.all([
-        // Invalidate and refetch
-        queryClient.invalidateQueries({ queryKey: [`likes-${post.id}`] }),
-      ]),
-  });
-
-  const onLikePost = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const onLikePost = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     mutate();
   };
 
   return (
-    <Button variant="link" size="icon" onClick={onLikePost} disabled={isPending}>
-      <HeartIcon />
-    </Button>
+    <form onSubmit={onLikePost}>
+      <Button variant="link" size="icon" disabled={isPending} type="submit">
+        <HeartIcon />
+      </Button>
+    </form>
   );
 };
 

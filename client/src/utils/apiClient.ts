@@ -1,62 +1,61 @@
-type ApiClientOptions = RequestInit;
+import axios from "axios";
+import { basePath } from "./basePath";
+import { useNavigate } from "@tanstack/react-router";
 
-const apiClient = async (url: string, options: ApiClientOptions = {}, retry = true): Promise<any> => {
-  try {
-    const response = await fetch(url, {
-      ...options,
-      credentials: "include", // Include cookies
-    });
-
-    if (!response.ok && retry) {
-      // Attempt to refresh the access token
-      const refreshResponse = await fetch("/api/refresh-token", {
-        method: "POST",
-        credentials: "include",
-      });
-
-      if (refreshResponse.ok) {
-        // Retry the original request
-        return apiClient(url, options, false);
-      } else {
-        // Refresh token is invalid or expired
-        console.error("Refresh token failed");
-        // Optionally handle logout or redirection here
-        // window.location.href = "/login";
-        return { error: "An error occurred" };
-        // throw new Error("Session expired. Please log in again.");
-      }
-    }
-
-    if (!response.ok) {
-      // Handle other HTTP errors
-      let errorData: any = {};
-      try {
-        errorData = await response.json();
-      } catch (parseError) {
-        console.error("Error parsing error response:", parseError);
-        // If parsing fails, use status text
-        return { error: errorData.message || "An error occurred" };
-        // errorData.message = response.statusText || "An error occurred";
-      }
-      // throw new Error(errorData.message || "An error occurred");
-    }
-
-    // Parse and return the response data
-    let data: any = {};
-    try {
-      data = await response.json();
-    } catch (parseError) {
-      // Handle cases where there is no content or invalid JSON
-      console.error("Error parsing response data:", parseError);
-      data = null; // or handle as needed
-    }
-
-    return data;
-  } catch (error) {
-    // Optionally, handle network errors differently
-    console.error("Network or server error:", error);
-    throw error;
-  }
+const options = {
+  baseURL: basePath(),
+  withCredentials: true,
+  timeout: 10000,
 };
+
+const apiClient = axios.create(options);
+
+export const APIRefresh = axios.create({
+  baseURL: basePath(),
+  withCredentials: true,
+  timeout: 10000,
+});
+APIRefresh.interceptors.response.use((response) => response);
+
+apiClient.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  async (error) => {
+    const { data, status, config } = error.response;
+
+    console.log("api client status", status);
+    console.log("api client data", data);
+
+    // Prevent retrying for specific endpoints like refresh token
+    if (config.url.includes("/api/auth/renew-access-token")) {
+      return Promise.reject(error);
+    }
+
+    if (status === 401 && data.message === "access token not found") {
+      try {
+        await APIRefresh.get("/api/auth/renew-access-token");
+        return APIRefresh(error.config);
+      } catch (refreshError: any) {
+        const { data: refreshErrorData } = refreshError.response || {};
+
+        if (refreshErrorData?.message === "Refresh token not found") {
+          console.log("Refresh token not found. Redirecting to login...");
+
+          // Prevent loop by ensuring we don't redirect from the login page
+          if (window.location.pathname !== "/") {
+            window.location.href = "/";
+          }
+        } else {
+          console.error("Error refreshing token:", refreshError);
+        }
+      }
+    }
+
+    return Promise.reject({
+      ...data,
+    });
+  }
+);
 
 export default apiClient;

@@ -1,6 +1,6 @@
 import React from "react";
 import Modal from "../ui/modal";
-import PostForm from "./post-form";
+import PostForm from "./add-post-form";
 
 interface PostModalProps {
   isOpen: boolean;

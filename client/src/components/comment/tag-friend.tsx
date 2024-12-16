@@ -1,4 +1,4 @@
-import { getAcceptedFriends } from "@/data/getAcceptedFriends";
+import { getAcceptedFriends } from "@/data/friend/getAcceptedFriends";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import React, { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
@@ -14,26 +14,11 @@ interface TagFriendProps {
   classname?: string;
 }
 
-const TagFriend: React.FC<TagFriendProps> = ({
-  debouncedSearch,
-  handleTaggedFriend,
-  classname,
-}: TagFriendProps) => {
+const TagFriend: React.FC<TagFriendProps> = ({ debouncedSearch, handleTaggedFriend, classname }: TagFriendProps) => {
   const { ref, inView } = useInView();
-  const {
-    status,
-    data,
-    error,
-    isFetching,
-    isFetchingNextPage,
-    fetchNextPage,
-    hasNextPage,
-    isPending,
-    isLoading,
-  } = useInfiniteQuery({
+  const { status, data, error, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage, isPending, isLoading } = useInfiniteQuery({
     queryKey: ["friends-accepted", debouncedSearch],
-    queryFn: ({ pageParam }) =>
-      getAcceptedFriends({ pageParam, debouncedSearch: debouncedSearch }),
+    queryFn: ({ pageParam }) => getAcceptedFriends({ pageParam, debouncedSearch: debouncedSearch }),
     initialPageParam: 1,
     enabled: Boolean(debouncedSearch),
     getNextPageParam: (lastPage) => lastPage.nextPage,
@@ -58,12 +43,7 @@ const TagFriend: React.FC<TagFriendProps> = ({
   return (
     <>
       {data.pages[0].data.length > 0 && (
-        <div
-          className={cn(
-            "absolute p-2 space-y-2 border rounded-md bg-white shadow-lg z-20",
-            classname
-          )}
-        >
+        <div className={cn("absolute p-2 space-y-2 border rounded-md bg-white shadow-lg z-20", classname)}>
           {data?.pages?.map((page, pageIndex) => (
             <React.Fragment key={pageIndex}>
               {page.data.map((friend) => (
@@ -72,31 +52,17 @@ const TagFriend: React.FC<TagFriendProps> = ({
                   className="flex items-center gap-2 p-2 cursor-pointer hover:bg-gray-200"
                   onClick={() => handleTaggedFriend(friend.username)}
                 >
-                  <ProfileImage
-                    image={friend.display_image}
-                    username={friend.username}
-                    classname="w-8 h-8"
-                  />
+                  <ProfileImage image={friend.display_image} username={friend.username} classname="w-8 h-8" />
                   <div>
-                    <ProfileName
-                      name={friend.name}
-                      classname="font-bold text-sm"
-                    />
-                    <ProfileUsername
-                      username={friend.username}
-                      classname="text-xs text-muted-foreground"
-                    />
+                    <ProfileName name={friend.name} classname="font-bold text-sm" />
+                    <ProfileUsername username={friend.username} classname="text-xs text-muted-foreground" />
                   </div>
                 </div>
               ))}
             </React.Fragment>
           ))}
           <div ref={ref} className="text-center">
-            {isFetchingNextPage
-              ? "Loading more..."
-              : hasNextPage
-                ? "Load more"
-                : ""}
+            {isFetchingNextPage ? "Loading more..." : hasNextPage ? "Load more" : ""}
           </div>
         </div>
       )}

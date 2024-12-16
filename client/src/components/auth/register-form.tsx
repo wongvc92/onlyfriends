@@ -4,11 +4,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signUpSchema, TSignUpFormSchema } from "@/validation/registerSchema";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
-import { toast } from "@/hooks/use-toast";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
+import { useRegister } from "@/hooks/auth/useRegister";
+import SubmitButton from "../common/submit-button";
 
 const RegisterForm = () => {
+  const { mutate, isPending } = useRegister();
   const form = useForm<TSignUpFormSchema>({
     resolver: zodResolver(signUpSchema),
     mode: "all",
@@ -20,44 +21,6 @@ const RegisterForm = () => {
     },
   });
 
-  const registerUser = async () => {
-    const url = new URL("http://localhost:5001/api/register");
-
-    const data = {
-      username: form.getValues("username"),
-      email: form.getValues("email"),
-      password: form.getValues("password"),
-    };
-
-    const res = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ ...data }),
-    });
-    if (!res.ok) {
-      const errRes = await res.json();
-      toast({
-        variant: "destructive",
-        description: errRes.message || "Something went wrong. Please try again.",
-      });
-    }
-    const succRes = await res.json();
-    toast({
-      variant: "default",
-      description: succRes.message || "Successfully registered",
-    });
-  };
-
-  const { mutate, isPending } = useMutation({
-    mutationFn: registerUser,
-  });
-
-  const onSubmit = async () => {
-    mutate();
-  };
-
   return (
     <div className="flex flex-col space-y-4 ">
       <div className="flex items-center justify-center my-4">
@@ -66,7 +29,7 @@ const RegisterForm = () => {
         <div className="flex-grow border-t border-gray-300"></div>
       </div>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={form.handleSubmit(() => mutate(form.getValues()))} className="space-y-4">
           <FormField
             name="username"
             render={({ field }) => (
@@ -118,9 +81,7 @@ const RegisterForm = () => {
             )}
           />
 
-          <Button type="submit" className="w-full" disabled={isPending}>
-            Register
-          </Button>
+          <SubmitButton defaultTitle="Register" isLoading={isPending} isLoadingTitle="Registering" className="w-full" />
         </form>
       </Form>
       <p className=" flex items-center gap-1 text-xs font-light text-muted-foreground self-center">

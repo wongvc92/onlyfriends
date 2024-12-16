@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import useDebounce from "../useDebounce";
+import useDebounce from "../common/useDebounce";
 import { useNavigate, useParams, useSearch } from "@tanstack/react-router";
 
 export const useSearchConversation = () => {
@@ -7,6 +7,7 @@ export const useSearchConversation = () => {
   const [inputValue, setInputValue] = useState(currentSearch.query || "");
   const { conversationId } = useParams({ strict: false });
   const debouncedQuery = useDebounce(inputValue, 300);
+
   const navigate = useNavigate({
     from: `/messages/conversations/${conversationId}`,
   });
@@ -28,6 +29,6 @@ export const useSearchConversation = () => {
         replace: true,
       });
     }
-  }, [debouncedQuery, inputValue, currentSearch, navigate]);
+  }, [debouncedQuery, currentSearch, navigate]);
   return { setInputValue, inputValue };
 };
