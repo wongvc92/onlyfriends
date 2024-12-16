@@ -1,4 +1,4 @@
-import RegisterForm from "@/components/auth/register-form";
+import RegisterPage from "@/components/auth/register-page";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/(auth)/register/")({
@@ -11,11 +11,3 @@ export const Route = createFileRoute("/(auth)/register/")({
   },
   component: RegisterPage,
 });
-
-function RegisterPage() {
-  return (
-    <div className="mx-auto max-w-md">
-      <RegisterForm />
-    </div>
-  );
-}

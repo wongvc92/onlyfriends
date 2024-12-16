@@ -1,19 +1,11 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
 import React, { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
-import { useParams } from "@tanstack/react-router";
 import PostCard from "@/components/post/post-card";
-import { getPostsByUsername } from "@/data/getPostsByUsername";
+import { useGetPostsByUsername } from "@/hooks/post/useGetPostsByUsername";
 
 const PersonalPostList = () => {
-  const { username } = useParams({ strict: false });
   const { ref, inView } = useInView();
-  const { status, data, error, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage } = useInfiniteQuery({
-    queryKey: [`posts-${username!}`],
-    queryFn: ({ pageParam }) => getPostsByUsername({ pageParam, username: username as string }),
-    initialPageParam: 1,
-    getNextPageParam: (lastPage) => lastPage.nextPage,
-  });
+  const { status, data, error, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage } = useGetPostsByUsername();
 
   useEffect(() => {
     if (inView) {

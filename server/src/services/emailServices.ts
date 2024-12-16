@@ -1,8 +1,9 @@
 import { Resend } from "resend";
+import { config } from "../config/app.config";
 
-const resend = new Resend(process.env.RESEND_API_KEY!);
-const RESEND_VERIFIED_DOMAIN = process.env.RESEND_VERIFIED_DOMAIN!;
-const PUBLIC_URL = process.env.PUBLIC_URL!;
+const resend = new Resend(config.RESEND.RESEND_API_KEY);
+const RESEND_VERIFIED_DOMAIN = config.RESEND.RESEND_VERIFIED_DOMAIN;
+const PUBLIC_URL = config.APP_ORIGIN;
 
 export const sendEmailVerificationToken = async (email: string, username: string, verificationToken: string) => {
   console.log("PUBLIC_URL", PUBLIC_URL);
@@ -24,7 +25,7 @@ export const sendEmailVerificationToken = async (email: string, username: string
       html: `
           <h1>Thank you for registering, ${username}!</h1>
           <p>Click the link below to verify your email address:</p>
-          <a href="${PUBLIC_URL}/verify-email?token=${verificationToken}">Verify Email</a>
+          <a href="${PUBLIC_URL}//verify-email?token=${verificationToken}">Verify Email</a>
         `,
     });
     if (error) {

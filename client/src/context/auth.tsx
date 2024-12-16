@@ -1,36 +1,14 @@
-import React, { createContext, useState } from "react";
+import React, { createContext } from "react";
 import { IUserClient } from "../types/ICheckAuth";
-import {
-  QueryObserverResult,
-  RefetchOptions,
-  useQuery,
-} from "@tanstack/react-query";
-
-const BASE_URL = import.meta.env.VITE_SERVER_URL!;
-
-const url =
-  process.env.NODE_ENV === "development" ? `${BASE_URL}/api/user` : "/api/user";
-
-export const getUser = async (): Promise<IUserClient> => {
-  const response = await fetch(url, {
-    method: "GET",
-    credentials: "include",
-  });
-  if (!response.ok) {
-    throw new Error("Unable to fetch data");
-  }
-  const data = await response.json();
-  return data.user;
-};
+import { QueryObserverResult, RefetchOptions, useQuery } from "@tanstack/react-query";
+import { getUser } from "@/data/user/getUser";
 
 export interface IAuthContext {
   error: Error | null;
   isLoading: boolean;
   user?: IUserClient | null;
   isAuthenticated: boolean;
-  refetch: (
-    options?: RefetchOptions
-  ) => Promise<QueryObserverResult<any, Error>>;
+  refetch: (options?: RefetchOptions) => Promise<QueryObserverResult<any, Error>>;
 }
 
 const AuthContext = createContext<IAuthContext | null>(null);
@@ -45,16 +23,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   } = useQuery({
     queryKey: ["users"],
     queryFn: getUser,
-    retry: false,
+    staleTime: Infinity,
+    retry: 0,
   });
   let isAuthenticated;
 
   if (isSuccess) {
     isAuthenticated = !!user;
-    // setAuth({ username: user.username, email: user.email, id: user.id });
   }
-
-  console.log("AuthProvider", user);
 
   return (
     <AuthContext.Provider

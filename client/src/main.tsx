@@ -6,10 +6,9 @@ import "../src/main.css";
 import { AuthProvider, useAuth } from "./context/auth";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
-import { RefreshAccessTokenProvider } from "./context/refreshAccessToken";
 import { SocketProvider } from "./context/socket";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({ defaultOptions: { queries: { staleTime: Infinity } } });
 // Set up a Router instance
 const router = createRouter({
   context: {
@@ -38,12 +37,10 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <RefreshAccessTokenProvider>
-          <SocketProvider>
-            <Toaster richColors position="top-center" />
-            <InnerApp />
-          </SocketProvider>
-        </RefreshAccessTokenProvider>
+        <SocketProvider>
+          <Toaster richColors position="top-center" />
+          <InnerApp />
+        </SocketProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

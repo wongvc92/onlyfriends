@@ -1,12 +1,11 @@
 import { Pool } from "pg";
-import dotenv from "dotenv";
 
-dotenv.config({ path: "./server/.env" });
+import { config } from "./app.config";
 
-const connectionString = process.env.DATABASE_URL!;
+const connectionString = config.DATABASE_URL;
 
 if (!connectionString) {
-  console.log("Please provide databse url");
+  console.log("Please provide database url");
 }
 const pool = new Pool({
   connectionString,

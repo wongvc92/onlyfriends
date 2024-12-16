@@ -8,27 +8,21 @@ import { useGetProfile } from "@/hooks/profile/useGetProfile";
 const MessageProfile = () => {
   const { username } = useSearch({ strict: false });
 
-  const { data: profile } = useGetProfile(username);
+  const { data: profile } = useGetProfile({ username });
   if (!profile) return null;
   return (
     <Card className="rounded-none border-none shadow-none">
       <CardHeader>
-        <div className="flex items-center gap-2 bg-white">
-          <ProfileImage
-            image={profile.display_image}
-            username={profile.username}
-          />
+        <div className="flex gap-2 items-center">
+          <ProfileImage image={profile.display_image} username={profile.username} />
+          <div className="flex items-center flex-wrap gap-1 bg-white">
+            <ProfileName name={profile.name} />
+            <ProfileUsername username={profile.username} classname="text-muted-foreground text-xs" />
 
-          <ProfileName name={profile.name} />
-          <ProfileUsername
-            username={profile.username}
-            classname="text-muted-foreground text-xs"
-          />
-
-          {/* 
+            {/* 
             <FriendStatus peopleId={profile.user_id!} /> */}
+          </div>
         </div>
-
         {/* <CardDescription className="line-clamp-2">
             {profile?.bio || ""}
           </CardDescription> */}

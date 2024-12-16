@@ -1,30 +1,13 @@
 import { Router } from "express";
 import { authenticateJWT } from "../middleware/authenticateJWT";
-import {
-  addComment,
-  deleteComment,
-  editComment,
-  getCommentCountByPostId,
-  getCommentsByPostId,
-} from "../controllers/commentControllers";
+import { commentsControllers } from "../controllers/comment.controllers";
 
 const commentRoutes = Router();
 
-commentRoutes.post("/api/comments", authenticateJWT, addComment);
-commentRoutes.get(
-  "/api/comments/:postId",
-  authenticateJWT,
-  getCommentsByPostId
-);
-commentRoutes.put("/api/comments/:commentId", authenticateJWT, editComment);
-commentRoutes.delete(
-  "/api/comments/:commentId",
-  authenticateJWT,
-  deleteComment
-);
-commentRoutes.get(
-  "/api/comments/count/:postId",
-  authenticateJWT,
-  getCommentCountByPostId
-);
+commentRoutes.post("/", authenticateJWT, commentsControllers.addComment);
+commentRoutes.put("/:commentId", authenticateJWT, commentsControllers.editCommentById);
+commentRoutes.delete("/:commentId", authenticateJWT, commentsControllers.deleteCommentById);
+commentRoutes.get("/:postId", authenticateJWT, commentsControllers.getCommentsByPostId);
+commentRoutes.get("/count/:postId", authenticateJWT, commentsControllers.getCommentsCountByPostId);
+
 export default commentRoutes;

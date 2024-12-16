@@ -1,32 +1,25 @@
 import { IMessage } from "@/types/IMessage";
-import { useMutation } from "@tanstack/react-query";
+import { IPrivateMessage } from "@/types/IPrivateMessage";
+import apiClient from "@/utils/apiClient";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { messageKeys } from "./messageKeys";
+import { useParams } from "@tanstack/react-router";
 
-const sendNewMessage = async (newMessage: {
-  text: string;
-  sender_id: string | undefined;
-  recipient_id: string | undefined;
-  conversationId: string;
-}): Promise<IMessage> => {
-  const res = await fetch("/api/messages", {
-    credentials: "include",
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(newMessage),
-  });
-
-  if (!res.ok) {
-    throw new Error("Failed create new message");
-  }
-
-  const data = await res.json();
-  const createdmessage = data.newMessage;
-  return createdmessage;
+const sendNewMessage = async ({ privivateMessage }: { privivateMessage: IPrivateMessage }): Promise<IMessage> => {
+  const url = "/api/messages";
+  const res = await apiClient.post(url, privivateMessage);
+  return res.data.newMessage;
 };
 
 export const useCreateMessage = () => {
+  const queryClient = useQueryClient();
+  const { conversationId } = useParams({ from: "/_authenticated/messages/_layout/conversations/_layout/$conversationId/" });
   return useMutation({
     mutationFn: sendNewMessage,
+    onSuccess: (newMessage: IMessage) => {
+      queryClient.setQueryData(messageKeys.list(conversationId), (oldData: IMessage[] | undefined) => {
+        return oldData ? [...oldData, newMessage] : [newMessage];
+      });
+    },
   });
 };

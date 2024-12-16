@@ -1,5 +1,5 @@
 export interface IVerificationToken {
-  id: number;
+  id: string;
   expires: Date;
   token: string;
   email: string;

@@ -1,9 +1,5 @@
 import express from "express";
 import cors from "cors";
-import loginRoutes from "./routes/loginRoutes";
-import registerRoutes from "./routes/registerRoutes";
-import logoutRoutes from "./routes/logoutRoutes";
-import passport from "./config/passport-config";
 import authRoutes from "./routes/authRoutes";
 import cookieParser from "cookie-parser";
 import postRoutes from "./routes/postsRoutes";
@@ -12,35 +8,27 @@ import peopleRouters from "./routes/peopleRoutes";
 import friendRoutes from "./routes/friendRoutes";
 import likeRoutes from "./routes/likeRoutes";
 import commentRoutes from "./routes/commentRoutes";
-import imageRoutes from "./routes/imageRoutes";
 import { S3Client } from "@aws-sdk/client-s3";
 import messageRoutes from "./routes/messageRoutes";
-import { Server } from "socket.io";
-import { createServer } from "http";
-import pool from "./config/db";
 import { errorHandler } from "./middleware/errorHandler";
 import { authenticateJWT } from "./middleware/authenticateJWT";
 import conversationRoutes from "./routes/conversationRoutes";
-
-const app = express();
-const PORT = 5005;
-const httpServer = createServer(app);
-export const io = new Server(httpServer, {
-  cors: {
-    origin: "http://localhost:3001",
-    methods: ["GET", "POST"],
-  },
-});
+import userRoutes from "./routes/userRoutes";
+import { config } from "./config/app.config";
+import s3Routes from "./routes/imageRoutes";
+import logRequestPath from "./middleware/logRequestPath";
+import { app, server } from "./socket/socket";
 
 app.use(
   cors({
-    origin: "http://localhost:3001", // Your client URL
+    origin: config.APP_ORIGIN,
     credentials: true, // Allow credentials (cookies)
   })
 );
-app.use(cookieParser());
 app.use(express.json());
-app.use(passport.initialize());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.use(logRequestPath);
 
 export const s3Client = new S3Client({
   region: process.env.AWS_REGION!,
@@ -50,48 +38,20 @@ export const s3Client = new S3Client({
   },
 });
 
-app.use(loginRoutes);
-app.use(registerRoutes);
-app.use(logoutRoutes);
-app.use(authRoutes);
-app.use(postRoutes);
-app.use(profileRoutes);
-app.use(peopleRouters);
-app.use(friendRoutes);
-app.use(likeRoutes);
-app.use(commentRoutes);
-app.use(imageRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/posts", authenticateJWT, postRoutes);
+app.use("/api/profiles", authenticateJWT, profileRoutes);
+app.use("/api/peoples", authenticateJWT, peopleRouters);
+app.use("/api/friends", authenticateJWT, friendRoutes);
+app.use("/api/likes", authenticateJWT, likeRoutes);
+app.use("/api/comments", authenticateJWT, commentRoutes);
+app.use("/api/s3", authenticateJWT, s3Routes);
 app.use("/api/messages", authenticateJWT, messageRoutes);
 app.use("/api/conversations", authenticateJWT, conversationRoutes);
 
 app.use(errorHandler);
-httpServer.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+
+server.listen(config.PORT, () => {
+  console.log(`Server is listening on http://localhost:${config.PORT} in ${config.NODE_ENV}`);
 });
-
-io.on("connection", (socket) => {
-  console.log("A user connected", socket.id);
-
-  // Listen for events
-  socket.on("send_message", async (data) => {
-    console.log("Message received:", data);
-
-    // const addedText = await addText(
-    //   data.text,
-    //   data.sender_id,
-    //   data.recipient_id,
-    //   data.conversationId
-    // );
-
-    // console.log("addedText", addedText);
-    // // Broadcast the message to all connected clients
-    // io.emit("new_message", addedText);
-  });
-
-  // Handle disconnection
-  socket.on("disconnect", () => {
-    console.log("A user disconnected:", socket.id);
-  });
-});
-
-pool.connect();

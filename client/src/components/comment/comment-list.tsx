@@ -1,29 +1,14 @@
-import { getCommentsByPostId } from "@/data/getCommentsByPostId";
 import { IPost } from "@/types/IPost";
-import { useInfiniteQuery } from "@tanstack/react-query";
 import React, { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import CommentCard from "./comment-card";
 import Spinner from "../ui/spinner";
 import { Button } from "../ui/button";
+import { useGetAllComments } from "@/hooks/comment/useGetAllComments";
 
 const CommentList = ({ post }: { post: IPost }) => {
   const { ref, inView } = useInView();
-  const {
-    status,
-    data,
-    error,
-    isFetching,
-    isFetchingNextPage,
-    fetchNextPage,
-    hasNextPage,
-  } = useInfiniteQuery({
-    queryKey: ["comments", post.id],
-    queryFn: ({ pageParam }) =>
-      getCommentsByPostId({ pageParam, postId: post.id }),
-    initialPageParam: 1,
-    getNextPageParam: (lastPage) => lastPage.nextPage,
-  });
+  const { status, data, error, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage } = useGetAllComments({ postId: post.id });
 
   useEffect(() => {
     if (inView) {
@@ -34,9 +19,7 @@ const CommentList = ({ post }: { post: IPost }) => {
   return (
     <div className="flex flex-col gap-2 p-4 ">
       {data?.pages[0].data.length === 0 ? (
-        <p className="text-sm text-muted-foreground text-center">
-          No comment yet. Be the first to comment.
-        </p>
+        <p className="text-sm text-muted-foreground text-center">No comment yet. Be the first to comment.</p>
       ) : (
         data?.pages.map((page, pageIndex) => (
           <React.Fragment key={pageIndex}>
@@ -56,13 +39,7 @@ const CommentList = ({ post }: { post: IPost }) => {
           variant="link"
           className="text-muted-foreground text-xs"
         >
-          {isFetchingNextPage ? (
-            <Spinner size="4" />
-          ) : hasNextPage ? (
-            <span className="underline">Load more</span>
-          ) : (
-            "Nothing more to load"
-          )}
+          {isFetchingNextPage ? <Spinner size="4" /> : hasNextPage ? <span className="underline">Load more</span> : "Nothing more to load"}
         </Button>
       </div>
     </div>

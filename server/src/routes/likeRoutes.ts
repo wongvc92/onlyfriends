@@ -1,15 +1,11 @@
 import { Router } from "express";
-import {
-  getLikeByPostId,
-  likePost,
-  unlikePost,
-} from "../controllers/likeControllers";
-import { authenticateJWT } from "../middleware/authenticateJWT";
+import { likeControllers } from "../controllers/like.controllers";
 
 export const likeRoutes = Router();
 
-likeRoutes.get("/api/likes/:postId", authenticateJWT, getLikeByPostId);
-likeRoutes.post("/api/likes", authenticateJWT, likePost);
-likeRoutes.delete("/api/likes", authenticateJWT, unlikePost);
+likeRoutes.post("/:postId", likeControllers.createLikeByPostId);
+likeRoutes.delete("/:postId", likeControllers.deleteLikeByPostId);
+
+likeRoutes.get("/:postId", likeControllers.getLikeByPostId);
 
 export default likeRoutes;

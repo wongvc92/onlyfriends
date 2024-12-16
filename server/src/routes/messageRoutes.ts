@@ -1,15 +1,11 @@
 import { Router } from "express";
 
-import {
-  createMessage,
-  getMessagesByConversationId,
-  getMessagesCount,
-} from "../controllers/messageControllers";
+import { messageControllers } from "../controllers/message.controllers";
 
 const messageRoutes = Router();
 
-messageRoutes.post("/", createMessage);
-messageRoutes.get("/count/:conversationId", getMessagesCount);
-messageRoutes.get("/:conversationId", getMessagesByConversationId);
+messageRoutes.post("/", messageControllers.createMessage);
+messageRoutes.get("/count/:conversationId", messageControllers.getMessagesCount);
+messageRoutes.get("/:conversationId", messageControllers.getMessagesByConversationId);
 
 export default messageRoutes;

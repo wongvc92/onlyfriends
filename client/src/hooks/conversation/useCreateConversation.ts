@@ -1,23 +1,12 @@
-import { basePath } from "@/utils/utils";
+import apiClient from "@/utils/apiClient";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
+import { conversationKeys } from "./conversationKeys";
 
 const createMessage = async (peopleId: string) => {
-  const url = basePath("/api/conversations");
-  const res = await fetch(url, {
-    method: "POST",
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ peopleId }),
-  });
-  if (!res.ok) {
-    throw new Error("Failed create conversation");
-  }
-
-  const data = await res.json();
-  return data.conversationId;
+  const url = "/api/conversations";
+  const res = await apiClient.post(url, { peopleId });
+  return res.data;
 };
 
 export const useCreateConversation = () => {
@@ -25,11 +14,12 @@ export const useCreateConversation = () => {
   const query = useQueryClient();
 
   return useMutation({
-    mutationFn: (peopleId: string) => createMessage(peopleId),
-    onSuccess: (conversationId) => {
-      console.log("conversationId", conversationId);
-      navigate({ to: `/messages/${conversationId}` });
-      query.invalidateQueries({ queryKey: ["conversations"] });
+    mutationFn: createMessage,
+    onSuccess: (data: { conversationId: string; username: string }) => {
+      const { conversationId, username } = data;
+
+      navigate({ to: `/messages/conversations/${conversationId}?username=${username}` });
+      query.invalidateQueries({ queryKey: conversationKeys.all });
     },
   });
 };

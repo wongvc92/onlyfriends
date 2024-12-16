@@ -1,9 +1,8 @@
 import { Router } from "express";
-import { authenticateJWT } from "../middleware/authenticateJWT";
-import { getPeoples } from "../controllers/peopleControllers";
+import { peopleControllers } from "../controllers/people.controllers";
 
 const peopleRouters = Router();
 
-peopleRouters.get("/api/peoples", authenticateJWT, getPeoples);
+peopleRouters.get("/", peopleControllers.getPeoples);
 
 export default peopleRouters;

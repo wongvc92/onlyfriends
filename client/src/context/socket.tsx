@@ -1,26 +1,55 @@
-import React, { createContext, useContext, ReactNode } from "react";
-
-import { DefaultEventsMap } from "@socket.io/component-emitter";
-
+import { createContext, useContext, useEffect, useState } from "react";
+import { useAuth } from "./auth";
 import { io, Socket } from "socket.io-client";
-type SocketContextType = Socket<DefaultEventsMap, DefaultEventsMap> | null;
 
-// Create the SocketContext
-const SocketContext = createContext<SocketContextType>(null);
+const URL = import.meta.env.MODE === "production" ? undefined : import.meta.env.VITE_SERVER_URL;
 
-export const SocketProvider = ({ children }: { children: ReactNode }) => {
-  const socket = io(import.meta.env.VITE_SERVER_URL!);
+interface ISocketProvider {
+  socket: Socket | null;
+  onlineUsers: string[];
+}
+const SocketContext = createContext<ISocketProvider | null>(null);
 
-  return (
-    <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>
-  );
+export const useSocket = () => {
+  const context = useContext(SocketContext);
+  if (!context) throw new Error("useSocket must be use within socketProvider ");
+  return context;
 };
 
-// Custom hook for accessing the SocketContext
-export const useSocketContext = (): SocketContextType => {
-  const context = useContext(SocketContext);
-  if (!context) {
-    throw new Error("useSocketContext must be used within a SocketProvider");
-  }
-  return context;
+export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
+  const [socket, setSocket] = useState<Socket | null>(null);
+  const [onlineUsers, setOnlineUsers] = useState([]);
+  const { isAuthenticated, user } = useAuth();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      const socketInstance = io(URL, {
+        query: {
+          userId: user?.id,
+        },
+        withCredentials: true,
+      });
+
+      setSocket(socketInstance);
+
+      return () => {
+        socketInstance.close();
+      };
+    } else {
+      if (socket) {
+        socket.close();
+        setSocket(null);
+      }
+    }
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("getOnlineUsers", (users) => {
+        setOnlineUsers(users);
+      });
+    }
+  }, [socket]);
+
+  return <SocketContext.Provider value={{ socket, onlineUsers }}>{children}</SocketContext.Provider>;
 };

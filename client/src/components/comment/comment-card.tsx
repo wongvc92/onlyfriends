@@ -17,11 +17,7 @@ const CommentCard = ({ comment }: { comment: IComment }) => {
       if (part.startsWith("@")) {
         // Style the mention with blue color
         return (
-          <Link
-            key={index}
-            className="text-sky-600"
-            to={`/${part.slice(1, part.length)}`}
-          >
+          <Link key={index} className="text-sky-600" to={`/${part.slice(1, part.length)}`}>
             {part}
           </Link>
         );
@@ -34,10 +30,7 @@ const CommentCard = ({ comment }: { comment: IComment }) => {
     <div className="border-none">
       <div className="flex gap-2">
         <div className="flex gap-2">
-          <ProfileImage
-            image="https://github.com/shadcn.png"
-            username={comment.username}
-          />
+          <ProfileImage image="https://github.com/shadcn.png" username={comment.username} />
         </div>
 
         <div className="bg-muted p-2 rounded-md space-y-1 ">
@@ -49,9 +42,7 @@ const CommentCard = ({ comment }: { comment: IComment }) => {
           {isEdit ? (
             <EditComment comment={comment} setIsEdit={setIsEdit} />
           ) : (
-            <p className="text-sm break-words">
-              {renderCommentWithMentions(comment.comment)}
-            </p>
+            <p className="text-sm break-words">{renderCommentWithMentions(comment.comment)}</p>
           )}
         </div>
       </div>

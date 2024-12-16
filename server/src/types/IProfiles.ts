@@ -1,12 +1,13 @@
 export interface IProfile {
-  id: number;
+  id: string;
   user_id: string;
   name: string;
-  display_image: string;
+  banner_image: string;
+  display_banner: string;
   bio: string;
   location: string;
   website: string;
-  created_at: Date;
+  joined_date: Date;
   updated_at: Date;
   username: string;
 }

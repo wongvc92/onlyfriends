@@ -1,4 +1,4 @@
-import { useImageUploadManager } from "@/hooks/useImageUploadManager";
+import { useImageUploadManager } from "@/hooks/common/useImageUploadManager";
 import { useRef, useState } from "react";
 
 import { CropIcon, ImageIcon } from "@radix-ui/react-icons";
@@ -14,19 +14,10 @@ interface MultiImageUploaderProps {
   value?: string;
   imageShape?: "rounded-full";
 }
-const MultiImageUploader: React.FC<MultiImageUploaderProps> = ({
-  onChange,
-  value,
-  imageShape,
-}) => {
+const MultiImageUploader: React.FC<MultiImageUploaderProps> = ({ onChange, value, imageShape }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const {
-    uploadSingleImage,
-    deleteSingleImage,
-    isPendingUpload,
-    isPendingDelete,
-  } = useImageUploadManager();
+  const { uploadSingleImage, deleteSingleImage, isPendingUpload, isPendingDelete } = useImageUploadManager();
   const { setImageToCrop, setImageToDelete, aspect } = useImageCropContext();
   const imageInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -67,9 +58,7 @@ const MultiImageUploader: React.FC<MultiImageUploaderProps> = ({
     onChange(imageUrl);
   };
 
-  const handleOpenCropModal = async (
-    e: React.MouseEvent<HTMLButtonElement>
-  ) => {
+  const handleOpenCropModal = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setIsOpen(true);
     if (!value) return;
@@ -84,38 +73,13 @@ const MultiImageUploader: React.FC<MultiImageUploaderProps> = ({
         {isPendingUpload ? (
           <Spinner />
         ) : value ? (
-          <div
-            className={`relative  h-[200px] aspect-[${aspect}] flex justify-center items-center bg-muted`}
-          >
-            <img
-              src={value}
-              className={`object-cover w-full h-full ${imageShape}`}
-            />
-            <Button
-              className="absolute -top-1 -right-1"
-              onClick={handleDeleteImage}
-              type="button"
-              size="icon"
-              variant="link"
-            >
-              {isPendingDelete ? (
-                <Spinner size="2" />
-              ) : (
-                <BsXCircleFill color="gray" />
-              )}
+          <div className={`relative  h-[200px] aspect-[${aspect}] flex justify-center items-center bg-muted`}>
+            <img src={value} className={`object-cover w-full h-full ${imageShape}`} />
+            <Button className="absolute -top-1 -right-1" onClick={handleDeleteImage} type="button" size="icon" variant="link">
+              {isPendingDelete ? <Spinner size="2" /> : <BsXCircleFill color="gray" />}
             </Button>
-            <Button
-              className="absolute -top-1 -left-1"
-              onClick={handleOpenCropModal}
-              type="button"
-              size="icon"
-              variant="link"
-            >
-              {isPendingUpload ? (
-                <Spinner size="2" />
-              ) : (
-                <CropIcon color="gray" />
-              )}
+            <Button className="absolute -top-1 -left-1" onClick={handleOpenCropModal} type="button" size="icon" variant="link">
+              {isPendingUpload ? <Spinner size="2" /> : <CropIcon color="gray" />}
             </Button>
           </div>
         ) : (
@@ -134,19 +98,8 @@ const MultiImageUploader: React.FC<MultiImageUploaderProps> = ({
         )}
       </div>
 
-      <input
-        ref={imageInputRef}
-        hidden
-        multiple
-        type="file"
-        accept="image/*"
-        onChange={handleFileChange}
-      />
-      <CropImageModal
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        onChange={onChange}
-      />
+      <input ref={imageInputRef} hidden multiple type="file" accept="image/*" onChange={handleFileChange} />
+      <CropImageModal isOpen={isOpen} setIsOpen={setIsOpen} onChange={onChange} />
     </>
   );
 };

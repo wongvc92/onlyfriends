@@ -1,21 +1,17 @@
-import { getFriendStatusByPeopleId } from "@/data/getFriendStatusByPeopleId";
-import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/context/auth";
 import UnfriendButton from "./unfriend-button";
 import CancelAddFriendButton from "./cancel-add-friend-button";
 import ApproveFriendButton from "./approve-friend-button";
 import { useParams } from "@tanstack/react-router";
 import AddFriendButton from "./add-friend-button";
+import { useGetFriendStatus } from "@/hooks/friend/useGetFriendStatus";
 
 const FriendStatus = ({ peopleId }: { peopleId: string }) => {
-  const { data } = useQuery({
-    queryKey: [`friendStatus-${peopleId}`],
-    queryFn: () => getFriendStatusByPeopleId(peopleId),
-  });
+  console.log("peopleId", peopleId);
   const { username } = useParams({ strict: false });
   const { user } = useAuth();
+  const { data } = useGetFriendStatus({ peopleId });
 
-  console.log("FriendStatus", data);
   if (!data) return null;
 
   const isInitiator = data.friendStatus?.initiated_by === user?.id;
@@ -32,12 +28,8 @@ const FriendStatus = ({ peopleId }: { peopleId: string }) => {
     } else {
       return (
         <div className="flex flex-col pl-2 space-y-2 justify-end">
-          <p className="text-xs text-muted-foreground text-right">
-            @{username} sent you friend request
-          </p>
-          <ApproveFriendButton
-            friendRequestId={data.friendStatus?.request_id}
-          />
+          <p className="text-xs text-muted-foreground text-right">@{username} sent you friend request</p>
+          <ApproveFriendButton friendRequestId={data.friendStatus?.request_id} />
         </div>
       );
     }
