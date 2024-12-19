@@ -5,7 +5,6 @@ import { peopleKeys } from "../people/peopleKeys";
 import { friendKeys } from "./friendKeys";
 
 const deleteFriend = async (peopleId: string) => {
-  console.log("peopleId", peopleId);
   const url = `/api/friends/${peopleId}`;
   const res = await apiClient.delete(url);
   return res.data;

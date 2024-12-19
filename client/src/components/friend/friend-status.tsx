@@ -7,7 +7,7 @@ import AddFriendButton from "./add-friend-button";
 import { useGetFriendStatus } from "@/hooks/friend/useGetFriendStatus";
 
 const FriendStatus = ({ peopleId }: { peopleId: string }) => {
-  console.log("peopleId", peopleId);
+
   const { username } = useParams({ strict: false });
   const { user } = useAuth();
   const { data } = useGetFriendStatus({ peopleId });

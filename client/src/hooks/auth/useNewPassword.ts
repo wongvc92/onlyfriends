@@ -27,7 +27,6 @@ const useNewPassword = () => {
     mutationFn: newPassword,
     onSuccess: (data) => {
       toast.success("Password changed successfully");
-      console.log("Password changed successfully:", data);
     },
     onError: (error) => {
       toast.error("Error changing password");

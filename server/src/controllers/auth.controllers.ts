@@ -201,15 +201,15 @@ const renewAccessToken = asyncHandler(async (req: Request, res: Response) => {
 
 const resetPassword = asyncHandler(async (req: Request, res: Response) => {
   const { email } = resetPasswordSchema.parse(req.body);
-  console.log("passwordResetToken", email);
+
   const existingUser = await authServices.getExistingUserByEmail(email);
-  console.log("existingUser", existingUser);
+
   if (!existingUser) {
     throw new ResourceNotFoundError("Email not found");
   }
 
   const passwordResetToken = await generatePasswordResetToken(existingUser.email);
-  console.log("passwordResetToken", passwordResetToken);
+
   const { error } = await sendPasswordResetEmail(existingUser.email, passwordResetToken);
   if (error) {
     throw new BadRequestError("Something went wrong, try again later.");

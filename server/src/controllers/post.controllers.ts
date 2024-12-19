@@ -104,7 +104,7 @@ const getSinglePostById = asyncHandler(async (req: Request, res: Response) => {
     throw new BadRequestError("postId is required");
   }
 
-  console.log("postId", postId);
+
   const post = await postServices.getSinglePostById(postId);
 
   res.status(HTTPSTATUS.OK).json({

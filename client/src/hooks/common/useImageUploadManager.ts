@@ -39,7 +39,6 @@ export const useImageUploadManager = () => {
 
     const url = `${BASE_URL}/api/s3/generate-upload-url`;
 
-    console.log("file", file);
     let signedUrl = "";
     try {
       const res = await fetch(url, {
@@ -60,7 +59,7 @@ export const useImageUploadManager = () => {
         return;
       }
       const data = await res.json();
-      console.log("data", data);
+
       signedUrl = data.signedURL;
     } catch (error) {
       toast.error(`Failed to upload image,please try again`);
@@ -92,7 +91,7 @@ export const useImageUploadManager = () => {
 
     setIsPendingUpload(false);
     await queryClient.invalidateQueries({ queryKey: ["profiles"] });
-    console.log("UPLOADSINGLEIMAGE", fileUrl);
+
     return fileUrl;
   };
 

@@ -3,23 +3,24 @@ import { IFriend } from "../types/IFriend";
 
 const getExistingFriendRequestCount = async (currentUserId: string, peopleId: string): Promise<number> => {
   const existingRequestResult = await pool.query(
-    `SELECT count(*) FROM friends WHERE (user_id = $1 AND friend_id = $2) OR (user_id = $2 AND friend_id = $1)`,
+    `SELECT count(*) FROM friends WHERE (user_id = $1 AND friend_id = $2) OR (user_id = $2 AND friend_id = $1);`,
     [currentUserId, peopleId]
   );
   return existingRequestResult.rows[0].count;
 };
 
 const createFriend = async (currentUserId: string, peopleId: string) => {
-  return await pool.query(`INSERT INTO friends (user_id, friend_id, initiated_by) VALUES ($1, $2, $3)`, [currentUserId, peopleId, currentUserId]);
+  return await pool.query(`INSERT INTO friends (user_id, friend_id, initiated_by) VALUES ($1, $2, $3);`, [currentUserId, peopleId, currentUserId]);
 };
 
 const deleteFriend = async (currentUserId: string, peopleId: string) => {
   await pool.query(
     `
-            DELETE FROM friends WHERE    
-            (friend_id = $1 AND user_id = $2) 
-            OR 
-            (friend_id = $2 AND user_id = $1)`,
+       DELETE FROM friends WHERE    
+      (friend_id = $1 AND user_id = $2) 
+      OR 
+      (friend_id = $2 AND user_id = $1);
+    `,
     [peopleId, currentUserId]
   );
 };
@@ -29,7 +30,7 @@ const getFriendRequestsCount = async (currentUserId: string): Promise<number> =>
     `
            select count(*)
            FROM friends
-           WHERE friends.friend_id = $1 AND friends.status = 'pending'
+           WHERE friends.friend_id = $1 AND friends.status = 'pending';
           `,
     [currentUserId]
   );
@@ -52,7 +53,7 @@ const getFriendRequests = async (currentUserId: string, offset: number, limit: n
           JOIN users ON users.id = friends.user_id
           LEFT JOIN profiles ON profiles.user_id = users.id
           WHERE friends.friend_id = $1 AND friends.status = 'pending'
-          OFFSET $2 LIMIT $3
+          OFFSET $2 LIMIT $3;
           `,
     [currentUserId, offset, limit]
   );
@@ -110,7 +111,7 @@ const getAcceptedFriends = async (currentUserId: string, query: string | undefin
       OR (f.user_id = u.id AND f.friend_id = $1)
     LEFT JOIN profiles AS p ON u.id = p.user_id
     WHERE ${queryCondition}
-    OFFSET $2 LIMIT $3
+    OFFSET $2 LIMIT $3;
     `,
     values
   );
@@ -124,7 +125,7 @@ const getSentFriendRequestsCount = async (currentUserId: string): Promise<number
     `
       SELECT COUNT(*) AS total_count
       FROM friends
-      WHERE user_id = $1 AND status = 'pending'
+      WHERE user_id = $1 AND status = 'pending';
       `,
     [currentUserId]
   );
@@ -147,7 +148,7 @@ const getSentFriendRequests = async (currentUserId: string, offset: number, limi
           JOIN users ON users.id = friends.friend_id
           LEFT JOIN profiles ON profiles.user_id = users.id
           WHERE friends.user_id = $1 AND friends.status = 'pending'
-          LIMIT $2 OFFSET $3
+          LIMIT $2 OFFSET $3;
           `,
     [currentUserId, limit, offset]
   );
@@ -168,7 +169,7 @@ const getFriendStatus = async (peopleId: string, currentUserId: string) => {
       WHERE 
       (friend_id = $1 AND user_id = $2) 
       OR 
-      (friend_id = $2 AND user_id = $1)
+      (friend_id = $2 AND user_id = $1);
       `,
     [peopleId, currentUserId]
   );

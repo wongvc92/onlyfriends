@@ -13,7 +13,6 @@ const getPeoples = asyncHandler(async (req: Request, res: Response) => {
 
   const query = req.query.query as string | undefined;
 
-  console.log("query", query);
   const page = parseInt(req.query.page as string, 10);
   const limit = parseInt(req.query.limit as string, 10);
   const offset = (page - 1) * limit;

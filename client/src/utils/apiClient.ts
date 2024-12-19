@@ -24,9 +24,6 @@ apiClient.interceptors.response.use(
   async (error) => {
     const { data, status, config } = error.response;
 
-    console.log("api client status", status);
-    console.log("api client data", data);
-
     // Prevent retrying for specific endpoints like refresh token
     if (config.url.includes("/api/auth/renew-access-token")) {
       return Promise.reject(error);

@@ -14,16 +14,16 @@ interface CropImageProps {
   onChange: (url: string) => void;
 }
 const CropImageModal: React.FC<CropImageProps> = ({ setIsOpen, isOpen, onChange }) => {
-  const { uploadSingleImage, deleteSingleImage, isPendingUpload } = useImageUploadManager();
+  const { uploadImageToS3, deleteSingleImage, isPendingUpload } = useImageUploadManager();
   const { getProcessedImage, resetStates, zoom, setZoom, rotation, setRotation, imageToDelete } = useImageCropContext();
 
   const handleCropImage = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    console.log("handleCropImage imageToDelete", imageToDelete);
+
     await deleteSingleImage(imageToDelete as string);
     const file = await getProcessedImage();
     if (!file) return;
-    const fileToUrl = (await uploadSingleImage(file)) as string;
+    const fileToUrl = (await uploadImageToS3(file)) as string;
     onChange(fileToUrl);
 
     resetStates();

@@ -7,7 +7,7 @@ const RESEND_VERIFIED_DOMAIN = config.RESEND.RESEND_VERIFIED_DOMAIN;
 const PUBLIC_URL = config.APP_ORIGIN;
 
 export const sendEmailVerificationToken = async (email: string, username: string, verificationToken: string) => {
-  console.log("PUBLIC_URL", PUBLIC_URL);
+
   if (!PUBLIC_URL) {
     console.log("Missing public URL");
     throw new BadRequestError("Missing public URL");

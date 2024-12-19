@@ -17,8 +17,8 @@ const deleteLikeByPostId = async (postId: string, currentUserId: string) => {
          DELETE 
          FROM likes
          WHERE
-         post_id = $1 AND user_id = $2
-          `,
+         post_id = $1 AND user_id = $2;
+    `,
     [postId, currentUserId]
   );
 };
@@ -28,8 +28,8 @@ const getLikeByPostId = async (postId: string, currentUserId: string): Promise<{
     `
           SELECT * 
           FROM likes 
-          WHERE post_id=$1 AND user_id=$2
-          `,
+          WHERE post_id=$1 AND user_id=$2;
+    `,
     [postId, currentUserId]
   );
   let isLiked;
@@ -44,7 +44,7 @@ const getLikeByPostId = async (postId: string, currentUserId: string): Promise<{
         SELECT count(*) as count
         FROM likes
         WHERE
-        post_id = $1
+        post_id = $1;
         `,
     [postId]
   );

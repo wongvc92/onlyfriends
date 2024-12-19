@@ -54,7 +54,7 @@ const getPeoples = async (currentUserId: string, offset: number, limit: number, 
     ON ( u.id = f.friend_id AND f.user_id = $1 )
     OR (u.id = f.user_id AND f.friend_id = $1)
     WHERE ${queryCondition}
-    OFFSET $2 LIMIT $3
+    OFFSET $2 LIMIT $3;
     `,
     values
   );

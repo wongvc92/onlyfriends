@@ -23,7 +23,7 @@ const getMessagesByConversationId = async (conversationId: string): Promise<IMes
         JOIN users r ON m.recipient_id = r.id
         LEFT JOIN profiles rp ON rp.user_id = r.id
         WHERE m.conversation_id = $1
-        ORDER BY m.created_at ASC
+        ORDER BY m.created_at ASC;
         `,
     [conversationId]
   );
@@ -78,7 +78,7 @@ const getMessagesCount = async (conversationId: string): Promise<number> => {
     `
         SELECT count (*)
         FROM messages
-        WHERE messages.conversation_id = $1
+        WHERE messages.conversation_id = $1;
         `,
     [conversationId]
   );

@@ -25,7 +25,7 @@ const MultiImageUploader: React.FC<MultiImageUploaderProps> = ({
   const [isPendingDelete, setisPendingDelete] = useState(false);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
 
-  console.log("images", images);
+
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     if (!e.target.files) return;

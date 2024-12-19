@@ -49,7 +49,7 @@ const ImageSlider: React.FC<ImageSliderProps> = ({ post }) => {
     containerRef.current.scrollLeft = scrollLeft - walk;
   };
 
-  console.log("initial image index", initialImageIndex);
+
   return (
     <>
       {!!post.images && post.images.length > 0 && (

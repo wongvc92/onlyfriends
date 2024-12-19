@@ -4,7 +4,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 
 const editProfile = async (formData: TProfileSchema) => {
-  console.log("formData", formData);
   if (!formData?.id) return;
   const url = `/api/profiles/${formData.id}`;
   const res = await apiClient.put(url, formData);

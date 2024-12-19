@@ -42,7 +42,7 @@ const getPostsByUsernameCount = async (username: string): Promise<number> => {
     `SELECT COUNT(*) 
         FROM posts
         JOIN users ON posts.user_id = users.id
-        WHERE users.username = $1
+        WHERE users.username = $1;
         `,
     [username]
   );
@@ -76,7 +76,7 @@ const getPostsByUsername = async (username: string, limit: number, offset: numbe
         WHERE users.username = $1
         GROUP BY posts.id, users.username, profiles.name, profiles.bio, profiles.location, profiles.website, profiles.display_image
         ORDER BY posts.created_at DESC
-        LIMIT $2 OFFSET $3
+        LIMIT $2 OFFSET $3;
       `,
     [username, limit, offset]
   );
@@ -119,7 +119,7 @@ const getAllPosts = async (limit: number, offset: number): Promise<IPost[]> => {
         LEFT JOIN post_images ON post_images.post_id = posts.id
             GROUP BY posts.id, users.username, profiles.name, profiles.bio, profiles.location, profiles.website,profiles.display_image
         ORDER BY posts.created_at DESC
-        LIMIT $1 OFFSET $2
+        LIMIT $1 OFFSET $2;
       `,
     [limit, offset]
   );
@@ -152,7 +152,7 @@ const getSinglePostById = async (postId: string): Promise<IPost> => {
         LEFT JOIN profiles ON profiles.user_id = users.id
         LEFT JOIN post_images ON post_images.post_id = posts.id
         WHERE posts.id = $1
-        GROUP BY posts.id, users.username, profiles.name, profiles.bio, profiles.location, profiles.website, profiles.display_image
+        GROUP BY posts.id, users.username, profiles.name, profiles.bio, profiles.location, profiles.website, profiles.display_image;
         `,
     [postId]
   );

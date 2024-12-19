@@ -21,7 +21,7 @@ const ProfileInfo = () => {
     return null;
   }
   const isSelfProfile = auth.user && auth.user.username === username ? true : false;
-  console.log("ProfileInfo", profile);
+
   return (
     <div className="w-full">
       {profile && (

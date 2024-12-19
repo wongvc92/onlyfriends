@@ -40,7 +40,7 @@ const MessageList = () => {
 
   useEffect(() => {
     socket?.on("newMessage", (newMessage: IMessage) => {
-      console.log("newMessage", newMessage);
+
       queryClient.setQueryData(messageKeys.list(conversationId), (oldData: IMessage[] | undefined) => {
         return oldData ? [...oldData, newMessage] : [newMessage];
       });

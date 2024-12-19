@@ -33,7 +33,7 @@ const SingleImageUploader: React.FC<SingleImageUploaderProps> = ({
     onChange(dataUrl);
   };
 
-  console.log("image", image);
+
   const handleDeleteImage = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (!value) return;

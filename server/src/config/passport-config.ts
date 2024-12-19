@@ -7,7 +7,6 @@ import { JwtPayload } from "jsonwebtoken";
 
 const opts = {
   jwtFromRequest: (req: Request) => {
-    console.log("Cookies in request:", req.cookies);
     // Extract JWT from cookies instead of Authorization header
     const token = req.cookies.accessToken;
     return token || null;
