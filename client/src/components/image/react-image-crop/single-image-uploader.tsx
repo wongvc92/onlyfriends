@@ -4,18 +4,14 @@ import { BsXCircleFill } from "react-icons/bs";
 import Spinner from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";
 import CropImageModal from "./crop-image-modal";
-import { blobToDataURL } from "@/utils/fileutils";
+import { blobToDataURL } from "@/utils/fileUtils";
 
 interface SingleImageUploaderProps {
   onChange: (url: string | null) => void;
   value?: string;
   imageShape?: "rounded-full";
 }
-const SingleImageUploader: React.FC<SingleImageUploaderProps> = ({
-  onChange,
-  value,
-  imageShape,
-}) => {
+const SingleImageUploader: React.FC<SingleImageUploaderProps> = ({ onChange, value, imageShape }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [image, setImage] = useState<string | null>(null);
@@ -32,7 +28,6 @@ const SingleImageUploader: React.FC<SingleImageUploaderProps> = ({
     setImage(dataUrl);
     onChange(dataUrl);
   };
-
 
   const handleDeleteImage = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -61,9 +56,7 @@ const SingleImageUploader: React.FC<SingleImageUploaderProps> = ({
     onChange(dataUrl);
   };
 
-  const handleOpenCropModal = async (
-    e: React.MouseEvent<HTMLButtonElement>
-  ) => {
+  const handleOpenCropModal = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setIsOpen(true);
   };
@@ -74,35 +67,12 @@ const SingleImageUploader: React.FC<SingleImageUploaderProps> = ({
           <Spinner />
         ) : image ? (
           <>
-            <img
-              src={image}
-              className={`object-cover w-full h-full ${imageShape}`}
-            />
-            <Button
-              className="absolute -top-1 -right-1"
-              onClick={handleDeleteImage}
-              type="button"
-              size="icon"
-              variant="link"
-            >
-              {isPendingDelete ? (
-                <Spinner size="2" />
-              ) : (
-                <BsXCircleFill color="gray" />
-              )}
+            <img src={image} className={`object-cover w-full h-full ${imageShape}`} />
+            <Button className="absolute -top-1 -right-1" onClick={handleDeleteImage} type="button" size="icon" variant="link">
+              {isPendingDelete ? <Spinner size="2" /> : <BsXCircleFill color="gray" />}
             </Button>
-            <Button
-              className="absolute -top-1 -left-1"
-              onClick={handleOpenCropModal}
-              type="button"
-              size="icon"
-              variant="link"
-            >
-              {isPendingUpload ? (
-                <Spinner size="2" />
-              ) : (
-                <CropIcon color="gray" />
-              )}
+            <Button className="absolute -top-1 -left-1" onClick={handleOpenCropModal} type="button" size="icon" variant="link">
+              {isPendingUpload ? <Spinner size="2" /> : <CropIcon color="gray" />}
             </Button>
           </>
         ) : (
@@ -121,20 +91,8 @@ const SingleImageUploader: React.FC<SingleImageUploaderProps> = ({
         )}
       </div>
 
-      <input
-        ref={imageInputRef}
-        hidden
-        type="file"
-        accept="image/*"
-        onChange={handleFileChange}
-      />
-      <CropImageModal
-        setImage={setImage}
-        isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
-        onChange={onChange}
-        src={image as string}
-      />
+      <input ref={imageInputRef} hidden type="file" accept="image/*" onChange={handleFileChange} />
+      <CropImageModal setImage={setImage} isOpen={isOpen} onClose={() => setIsOpen(false)} onChange={onChange} src={image as string} />
     </>
   );
 };

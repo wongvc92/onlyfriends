@@ -18,7 +18,7 @@ interface ImageUploaderProps {
 const ImageUploader: React.FC<ImageUploaderProps> = ({ onChange, value, imageShape }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const { uploadSingleImage, deleteSingleImage, isPendingUpload, isPendingDelete } = useImageUploadManager();
+  const { uploadImageToS3, deleteSingleImage, isPendingUpload, isPendingDelete } = useImageUploadManager();
   const { setImageToCrop, setImageToDelete, aspect } = useImageCropContext();
   const imageInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -27,7 +27,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onChange, value, imageSha
 
     const file = e.target.files?.[0];
     if (!file) return;
-    const imageUrl = await uploadSingleImage(file);
+    const imageUrl = await uploadImageToS3(file);
     if (!imageUrl) return;
     onChange(imageUrl);
   };
@@ -54,7 +54,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onChange, value, imageSha
     setIsDragging(false);
     const file = e.dataTransfer.files[0];
     if (!file) return;
-    const imageUrl = await uploadSingleImage(file);
+    const imageUrl = await uploadImageToS3(file);
     if (!imageUrl) return;
     onChange(imageUrl);
   };

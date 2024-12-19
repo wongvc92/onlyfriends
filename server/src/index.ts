@@ -1,4 +1,5 @@
-import express from "express";
+import dotenv from "dotenv";
+import express, { Request, Response } from "express";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes";
 import cookieParser from "cookie-parser";
@@ -18,6 +19,9 @@ import { config } from "./config/app.config";
 import s3Routes from "./routes/imageRoutes";
 import logRequestPath from "./middleware/logRequestPath";
 import { app, server } from "./socket/socket";
+import path from "path";
+
+dotenv.config();
 
 app.use(
   cors({
@@ -52,6 +56,20 @@ app.use("/api/conversations", authenticateJWT, conversationRoutes);
 
 app.use(errorHandler);
 
+if (process.env.NODE_ENV === "production") {
+  // Path to the frontend's build files
+  const clientDistPath = path.join(__dirname, "../../client/dist");
+
+  console.log("Serving static files from:", clientDistPath);
+
+  // Serve static files
+  app.use(express.static(clientDistPath));
+
+  // Catch-all route to serve the React app for non-API routes
+  app.get("*", (req: Request, res: Response) => {
+    res.sendFile(path.resolve(clientDistPath, "index.html"));
+  });
+}
 server.listen(config.PORT, () => {
   console.log(`Server is listening on http://localhost:${config.PORT} in ${config.NODE_ENV}`);
 });
