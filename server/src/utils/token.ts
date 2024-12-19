@@ -3,8 +3,8 @@ import crypto from "crypto";
 import { ITwoFactorConfirmation } from "../types/ITwoFactorConfirmation";
 import { IVerificationToken } from "../types/VerificationTokens";
 import { ITwoFactorToken } from "../types/ITwoFactorToken";
-
-
+import { randomBytes } from "crypto";
+import { IPasswordResetToken } from "../types/IPasswordResetToken";
 
 export const generateVerificationToken = async (email: string) => {
   const token = crypto.randomBytes(32).toString("hex");
@@ -70,4 +70,66 @@ export const createTwoFactorConfirmation = async (userId: string) => {
 export const getVerificationToken = async (token: string): Promise<IVerificationToken> => {
   const data = await pool.query("SELECT * FROM verification_tokens WHERE token = $1", [token]);
   return data.rows[0];
+};
+
+const getPasswordResetTokenByEmail = async (email: string): Promise<string | undefined> => {
+  const results = await pool.query(
+    `
+    SELECT id 
+    FROM password_reset_tokens
+    WHERE email = $1;
+    `,
+    [email]
+  );
+
+  return results.rows.length > 0 ? results.rows[0].id : undefined;
+};
+
+export const deletePasswordResetTokenById = async (id: string) => {
+  await pool.query(
+    `
+  DELETE FROM password_reset_tokens
+  WHERE id=$1;
+  `,
+    [id]
+  );
+};
+
+const createPasswordResetToken = async ({ token, email, expires }: { token: string; email: string; expires: Date }): Promise<string> => {
+  const result = await pool.query(
+    `
+    INSERT INTO password_reset_tokens
+    (token, email, expires)
+    values($1,$2,$3)
+    RETURNING token
+    `,
+    [token, email, expires]
+  );
+  console.log("createPasswordResetToken", result.rows[0]);
+  return result.rows[0].token;
+};
+
+export const generatePasswordResetToken = async (email: string): Promise<string> => {
+  const token = randomBytes(32).toString("hex"); // Generates a secure 64-character token
+  const expires = new Date(new Date().getTime() + 3600 * 1000);
+  const existingTokenId = await getPasswordResetTokenByEmail(email);
+
+  if (existingTokenId) {
+    await deletePasswordResetTokenById(existingTokenId);
+  }
+
+  return await createPasswordResetToken({ token, email, expires });
+};
+
+export const getPasswordResetTokenByToken = async (token: string): Promise<IPasswordResetToken> => {
+  const results = await pool.query(
+    `
+    SELECT * 
+    FROM password_reset_tokens
+    WHERE token = $1;
+    `,
+    [token]
+  );
+
+  return results.rows[0];
 };

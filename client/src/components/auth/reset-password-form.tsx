@@ -1,26 +1,30 @@
-import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { resetSignInSchema, TResetSignInSchema } from "@/validation/resetSignInSchema";
+import { useResetPassword } from "@/hooks/auth/useResetPassword";
+import { resetPasswordSchema, TResetPasswordSchema } from "@/validation/resetPasswordSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import SubmitButton from "../common/submit-button";
 
-const ResetForm = () => {
-  const form = useForm<TResetSignInSchema>({
-    resolver: zodResolver(resetSignInSchema),
-    mode: "all",
+const ResetPasswordForm = () => {
+  const { mutate, isPending } = useResetPassword();
+  const form = useForm<TResetPasswordSchema>({
+    resolver: zodResolver(resetPasswordSchema),
+    mode: "onChange",
     defaultValues: {
       email: "",
     },
   });
 
-  const onSubmit = async () => {};
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    mutate(form.getValues().email);
+  };
 
   return (
-    <div className="flex flex-col space-y-4 ">
-      <p className="text-center">Forgot your password?</p>
+    <div className="flex flex-col space-y-4">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={onSubmit} className="space-y-4">
           <FormField
             name="email"
             render={({ field }) => (
@@ -34,13 +38,11 @@ const ResetForm = () => {
             )}
           />
 
-          <Button type="submit" className="w-full">
-            Reset password
-          </Button>
+          <SubmitButton defaultTitle="Reset password" isLoadingTitle="Resetting password" isLoading={isPending} className="w-full" />
         </form>
       </Form>
     </div>
   );
 };
 
-export default ResetForm;
+export default ResetPasswordForm;

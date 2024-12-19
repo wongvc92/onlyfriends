@@ -23,6 +23,16 @@ const updateEmailVerificationStatus = async (email: string) => {
   return await pool.query("UPDATE users SET email_verified = $1 WHERE email = $2", [new Date(), email]);
 };
 
+const updateUserPasswordByEmail = async (hashedPassword: string, email: string) => {
+  await pool.query(
+    `
+      UPDATE users
+      SET password=$1
+      WHERE email=$2;
+    `,
+    [email, hashedPassword]
+  );
+};
 const deleteVerificationTokenById = async (id: string) => {
   return await pool.query("DELETE FROM verification_tokens WHERE id = $1", [id]);
 };
@@ -48,4 +58,5 @@ export const authServices = {
   updateEmailVerificationStatus,
   deleteVerificationTokenById,
   getUsernameById,
+  updateUserPasswordByEmail,
 };

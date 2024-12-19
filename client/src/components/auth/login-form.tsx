@@ -90,9 +90,9 @@ export const LoginForm = () => {
                       <Input type="password" {...field} disabled={isPending} />
                     </FormControl>
                     <Button variant="link" size="sm" asChild className="px-0" type="button" disabled={isPending}>
-                      <a href="/auth/reset" className="mt-10">
+                      <Link to="/reset" className="mt-10">
                         Forgot password?
-                      </a>
+                      </Link>
                     </Button>
                     {form.formState.errors.password && <FormMessage>{form.formState.errors.password.message}</FormMessage>}
                   </FormItem>
