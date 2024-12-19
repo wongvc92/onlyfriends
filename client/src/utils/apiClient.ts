@@ -43,7 +43,7 @@ apiClient.interceptors.response.use(
           console.log("Refresh token not found. Redirecting to login...");
 
           // Prevent loop by ensuring we don't redirect from the login page
-          if (window.location.pathname !== "/") {
+          if (window.location.pathname !== "/" && window.location.pathname !== "/new-password") {
             window.location.href = "/";
           }
         } else {

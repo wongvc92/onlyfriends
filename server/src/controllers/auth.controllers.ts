@@ -9,10 +9,13 @@ import { asyncHandler } from "../middleware/asyncHandler";
 import { HTTPSTATUS } from "../config/http.config";
 import {
   createTwoFactorConfirmation,
+  deletePasswordResetTokenById,
   deleteTwoFactorTokenByTokenId,
   deleteTwoFactorTokenByTwoFactorConfirmationId,
+  generatePasswordResetToken,
   generateTwoFactorToken,
   generateVerificationToken,
+  getPasswordResetTokenByToken,
   getTwoFactorConfirmationByUserId,
   getTwoFactorTokenDataByEmail,
   getVerificationToken,
@@ -20,6 +23,10 @@ import {
 import { jwtUtils } from "../utils/jwt";
 import { config } from "../config/app.config";
 import { cookieUtils } from "../utils/cookie";
+import { resetPasswordSchema } from "../validation/resetPasswordSchema";
+import ResourceNotFoundError from "../error/ResourceNotFoundError";
+import { sendPasswordResetEmail } from "../utils/email";
+import { newPasswordSchema } from "../validation/newPasswordSchema";
 
 const registerUser = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const { username, password, email } = req.body;
@@ -192,10 +199,56 @@ const renewAccessToken = asyncHandler(async (req: Request, res: Response) => {
   res.status(HTTPSTATUS.CREATED).json({ accessToken: newAccessToken });
 });
 
+const resetPassword = asyncHandler(async (req: Request, res: Response) => {
+  const { email } = resetPasswordSchema.parse(req.body);
+  console.log("passwordResetToken", email);
+  const existingUser = await authServices.getExistingUserByEmail(email);
+  console.log("existingUser", existingUser);
+  if (!existingUser) {
+    throw new ResourceNotFoundError("Email not found");
+  }
+
+  const passwordResetToken = await generatePasswordResetToken(existingUser.email);
+  console.log("passwordResetToken", passwordResetToken);
+  const { error } = await sendPasswordResetEmail(existingUser.email, passwordResetToken);
+  if (error) {
+    throw new BadRequestError("Something went wrong, try again later.");
+  }
+  return res.status(HTTPSTATUS.CREATED).json({ message: "Reset email sent!" });
+});
+
+const newPassword = asyncHandler(async (req: Request, res: Response) => {
+  const { password, confirmPassword, token } = newPasswordSchema.parse(req.body);
+
+  const passwordResetToken = await getPasswordResetTokenByToken(token);
+  if (!passwordResetToken) {
+    throw new BadRequestError("Token not found");
+  }
+
+  const hasExpired = new Date(passwordResetToken.expires) < new Date();
+  if (hasExpired) {
+    throw new BadRequestError("Token has expired");
+  }
+
+  const existingUser = authServices.getExistingUserByEmail(passwordResetToken.email);
+
+  if (!existingUser) {
+    throw new AuthError("User not found");
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+  await authServices.updateUserPasswordByEmail(passwordResetToken.email, hashedPassword);
+  await deletePasswordResetTokenById(passwordResetToken.id);
+
+  res.status(HTTPSTATUS.CREATED).json({ message: "Password updated successfully" });
+});
+
 export const authControllers = {
   registerUser,
   verifyEmailByToken,
   loginUser,
   logoutUser,
   renewAccessToken,
+  resetPassword,
+  newPassword,
 };

@@ -1,4 +1,3 @@
-import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,11 +22,11 @@ const RegisterForm = () => {
 
   return (
     <div className="flex flex-col space-y-4 ">
-      <div className="flex items-center justify-center my-4">
+      {/* <div className="flex items-center justify-center my-4">
         <div className="flex-grow border-t border-gray-300"></div>
         <span className="mx-4 text-muted-foreground text-xs"> Or register with email</span>
         <div className="flex-grow border-t border-gray-300"></div>
-      </div>
+      </div> */}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(() => mutate(form.getValues()))} className="space-y-4">
           <FormField

@@ -124,3 +124,10 @@ CREATE TABLE two_factor_confirmations (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
+CREATE TABLE password_reset_tokens (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    email VARCHAR(255) NOT NULL,
+    token VARCHAR(64) NOT NULL,
+    expired TIMESTAMP NOT NULL
+);
