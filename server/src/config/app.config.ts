@@ -3,7 +3,7 @@ import { getEnv } from "../utils/getEnv";
 const appConfig = () => ({
   NODE_ENV: getEnv("NODE_ENV"),
   APP_ORIGIN: getEnv("APP_ORIGIN"),
-  PORT: getEnv("PORT"),
+  PORT: getEnv("PORT") || 5000,
   BASE_PATH: getEnv("BASE_PATH"),
   DATABASE_URL: getEnv("DATABASE_URL"),
   JWT: {
