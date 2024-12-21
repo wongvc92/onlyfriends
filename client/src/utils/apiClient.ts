@@ -1,6 +1,5 @@
 import axios from "axios";
 import { basePath } from "./basePath";
-import { useNavigate } from "@tanstack/react-router";
 
 const options = {
   baseURL: basePath(),

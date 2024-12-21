@@ -1,7 +1,7 @@
 const BASE_URL = import.meta.env.VITE_SERVER_URL!;
 
 export const basePath = (value = "") => {
-  return process.env.NODE_ENV === "development" ? `${BASE_URL}${value}` : value;
+  return `${BASE_URL}${value}`;
 };
 
 interface SearchParamsProps {
