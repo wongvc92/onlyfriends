@@ -1,0 +1,59 @@
+version: "3"
+services:
+  postgres:
+    image: postgres:17
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_USER=POSTGRES_USER
+      - POSTGRES_PASSWORD=POSTGRES_PASSWORD
+      - POSTGRES_DB=POSTGRES_DB
+  nginx:
+    depends_on:
+      - server
+      - client
+    restart: always
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./nginx
+    ports:
+      - "3050:80"
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.dev
+    container_name: server-dev
+    ports:
+      - "5000:5000"
+    volumes:
+      - /app/node_modules
+      - ./server:/app
+    env_file:
+      - .env
+    environment:
+      - VITE_SERVER_URL
+      - DATABASE_URL
+      - APP_ORIGIN
+      - BASE_PATH
+      - NODE_ENV
+      - PORT
+      - ACCESS_TOKEN_SECRET
+      - REFRESH_TOKEN_SECRET
+      - RESEND_API_KEY
+      - RESEND_VERIFIED_DOMAIN
+      - AWS_REGION
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - AWS_BUCKET_NAME
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile.dev
+    stdin_open: true
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - VITE_SERVER_URL=http://localhost:5000
+    container_name: client-dev
+    volumes:
+      - /app/node_modules
+      - ./client:/app

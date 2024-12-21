@@ -6,20 +6,17 @@ import path from "path";
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [TanStackRouterVite({}), react()],
+  server: {
+    host: "0.0.0.0",
+    port: 3000,
+    hmr: {
+      host: "localhost",
+      port: 3050,
+    },
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
-    },
-  },
-  server: {
-    port: 3001, // If you want to run the dev server on port 3001
-    proxy: {
-      "/api": {
-        target: "http://localhost:5001",
-        changeOrigin: true,
-        secure: false,
-        // rewrite: (path) => path.replace(/^\/api/, ""),
-      },
     },
   },
 });

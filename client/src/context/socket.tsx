@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { useAuth } from "./auth";
 import { io, Socket } from "socket.io-client";
 
-const URL = import.meta.env.MODE === "production" ? undefined : import.meta.env.VITE_SERVER_URL;
+const URL = import.meta.env.VITE_SERVER_URL;
 
 interface ISocketProvider {
   socket: Socket | null;
