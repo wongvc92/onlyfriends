@@ -40,11 +40,11 @@ ALTER TABLE friends ADD CONSTRAINT unique_friendship UNIQUE (user_id, friend_id)
 
 
 CREATE TABLE posts (
-     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    posts VARCHAR NOT NULL,
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    post VARCHAR NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE
+    author_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE post_images(

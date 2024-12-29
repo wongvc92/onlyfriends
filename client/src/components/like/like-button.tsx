@@ -1,10 +1,9 @@
 import { HeartIcon } from "@radix-ui/react-icons";
 import { Button } from "../ui/button";
-import { IPost } from "@/types/IPost";
-import { useCreateLike } from "@/hooks/post/useCreateLike";
+import { useCreateLike } from "@/hooks/like/useCreateLike";
 
-const LikeButton = ({ post }: { post: IPost }) => {
-  const { mutate, isPending } = useCreateLike({ postId: post.id });
+const LikeButton = ({ postId }: { postId: string }) => {
+  const { mutate, isPending } = useCreateLike({ postId });
 
   const onLikePost = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

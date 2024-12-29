@@ -1,10 +1,9 @@
-import { IPost } from "@/types/IPost";
 import { Button } from "../ui/button";
 import { HeartFilledIcon } from "@radix-ui/react-icons";
-import { useDeleteLike } from "@/hooks/post/useDeleteLike";
+import { useDeleteLike } from "@/hooks/like/useDeleteLike";
 
-const DislikeButton = ({ post }: { post: IPost }) => {
-  const { mutate, isPending } = useDeleteLike({ postId: post.id });
+const DislikeButton = ({ postId }: { postId: string }) => {
+  const { mutate, isPending } = useDeleteLike({ postId });
 
   const onUnlikePost = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

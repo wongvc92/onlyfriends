@@ -2,17 +2,13 @@ import { IPost } from "@/types/IPost";
 import apiClient from "@/utils/apiClient";
 import { buildSearchParams } from "@/utils/basePath";
 
-export const getPostsByUsername = async ({
-  pageParam,
-  username,
-}: {
-  pageParam: number;
-  username: string;
-}): Promise<{
+export interface IGetPostsByUsernameResponse {
   data: IPost[];
   currentPage: number;
   nextPage: number;
-}> => {
+}
+
+export const getPostsByUsername = async ({ pageParam, username }: { pageParam: number; username: string }): Promise<IGetPostsByUsernameResponse> => {
   const LIMIT = 3;
 
   const searchParams = {
@@ -21,6 +17,6 @@ export const getPostsByUsername = async ({
   };
 
   const url = `/api/posts/user/${username}` + buildSearchParams(searchParams);
-  const res = await apiClient(url);
+  const res = await apiClient.get(url);
   return res.data;
 };

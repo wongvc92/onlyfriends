@@ -10,6 +10,7 @@ const CommentList = ({ post }: { post: IPost }) => {
   const { ref, inView } = useInView();
   const { status, data, error, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage } = useGetAllComments({ postId: post.id });
 
+  // Trigger fetching new comments when the button comes into view
   useEffect(() => {
     if (inView) {
       fetchNextPage();
@@ -17,15 +18,15 @@ const CommentList = ({ post }: { post: IPost }) => {
   }, [fetchNextPage, inView]);
 
   return (
-    <div className="flex flex-col gap-2 p-4 ">
-      {data?.pages[0].data.length === 0 ? (
+    <div className="flex flex-col gap-2 p-4">
+      {data?.pages[0]?.data.length === 0 ? (
         <p className="text-sm text-muted-foreground text-center">No comment yet. Be the first to comment.</p>
       ) : (
         data?.pages.map((page, pageIndex) => (
           <React.Fragment key={pageIndex}>
             {page.data.map((comment) => (
-              <div key={comment.id} className="flex start gap-2 py-2 ">
-                <CommentCard comment={comment} key={comment.id} />
+              <div key={comment.id} className="flex start gap-2 py-2">
+                <CommentCard comment={comment} />
               </div>
             ))}
           </React.Fragment>

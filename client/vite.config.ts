@@ -11,15 +11,4 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  server: {
-    port: 3001, // If you want to run the dev server on port 3001
-    proxy: {
-      "/api": {
-        target: "http://localhost:5001",
-        changeOrigin: true,
-        secure: false,
-        // rewrite: (path) => path.replace(/^\/api/, ""),
-      },
-    },
-  },
 });

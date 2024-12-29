@@ -4,7 +4,6 @@ import { PiShareFatBold } from "react-icons/pi";
 import { Link, useLocation } from "@tanstack/react-router";
 import { getrelativeTime } from "@/utils/getrelativeTime";
 import { IPost } from "@/types/IPost";
-import PostACtion from "./post-action";
 import Comments from "../comment/comments";
 import { useState } from "react";
 import EditPostForm from "./edit-post-form";
@@ -13,7 +12,8 @@ import ProfileImage from "../profile/profile-image";
 import ProfileName from "../profile/profile-name";
 import ProfileUsername from "../profile/profile-username";
 import { cn } from "@/lib/utils";
-import Likes from "./like-status";
+import Likes from "../like/like-status";
+import PostAction from "./post-action";
 
 const PostCard = ({ post }: { post: IPost }) => {
   const [isEdit, setIsEdit] = useState(false);
@@ -39,15 +39,15 @@ const PostCard = ({ post }: { post: IPost }) => {
             <div className="flex-grow w-full border opacity-0">click here</div>
           </Link>
           <div className="ml-auto">
-            <PostACtion post={post} setIsEdit={setIsEdit} />
+            <PostAction post={post} setIsEdit={setIsEdit} />
           </div>
         </div>
       </CardHeader>
 
       <CardContent>{isEdit ? <EditPostForm setIsEdit={setIsEdit} post={post} /> : <PostContent post={post} />}</CardContent>
       <CardFooter className="flex items-center justify-start gap-6">
-        <Likes post={post} />
-        <Comments post={post} />
+        <Likes is_liked={post.is_liked} like_count={post.like_count} postId={post.id} />
+        <Comments comment_count={post.comment_count} postId={post.id} />
         <PiShareFatBold />
       </CardFooter>
     </Card>

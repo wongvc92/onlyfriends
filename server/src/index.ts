@@ -1,3 +1,6 @@
+import dotenv from "dotenv";
+dotenv.config(); // Remove the path option to look for .env in root
+
 import express from "express";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes";
@@ -21,7 +24,7 @@ import { app, server } from "./socket/socket";
 
 app.use(
   cors({
-    origin: config.APP_ORIGIN,
+    origin: [config.APP_ORIGIN, "http://localhost"],
     credentials: true, // Allow credentials (cookies)
   })
 );

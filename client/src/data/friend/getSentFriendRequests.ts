@@ -1,4 +1,4 @@
-import { IFriendsRequest } from "@/types/IFriend";
+import { IFriend } from "@/types/IFriend";
 import apiClient from "@/utils/apiClient";
 import { buildSearchParams } from "@/utils/basePath";
 
@@ -6,7 +6,7 @@ export const getSentFriendRequests = async ({
   pageParam,
 }: {
   pageParam: number;
-}): Promise<{ data: IFriendsRequest[]; currentPage: number; nextPage: number; totalCount: number; totalPages: number }> => {
+}): Promise<{ data: IFriend[]; currentPage: number; nextPage: number; totalCount: number; totalPages: number }> => {
   const LIMIT = 10;
 
   const searchParams = {
