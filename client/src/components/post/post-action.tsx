@@ -4,24 +4,24 @@ import { BsThreeDots } from "react-icons/bs";
 import Modal from "@/components/ui/modal";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import Spinner from "@/components/ui/spinner";
 import { IPost } from "@/types/IPost";
 import { useAuth } from "@/context/auth";
 import { Pencil1Icon } from "@radix-ui/react-icons";
 import { useDeletePost } from "@/hooks/post/useDeletePost";
+import SubmitButton from "../common/submit-button";
 
 interface PostActionProps {
   post: IPost;
   setIsEdit: React.Dispatch<React.SetStateAction<boolean>>;
 }
-const PostACtion: React.FC<PostActionProps> = ({ post, setIsEdit }) => {
+const PostAction: React.FC<PostActionProps> = ({ post, setIsEdit }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { mutate, isPending } = useDeletePost();
   const auth = useAuth();
 
-  const onDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const onDelete = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    mutate(post.id);
+    mutate(post.id, { onSuccess: () => setIsOpen(false), onError: () => setIsOpen(false) });
   };
 
   return (
@@ -34,15 +34,10 @@ const PostACtion: React.FC<PostActionProps> = ({ post, setIsEdit }) => {
         classname="w-[400px]"
       >
         <div className="flex items-center gap-2 justify-end">
-          <Button type="button" variant="destructive" onClick={onDelete} className="rounded-full">
-            {isPending ? (
-              <div className="flex items-center gap-2">
-                <Spinner size="4" color="white" /> Deleting...
-              </div>
-            ) : (
-              "Yes"
-            )}
-          </Button>
+          <form onSubmit={onDelete}>
+            <SubmitButton defaultTitle="Yes" isLoadingTitle="Deleting..." isLoading={isPending} className="rounded-full" variant="destructive" />
+          </form>
+
           <Button type="button" variant="outline" className="rounded-full" onClick={() => setIsOpen(false)}>
             Cancel
           </Button>
@@ -53,11 +48,11 @@ const PostACtion: React.FC<PostActionProps> = ({ post, setIsEdit }) => {
           <BsThreeDots color="gray" />
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuItem onClick={() => setIsOpen(true)} className={`${post.user_id === auth.user?.id ? "flex" : "hidden"}`}>
+          <DropdownMenuItem onClick={() => setIsOpen(true)} className={`${post.author_id === auth.user?.id ? "flex" : "hidden"}`}>
             <FaRegTrashCan />
             Delete
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setIsEdit(true)} className={`${post.user_id === auth.user?.id ? "flex" : "hidden"}`}>
+          <DropdownMenuItem onClick={() => setIsEdit(true)} className={`${post.author_id === auth.user?.id ? "flex" : "hidden"}`}>
             <Pencil1Icon />
             Edit
           </DropdownMenuItem>
@@ -67,4 +62,4 @@ const PostACtion: React.FC<PostActionProps> = ({ post, setIsEdit }) => {
   );
 };
 
-export default PostACtion;
+export default PostAction;

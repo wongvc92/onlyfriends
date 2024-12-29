@@ -4,11 +4,11 @@ import { BsThreeDots } from "react-icons/bs";
 import Modal from "@/components/ui/modal";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import Spinner from "@/components/ui/spinner";
 import { useAuth } from "@/context/auth";
 import { IComment } from "@/types/IComment";
 import { Pencil1Icon } from "@radix-ui/react-icons";
 import { useDeleteComment } from "@/hooks/comment/useDeleteComment";
+import SubmitButton from "../common/submit-button";
 
 interface CommentActionProps {
   setIsEdit: React.Dispatch<React.SetStateAction<boolean>>;
@@ -17,14 +17,18 @@ interface CommentActionProps {
 
 const CommentAction: React.FC<CommentActionProps> = ({ comment, setIsEdit }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { isPending, mutate, isSuccess } = useDeleteComment();
+  const { isPending, mutate } = useDeleteComment(comment.post_id);
   const auth = useAuth();
 
-  const onDelete = () => {
+  const onDelete = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     mutate(
-      { comment },
+      { commentId: comment.id },
       {
         onSuccess: () => {
+          setIsOpen(false);
+        },
+        onError: () => {
           setIsOpen(false);
         },
       }
@@ -41,16 +45,10 @@ const CommentAction: React.FC<CommentActionProps> = ({ comment, setIsEdit }) => 
         classname="w-[400px]"
       >
         <div className="flex items-center gap-2 justify-end">
-          <Button type="button" variant="destructive" onClick={onDelete} className="rounded-full">
-            {isPending ? (
-              <div className="flex items-center gap-2">
-                <Spinner size="4" color="white" /> Deleting...
-              </div>
-            ) : (
-              "Yes"
-            )}
-          </Button>
-          <Button type="button" variant="outline" className="rounded-full" onClick={() => setIsEdit(false)}>
+          <form onSubmit={onDelete}>
+            <SubmitButton defaultTitle="Yes" isLoadingTitle="Deleting..." isLoading={isPending} className="rounded-full" variant="destructive" />
+          </form>
+          <Button type="button" variant="outline" className="rounded-full" onClick={() => setIsOpen(false)}>
             Cancel
           </Button>
         </div>

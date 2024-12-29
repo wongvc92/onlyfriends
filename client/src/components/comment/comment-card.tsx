@@ -30,7 +30,7 @@ const CommentCard = ({ comment }: { comment: IComment }) => {
     <div className="border-none">
       <div className="flex gap-2">
         <div className="flex gap-2">
-          <ProfileImage image="https://github.com/shadcn.png" username={comment.username} />
+          <ProfileImage image={comment.display_image} username={comment.username} />
         </div>
 
         <div className="bg-muted p-2 rounded-md space-y-1 ">

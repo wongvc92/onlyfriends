@@ -13,7 +13,7 @@ import { useCreateComment } from "@/hooks/comment/useCreateComment";
 
 const PostComment = ({ post }: { post: IPost }) => {
   const tag = useTagging();
-  const { mutate, isPending, isSuccess } = useCreateComment();
+  const { mutate, isPending, isSuccess } = useCreateComment(post.id);
 
   const form = useForm<TCommentSchema>({
     resolver: zodResolver(commentSchema),

@@ -8,7 +8,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
 import { SocketProvider } from "./context/socket";
 
-const queryClient = new QueryClient({ defaultOptions: { queries: { staleTime: Infinity } } });
+const queryClient = new QueryClient();
 // Set up a Router instance
 const router = createRouter({
   context: {

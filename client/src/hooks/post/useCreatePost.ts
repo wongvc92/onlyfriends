@@ -1,10 +1,18 @@
 import { urlToFile } from "@/lib/cropImage";
 import { useImageUploadManager } from "../common/useImageUploadManager";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { InfiniteData, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import apiClient from "@/utils/apiClient";
 import { postKeys } from "./postKeys";
 import { useAuth } from "@/context/auth";
+import { IGetAllPostsResponse } from "@/data/post/getAllPosts";
+import { IPost } from "@/types/IPost";
+import { IGetPostsByUsernameResponse } from "@/data/post/getPostsByUsername";
+
+interface ICreatePostResponse {
+  post: IPost;
+  message: string;
+}
 
 const createPost = async ({
   post,
@@ -14,7 +22,7 @@ const createPost = async ({
   images?: {
     url: string;
   }[];
-}) => {
+}): Promise<ICreatePostResponse> => {
   // const { uploadImageToS3 } = useImageUploadManager();
 
   // const signedImages: { url: string }[] = [];
@@ -52,12 +60,53 @@ export const useCreatePost = () => {
       toast.error("Something went wrong. Please try again.");
     },
 
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: postKeys.all,
+    onSuccess: (data: ICreatePostResponse) => {
+      queryClient.setQueryData(postKeys.userPosts(data.post.username), (oldData: InfiniteData<IGetPostsByUsernameResponse> | undefined) => {
+        if (!oldData) return oldData;
+
+        const newPages = oldData.pages.map((page, index) => {
+          if (!page || !page.data) return page;
+
+          // Add the new comment only to the first page
+          if (index === 0) {
+            return {
+              ...page,
+              data: [data.post, ...page.data],
+            };
+          }
+
+          return page; // Leave other pages unchanged
+        });
+
+        return {
+          ...oldData,
+          pages: newPages,
+          pageParams: oldData.pageParams,
+        } as InfiniteData<IGetPostsByUsernameResponse>;
       });
-      queryClient.invalidateQueries({
-        queryKey: postKeys.userPosts(auth.user?.username as string),
+
+      queryClient.setQueryData(postKeys.list(), (oldData: InfiniteData<IGetAllPostsResponse> | undefined) => {
+        if (!oldData) return oldData;
+
+        const newPages = oldData.pages.map((page, index) => {
+          if (!page || !page.data) return page;
+
+          // Add the new comment only to the first page
+          if (index === 0) {
+            return {
+              ...page,
+              data: [data.post, ...page.data],
+            };
+          }
+
+          return page; // Leave other pages unchanged
+        });
+
+        return {
+          ...oldData,
+          pages: newPages,
+          pageParams: oldData.pageParams,
+        } as InfiniteData<IGetAllPostsResponse>;
       });
     },
   });

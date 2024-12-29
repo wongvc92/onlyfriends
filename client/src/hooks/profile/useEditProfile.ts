@@ -11,7 +11,7 @@ const editProfile = async (formData: TProfileSchema) => {
 };
 
 export const useEditProfile = ({ username }: { username?: string }) => {
-  const navigate = useNavigate({ from: `/${username}/edit` });
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: editProfile,

@@ -17,12 +17,14 @@ const createPost = asyncHandler(async (req: Request, res: Response) => {
 
   const createdPost = await postServices.createpost(post, currentUser.id);
 
+  const createdPostImages = [];
   if (images && images.length > 0) {
     for (const image of images) {
-      await postServices.createPostImage(image.url, createdPost.id);
+      const createdPostImage = await postServices.createPostImage(image.url, createdPost.id);
+      createdPostImages.push(createdPostImage);
     }
   }
-  res.status(HTTPSTATUS.CREATED).json({ post });
+  res.status(HTTPSTATUS.CREATED).json({ post: { ...createdPost, post_images: createdPostImages }, message: "Post created" });
 });
 
 const editPostById = asyncHandler(async (req: Request, res: Response) => {
@@ -34,10 +36,16 @@ const editPostById = asyncHandler(async (req: Request, res: Response) => {
   const { post } = postSchema.parse(req.body);
 
   const editedPost = await postServices.editPostById(post, postId);
-  res.status(HTTPSTATUS.CREATED).json({ editedPost, message: "Post updated" });
+  res.status(HTTPSTATUS.CREATED).json({ post: editedPost, message: "Post updated" });
 });
 
 const getPostsByUsername = asyncHandler(async (req: Request, res: Response) => {
+  const currentUser = req.user;
+
+  if (!currentUser) {
+    throw new AuthError("Please login");
+  }
+
   const username = req.params.username;
   if (!username) {
     throw new BadRequestError("username is required");
@@ -50,7 +58,7 @@ const getPostsByUsername = asyncHandler(async (req: Request, res: Response) => {
   const totalPosts = await postServices.getPostsByUsernameCount(username);
   const totalPages = Math.ceil(totalPosts / limit);
 
-  const posts = await postServices.getPostsByUsername(username, limit, offset);
+  const posts = await postServices.getPostsByUsername(currentUser.id, username, limit, offset);
 
   res.status(HTTPSTATUS.OK).json({
     data: posts,
@@ -79,6 +87,12 @@ const deletePost = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const getAllPosts = asyncHandler(async (req: Request, res: Response) => {
+  const currentUser = req.user;
+
+  if (!currentUser) {
+    throw new AuthError("Please login");
+  }
+
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 10;
   const offset = (page - 1) * limit;
@@ -86,7 +100,7 @@ const getAllPosts = asyncHandler(async (req: Request, res: Response) => {
   const totalPosts = await postServices.getAllPostsCount();
   const totalPages = Math.ceil(totalPosts / limit);
 
-  const posts = await postServices.getAllPosts(limit, offset);
+  const posts = await postServices.getAllPosts(limit, offset, currentUser.id);
 
   res.status(HTTPSTATUS.OK).json({
     data: posts,
@@ -98,14 +112,18 @@ const getAllPosts = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const getSinglePostById = asyncHandler(async (req: Request, res: Response) => {
+  const currentUser = req.user;
+
+  if (!currentUser) {
+    throw new AuthError("Please login");
+  }
   const postId = req.params.postId;
 
   if (!postId) {
     throw new BadRequestError("postId is required");
   }
 
-
-  const post = await postServices.getSinglePostById(postId);
+  const post = await postServices.getSinglePostById(postId, currentUser.id);
 
   res.status(HTTPSTATUS.OK).json({
     post,

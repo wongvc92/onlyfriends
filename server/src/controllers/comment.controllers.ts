@@ -13,8 +13,8 @@ export const addComment = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const { comment, post_id } = commentSchema.parse(req.body);
-  await commentServices.addComment(post_id, comment, currentUser.id);
-  res.status(HTTPSTATUS.CREATED).json({ message: "Successfully add comment" });
+  const createdComment = await commentServices.addComment(post_id, comment, currentUser.id);
+  res.status(HTTPSTATUS.CREATED).json({ comment: createdComment, message: "Successfully add comment" });
 });
 
 export const getCommentsByPostId = asyncHandler(async (req: Request, res: Response) => {
@@ -67,7 +67,7 @@ export const editCommentById = asyncHandler(async (req: Request, res: Response) 
 
   const { comment } = commentSchema.parse(req.body);
   const updatedComment = await commentServices.editCommentById(comment, commentId);
-  res.status(HTTPSTATUS.CREATED).json({ data: updatedComment, message: "Comment edited." });
+  res.status(HTTPSTATUS.CREATED).json({ comment: updatedComment, message: "Comment edited." });
 });
 
 export const commentsControllers = {
