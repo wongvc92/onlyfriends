@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { useCreateProfile } from "@/hooks/profile/useCreateProfile";
 import SubmitButton from "../common/submit-button";
 import MultiImageUploader from "../image/react-easy-crop/multi-image-uploader";
+import ImageUploader from "../image/react-easy-crop/image-uploader";
 
 const AddProfileForm = () => {
   const { mutate, isPending } = useCreateProfile();
@@ -44,7 +45,7 @@ const AddProfileForm = () => {
               <FormLabel className="text-muted-foreground">Banner Image</FormLabel>
               <FormControl>
                 <ImageCropProvider aspect={4 / 2} cropShape="rect">
-                  <MultiImageUploader onChange={field.onChange} value={field.value} key={"banner_image"} type="single" />
+                  <ImageUploader onChange={field.onChange} value={field.value} key="banner_image" />
                 </ImageCropProvider>
               </FormControl>
               {form.formState.errors.banner_image && <FormMessage>{form.formState.errors.banner_image.message}</FormMessage>}
@@ -59,7 +60,7 @@ const AddProfileForm = () => {
               <FormLabel className="text-muted-foreground">Display Image</FormLabel>
               <FormControl>
                 <ImageCropProvider aspect={1} cropShape="round">
-                  <MultiImageUploader onChange={field.onChange} value={field.value} imageShape="rounded-full" key={"display_image"} type="single" />
+                  <ImageUploader onChange={field.onChange} value={field.value} imageShape="rounded-full" key="display_image" />
                 </ImageCropProvider>
               </FormControl>
               {form.formState.errors.display_image && <FormMessage>{form.formState.errors.display_image.message}</FormMessage>}

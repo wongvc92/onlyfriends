@@ -3,13 +3,13 @@ import { IProfile } from "../types/IProfiles";
 import { TProfileSchema } from "../validation/profileSchema";
 
 const createProfile = async (profileData: TProfileSchema, currentUserId: string) => {
-  const { name, bio, website, location, display_image } = profileData;
+  const { name, bio, website, location, display_image, banner_image } = profileData;
   const result = await pool.query(
     `WITH created_profile AS 
       (
         INSERT INTO profiles 
-        (name, bio, website, location, user_id, display_image) 
-        values($1, $2, $3, $4, $5, $6)
+        (name, bio, website, location, user_id, display_image, banner_image) 
+        values($1, $2, $3, $4, $5, $6, $7)
         RETURNING *
        )
         SELECT cp.*,
@@ -18,7 +18,7 @@ const createProfile = async (profileData: TProfileSchema, currentUserId: string)
         FROM created_profile cp
         LEFT JOIN users ON cp.user_id = users.id
     `,
-    [name, bio, website, location, currentUserId, display_image]
+    [name, bio, website, location, currentUserId, display_image, banner_image]
   );
   return result.rows[0];
 };

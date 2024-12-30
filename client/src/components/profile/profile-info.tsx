@@ -21,6 +21,7 @@ const ProfileInfo = () => {
     return null;
   }
   const isSelfProfile = auth.user && auth.user.username === username ? true : false;
+  const isFirstTimeProfile = isSelfProfile && profile.id === null;
 
   return (
     <div className="w-full">
@@ -55,13 +56,11 @@ const ProfileInfo = () => {
 
                   {!isSelfProfile && <FriendStatus peopleId={profile.user_id!} />}
 
-                  {isSelfProfile && (
-                    <Link to={`/${username}/edit`}>
-                      <Button className="rounded-full" variant="outline">
-                        Edit profile
-                      </Button>
-                    </Link>
-                  )}
+                  <Link to={isSelfProfile && !isFirstTimeProfile ? `/${username}/edit` : `/${username}/add`}>
+                    <Button className="rounded-full" variant="outline">
+                      {isSelfProfile && !isFirstTimeProfile ? "Edit profile" : "Add profile"}
+                    </Button>
+                  </Link>
                 </div>
 
                 <CardDescription className="line-clamp-2">{profile?.bio || ""}</CardDescription>
