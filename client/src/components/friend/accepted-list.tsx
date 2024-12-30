@@ -53,7 +53,7 @@ const AcceptedList = () => {
                 {page.data.map((acceptedFriend) => (
                   <div key={acceptedFriend.id} className="flex  w-full items-center justify-between border p-4 rounded-md">
                     <div className="flex items-start gap-2">
-                      <ProfileImage image="https://github.com/shadcn.png" username={acceptedFriend.username} classname="w-10 h-10" />
+                      <ProfileImage image={acceptedFriend.display_image} username={acceptedFriend.username} classname="w-10 h-10" />
                       <div>
                         <ProfileName name={acceptedFriend.name} classname="font-bold text-sm" />
                         <ProfileUsername username={acceptedFriend.username} classname="font-light text-muted-foreground text-xs" />
