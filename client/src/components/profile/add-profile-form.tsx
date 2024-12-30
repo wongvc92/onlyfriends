@@ -1,20 +1,16 @@
-import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ImageCropProvider } from "@/providers/image-crop-provider";
+import { ImageCropProvider } from "@/context/image-crop";
 import { profileSchema, TProfileSchema } from "@/validation/profileSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useParams } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
-import ImageUploader from "../image/react-easy-crop/image-uploader";
 import { useCreateProfile } from "@/hooks/profile/useCreateProfile";
+import SubmitButton from "../common/submit-button";
+import MultiImageUploader from "../image/react-easy-crop/multi-image-uploader";
 
 const AddProfileForm = () => {
-  const [rows, setRows] = useState(2);
-  const { username } = useParams({ strict: false });
-  const { mutate, isPending } = useCreateProfile({ username });
+  const { mutate, isPending } = useCreateProfile();
 
   const form = useForm<TProfileSchema>({
     resolver: zodResolver(profileSchema),
@@ -29,14 +25,16 @@ const AddProfileForm = () => {
     },
   });
 
+  const onSubmit = (data: TProfileSchema) => {
+    mutate(data);
+  };
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(() => mutate(form.getValues()))} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <div className="flex justify-between items-center">
           <h3 className="font-semibold">Add Profile</h3>
-          <Button type="submit" className="w-fit rounded-full shadow-lg" disabled={isPending}>
-            Save
-          </Button>
+          <SubmitButton defaultTitle="Save" isLoadingTitle="Saving..." className="w-fit rounded-full shadow-lg" isLoading={isPending} />
         </div>
 
         <FormField
@@ -46,7 +44,7 @@ const AddProfileForm = () => {
               <FormLabel className="text-muted-foreground">Banner Image</FormLabel>
               <FormControl>
                 <ImageCropProvider aspect={4 / 2} cropShape="rect">
-                  <ImageUploader onChange={field.onChange} value={field.value} key={"banner_image"} />
+                  <MultiImageUploader onChange={field.onChange} value={field.value} key={"banner_image"} type="single" />
                 </ImageCropProvider>
               </FormControl>
               {form.formState.errors.banner_image && <FormMessage>{form.formState.errors.banner_image.message}</FormMessage>}
@@ -61,7 +59,7 @@ const AddProfileForm = () => {
               <FormLabel className="text-muted-foreground">Display Image</FormLabel>
               <FormControl>
                 <ImageCropProvider aspect={1} cropShape="round">
-                  <ImageUploader onChange={field.onChange} value={field.value} imageShape="rounded-full" key={"display_image"} />
+                  <MultiImageUploader onChange={field.onChange} value={field.value} imageShape="rounded-full" key={"display_image"} type="single" />
                 </ImageCropProvider>
               </FormControl>
               {form.formState.errors.display_image && <FormMessage>{form.formState.errors.display_image.message}</FormMessage>}
@@ -91,7 +89,6 @@ const AddProfileForm = () => {
                 <Textarea
                   {...field}
                   disabled={isPending}
-                  rows={rows}
                   ref={(el) => {
                     field.ref(el);
                     if (el) {

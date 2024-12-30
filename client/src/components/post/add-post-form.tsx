@@ -1,7 +1,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
 import { contentMaxLimit, postSchema, TPostSchema } from "@/validation/postsSchema";
 import { toast } from "sonner";
 import DynamicTextarea from "../ui/dynamic-textarea";
@@ -9,13 +8,15 @@ import { useTagging } from "@/hooks/common/useTagging";
 import TagFriend from "../comment/tag-friend";
 import MultiImageUploader from "../image/react-image-crop/multi-image-uploader";
 import { useCreatePost } from "@/hooks/post/useCreatePost";
+import SubmitButton from "../common/submit-button";
 
 interface PostFormProps {
   onClose: () => void;
 }
 const AddPostForm: React.FC<PostFormProps> = ({ onClose }) => {
   const tag = useTagging();
-  const { mutate, isPending, isSuccess } = useCreatePost();
+  const { mutate, isPending } = useCreatePost();
+
   const form = useForm<TPostSchema>({
     resolver: zodResolver(postSchema),
     mode: "onChange",
@@ -25,9 +26,10 @@ const AddPostForm: React.FC<PostFormProps> = ({ onClose }) => {
     },
   });
 
-  const onSubmit = () => {
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     mutate(
-      { post: tag.content, images: form.getValues().images },
+      { post: tag.content, images: form.getValues("images") },
       {
         onSuccess: () => {
           onClose();
@@ -41,7 +43,7 @@ const AddPostForm: React.FC<PostFormProps> = ({ onClose }) => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={onSubmit} className="space-y-4">
         <FormField
           name="post"
           render={({ field }) => (
@@ -73,9 +75,12 @@ const AddPostForm: React.FC<PostFormProps> = ({ onClose }) => {
                 >
                   {tag.content.length}/{contentMaxLimit}
                 </p>
-                <Button type="submit" className="w-fit" disabled={isPending || tag.content.length === 0 || tag.content.length > contentMaxLimit}>
-                  Post
-                </Button>
+                <SubmitButton
+                  isLoading={isPending}
+                  defaultTitle="Post"
+                  className="w-fit"
+                  disabled={isPending || tag.content.length > contentMaxLimit}
+                />
               </div>
             </FormItem>
           )}

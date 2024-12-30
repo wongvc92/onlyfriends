@@ -49,11 +49,10 @@ const ImageSlider: React.FC<ImageSliderProps> = ({ post }) => {
     containerRef.current.scrollLeft = scrollLeft - walk;
   };
 
-
   return (
     <>
       {!!post.images && post.images.length > 0 && (
-        <div className="overflow-hidden">
+        <div className="w-full">
           <div
             ref={containerRef}
             onMouseDown={handleMouseDown}
@@ -67,9 +66,7 @@ const ImageSlider: React.FC<ImageSliderProps> = ({ post }) => {
               <img
                 src={image.url}
                 key={image.id}
-                className={`max-w-[300px] rounded-md object-cover transition-transform duration-300 ${
-                  isDragging ? "scale-95" : "hover:scale-105"
-                }`}
+                className={`w-[200px] rounded-md object-cover transition-transform duration-300 ${isDragging ? "scale-95" : "hover:scale-105"}`}
                 style={{
                   pointerEvents: isDragging ? "none" : "auto",
                 }}
@@ -80,12 +77,7 @@ const ImageSlider: React.FC<ImageSliderProps> = ({ post }) => {
           </div>
           {/* Image Modal */}
           {isModalOpen && (
-            <ImageModal
-              isModalOpen={isModalOpen}
-              onClose={() => setIsModalOpen(false)}
-              post={post}
-              initialImageIndex={initialImageIndex}
-            />
+            <ImageModal isModalOpen={isModalOpen} onClose={() => setIsModalOpen(false)} post={post} initialImageIndex={initialImageIndex} />
           )}
         </div>
       )}

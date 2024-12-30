@@ -1,22 +1,21 @@
-import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { profileSchema, TProfileSchema } from "@/validation/profileSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { ImageCropProvider } from "@/providers/image-crop-provider";
-import ImageUploader from "../image/react-easy-crop/image-uploader";
 import { useGetProfile } from "@/hooks/profile/useGetProfile";
 import { useEditProfile } from "@/hooks/profile/useEditProfile";
+import SubmitButton from "../common/submit-button";
+import DynamicTextarea from "../ui/dynamic-textarea";
+import { ImageCropProvider } from "@/context/image-crop";
+import ImageUploader from "../image/react-easy-crop/image-uploader";
 
 const EditProfileForm = () => {
   const { username } = useParams({ strict: false });
-  const [rows, setRows] = useState(2);
   const { data } = useGetProfile({ username });
-  const { mutate, isPending } = useEditProfile({ username });
+  const { mutate, isPending } = useEditProfile();
 
   const form = useForm<TProfileSchema>({
     resolver: zodResolver(profileSchema),
@@ -46,14 +45,16 @@ const EditProfileForm = () => {
     }
   }, [data, form]);
 
+  const onSubmit = (data: TProfileSchema) => {
+    mutate(data);
+  };
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(() => mutate(form.getValues()))} className="space-y-4 w-full">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 w-full">
         <div className="flex justify-between items-center">
           <h3 className="font-semibold">Edit Profile</h3>
-          <Button type="submit" className="w-fit rounded-full shadow-lg" disabled={isPending}>
-            Save
-          </Button>
+          <SubmitButton defaultTitle="Save" isLoadingTitle="Saving..." className="w-fit rounded-full shadow-lg" isLoading={isPending} />
         </div>
 
         <FormField
@@ -75,7 +76,7 @@ const EditProfileForm = () => {
               <FormLabel className="text-muted-foreground">Banner Image</FormLabel>
               <FormControl>
                 <ImageCropProvider aspect={4 / 2} cropShape="rect">
-                  <ImageUploader onChange={field.onChange} value={field.value} key={"banner_image"} />
+                  <ImageUploader onChange={field.onChange} value={field.value} key="banner_image" />
                 </ImageCropProvider>
               </FormControl>
               {form.formState.errors.banner_image && <FormMessage>{form.formState.errors.banner_image.message}</FormMessage>}
@@ -90,7 +91,7 @@ const EditProfileForm = () => {
               <FormLabel className="text-muted-foreground">Display Image</FormLabel>
               <FormControl>
                 <ImageCropProvider aspect={1} cropShape="round">
-                  <ImageUploader onChange={field.onChange} value={field.value} imageShape="rounded-full" key={"display_image"} />
+                  <ImageUploader onChange={field.onChange} value={field.value} imageShape="rounded-full" key="display_image" />
                 </ImageCropProvider>
               </FormControl>
               {form.formState.errors.display_image && <FormMessage>{form.formState.errors.display_image.message}</FormMessage>}
@@ -115,24 +116,7 @@ const EditProfileForm = () => {
             <FormItem>
               <FormLabel className="text-muted-foreground">Bio</FormLabel>
               <FormControl>
-                <Textarea
-                  {...field}
-                  disabled={isPending}
-                  rows={rows}
-                  ref={(el) => {
-                    field.ref(el);
-                    if (el) {
-                      el.style.height = "auto"; // Reset height
-                      el.style.height = `${el.scrollHeight}px`; // Set to scroll height
-                    }
-                  }}
-                  onInput={(e) => {
-                    const target = e.target as HTMLTextAreaElement;
-                    target.style.height = "auto"; // Reset height
-                    target.style.height = `${target.scrollHeight}px`; // Set to scroll height
-                  }}
-                  style={{ overflow: "hidden" }}
-                />
+                <DynamicTextarea {...field} disabled={isPending} style={{ overflow: "hidden" }} />
               </FormControl>
               <div className={`flex justify-end text-muted-foreground text-xs ${form.formState.errors.bio && "text-red-500"}`}>
                 {form.getValues("bio")?.length}/255

@@ -120,8 +120,8 @@ export const ImageCropProvider = ({
     setCroppedAreaPixels(defaultCroppedAreaPixels);
   };
 
-  const contextValue = useMemo(
-    () => ({
+  const contextValue = useMemo(() => {
+    return {
       cropShape,
       aspect,
       imageToDelete,
@@ -149,31 +149,30 @@ export const ImageCropProvider = ({
       min_rotation,
       rotation_step,
       resetStates,
-    }),
-    [
-      cropShape,
-      aspect,
-      imageToDelete,
-      setImageToDelete,
-      crop,
-      croppedAreaPixels,
-      getProcessedImage,
-      handleRotateAntiCw,
-      handleRotateCw,
-      handleZoomIn,
-      handleZoomOut,
-      imageToCrop,
-      max_rotation,
-      max_zoom,
-      min_rotation,
-      min_zoom,
-      onCropComplete,
-      rotation,
-      rotation_step,
-      zoom,
-      zoom_step,
-    ]
-  );
+    };
+  }, [
+    cropShape,
+    aspect,
+    imageToDelete,
+    setImageToDelete,
+    crop,
+    croppedAreaPixels,
+    getProcessedImage,
+    handleRotateAntiCw,
+    handleRotateCw,
+    handleZoomIn,
+    handleZoomOut,
+    imageToCrop,
+    max_rotation,
+    max_zoom,
+    min_rotation,
+    min_zoom,
+    onCropComplete,
+    rotation,
+    rotation_step,
+    zoom,
+    zoom_step,
+  ]);
 
   return <ImageCropContext.Provider value={contextValue}>{children}</ImageCropContext.Provider>;
 };

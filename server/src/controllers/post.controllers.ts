@@ -21,10 +21,12 @@ const createPost = asyncHandler(async (req: Request, res: Response) => {
   if (images && images.length > 0) {
     for (const image of images) {
       const createdPostImage = await postServices.createPostImage(image.url, createdPost.id);
+
       createdPostImages.push(createdPostImage);
     }
   }
-  res.status(HTTPSTATUS.CREATED).json({ post: { ...createdPost, post_images: createdPostImages }, message: "Post created" });
+
+  res.status(HTTPSTATUS.CREATED).json({ post: { ...createdPost, images: createdPostImages }, message: "Post created" });
 });
 
 const editPostById = asyncHandler(async (req: Request, res: Response) => {

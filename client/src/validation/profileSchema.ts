@@ -7,35 +7,33 @@ export const profileSchema = z.object({
   bio: z.string().max(255, { message: "Bio must contain at most 255 character(s)" }).optional().nullable(),
   banner_image: z
     .string()
-    .url()
-    .max(255)
-    .refine(
-      (url) => {
-        try {
-          const parsedUrl = new URL(url);
-          return allowedImageDomains.includes(parsedUrl.hostname);
-        } catch {
-          return false;
-        }
-      },
-      { message: "Image URL must be from an allowed domain" }
-    )
+    // .url()
+    // .refine(
+    //   (url) => {
+    //     try {
+    //       const parsedUrl = new URL(url);
+    //       return allowedImageDomains.includes(parsedUrl.hostname);
+    //     } catch {
+    //       return false;
+    //     }
+    //   },
+    //   { message: "Image URL must be from an allowed domain" }
+    // )
     .catch(""),
   display_image: z
     .string()
-    .url()
-    .max(255)
-    .refine(
-      (url) => {
-        try {
-          const parsedUrl = new URL(url);
-          return allowedImageDomains.includes(parsedUrl.hostname);
-        } catch {
-          return false;
-        }
-      },
-      { message: "Image URL must be from an allowed domain" }
-    )
+    // .url()
+    // .refine(
+    //   (url) => {
+    //     try {
+    //       const parsedUrl = new URL(url);
+    //       return allowedImageDomains.includes(parsedUrl.hostname);
+    //     } catch {
+    //       return false;
+    //     }
+    //   },
+    //   { message: "Image URL must be from an allowed domain" }
+    // )
     .catch(""),
   location: z.string().max(255).optional().nullable(),
   website: z

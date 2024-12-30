@@ -1,14 +1,12 @@
-import { useImageUploadManager } from "@/hooks/common/useImageUploadManager";
 import { useRef, useState } from "react";
-import { PiXCircleBold } from "react-icons/pi";
-
 import { CropIcon, ImageIcon } from "@radix-ui/react-icons";
-import { useImageCropContext } from "@/providers/image-crop-provider";
-import CropImageModal from "./crop-image-modal";
+import { useImageCropContext } from "@/context/image-crop";
 import { readFile, urlToFile } from "@/lib/cropImage";
 import { BsXCircleFill } from "react-icons/bs";
 import Spinner from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";
+import { blobToDataURL } from "@/utils/fileUtils";
+import SingleCropImageModal from "./single-crop-image-modal";
 
 interface ImageUploaderProps {
   onChange: (url: string) => void;
@@ -18,25 +16,28 @@ interface ImageUploaderProps {
 const ImageUploader: React.FC<ImageUploaderProps> = ({ onChange, value, imageShape }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const { uploadSingleImage, deleteSingleImage, isPendingUpload, isPendingDelete } = useImageUploadManager();
+  const [isPendingUpload, setIsPendingUpload] = useState(false);
+  const [isPendingDelete, setisPendingDelete] = useState(false);
   const { setImageToCrop, setImageToDelete, aspect } = useImageCropContext();
   const imageInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
-
+    setIsPendingUpload(true);
     const file = e.target.files?.[0];
     if (!file) return;
-    const imageUrl = await uploadSingleImage(file);
-    if (!imageUrl) return;
-    onChange(imageUrl);
+    const dataUrl = await blobToDataURL(file);
+    if (!dataUrl) return;
+    onChange(dataUrl);
+    setIsPendingUpload(false);
   };
 
   const handleDeleteImage = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    setisPendingDelete(true);
     if (!value) return;
-    await deleteSingleImage(value);
     onChange("");
+    setisPendingDelete(false);
   };
 
   const handleDragOver = (e: React.DragEvent<HTMLButtonElement>) => {
@@ -52,11 +53,12 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onChange, value, imageSha
   const handleOnDrop = async (e: React.DragEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setIsDragging(false);
-    const file = e.dataTransfer.files[0];
-    if (!file) return;
-    const imageUrl = await uploadSingleImage(file);
-    if (!imageUrl) return;
-    onChange(imageUrl);
+
+    const files = Array.from(e.dataTransfer.files);
+    if (!files) return;
+    const dataUrl = await blobToDataURL(files[0]);
+    if (!dataUrl) return;
+    onChange(dataUrl);
   };
 
   const handleOpenCropModal = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -100,7 +102,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onChange, value, imageSha
       </div>
 
       <input ref={imageInputRef} hidden type="file" accept="image/*" onChange={handleFileChange} />
-      <CropImageModal isOpen={isOpen} setIsOpen={setIsOpen} onChange={onChange} />
+      <SingleCropImageModal isOpen={isOpen} onClose={() => setIsOpen(false)} onChange={onChange} />
     </>
   );
 };
