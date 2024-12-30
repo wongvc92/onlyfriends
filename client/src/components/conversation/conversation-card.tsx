@@ -45,7 +45,7 @@ const ConversationCard: React.FC<CardProps> = ({ conversation }) => {
         }}
         key={conversation.id}
       >
-        <div className={`flex items-center gap-2 p-2 hover:bg-muted  ${activeCard}`}>
+        <div className={`flex items-center gap-2 p-2 hover:bg-muted border-b ${activeCard}`}>
           <div className="relative">
             <ProfileImage image={profileImage} username={profileUsername} />
             <div className={`p-1 rounded-full absolute top-0 right-0 ${isOnline ? "bg-emerald-500" : "bg-none"}`}></div>

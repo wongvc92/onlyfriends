@@ -14,8 +14,8 @@ const createProfile = asyncHandler(async (req: Request, res: Response) => {
 
   const parsedData = profileSchema.parse(req.body);
 
-  await profileServices.createProfile(parsedData, currentUser.id);
-  res.status(HTTPSTATUS.CREATED).json({ message: "Successfully created profile!" });
+  const createdProfile = await profileServices.createProfile(parsedData, currentUser.id);
+  res.status(HTTPSTATUS.CREATED).json({ profile: createdProfile, message: "Successfully created profile!" });
 });
 
 const getProfileByUsername = asyncHandler(async (req: Request, res: Response) => {

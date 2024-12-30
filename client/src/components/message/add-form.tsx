@@ -9,6 +9,7 @@ import { useCreateMessage } from "@/hooks/message/useCreateMessage";
 import { useState } from "react";
 import { messageSchema } from "@/validation/messageSchema";
 import { toast } from "sonner";
+import SubmitButton from "../common/submit-button";
 
 const AddForm = () => {
   const { conversationId } = useParams({ from: "/_authenticated/messages/_layout/conversations/_layout/$conversationId/" });
@@ -18,6 +19,7 @@ const AddForm = () => {
   const { mutate, isPending } = useCreateMessage();
   const [inputValue, setInputValue] = useState("");
 
+  console.log("profile", profile);
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     e.preventDefault();
     setInputValue(e.target.value);
@@ -52,9 +54,7 @@ const AddForm = () => {
     <form onSubmit={onSubmit}>
       <div className="relative">
         <DynamicTextarea name="text" id="text" className="pr-20" value={inputValue} onChange={onChange} disabled={isPending} />
-        <Button type="submit" className="absolute right-1 bottom-1" disabled={isPending || inputValue.length === 0}>
-          <IoSend />
-        </Button>
+        <SubmitButton className="absolute right-1 bottom-1" disabled={inputValue.length === 0} isLoading={isPending} Icon={<IoSend />} />
       </div>
     </form>
   );

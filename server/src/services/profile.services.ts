@@ -35,7 +35,7 @@ const getProfileByUsername = async (username: string): Promise<IProfile> => {
       p.location,
       p.website,
       p.updated_at,
-      p.user_id,
+      u.id as user_id,
       u.username,
       u.created_at as joined_date
       FROM users as u
