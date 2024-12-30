@@ -4,14 +4,23 @@ import { TProfileSchema } from "../validation/profileSchema";
 
 const createProfile = async (profileData: TProfileSchema, currentUserId: string) => {
   const { name, bio, website, location, display_image } = profileData;
-  await pool.query("INSERT INTO profiles (name, bio, website, location, user_id, display_image) values($1, $2, $3, $4, $5, $6);", [
-    name,
-    bio,
-    website,
-    location,
-    currentUserId,
-    display_image,
-  ]);
+  const result = await pool.query(
+    `WITH created_profile AS 
+      (
+        INSERT INTO profiles 
+        (name, bio, website, location, user_id, display_image) 
+        values($1, $2, $3, $4, $5, $6)
+        RETURNING *
+       )
+        SELECT cp.*,
+        users.username,
+        users.created_at as joined_date
+        FROM created_profile cp
+        LEFT JOIN users ON cp.user_id = users.id
+    `,
+    [name, bio, website, location, currentUserId, display_image]
+  );
+  return result.rows[0];
 };
 
 const getProfileByUsername = async (username: string): Promise<IProfile> => {
@@ -35,6 +44,7 @@ const getProfileByUsername = async (username: string): Promise<IProfile> => {
     `,
     [username]
   );
+
   return profileResults.rows[0];
 };
 
@@ -42,19 +52,19 @@ const editProfileById = async (profileData: TProfileSchema, profileId: string): 
   const { name, bio, website, location, display_image, banner_image } = profileData;
   const result = await pool.query(
     `
-    WITH created_profile AS 
+    WITH updated_profile AS 
       ( 
         UPDATE profiles 
         SET name = $1, bio = $2, website = $3, location = $4, display_image = $5, banner_image = $6 
         WHERE id = $7
         RETURNING *
       )
-      SELECT cp.*,
+      SELECT up.*,
       users.username,
       users.created_at as joined_date
-      FROM created_profile cp
-      LEFT JOIN users ON cp.user_id = users.id
-      WHERE cp.id = $7
+      FROM updated_profile up
+      LEFT JOIN users ON up.user_id = users.id
+      WHERE up.id = $7
     `,
     [name, bio, website, location, display_image, banner_image, profileId]
   );
