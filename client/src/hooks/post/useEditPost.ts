@@ -19,8 +19,16 @@ export const useEditPost = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: editPost,
-    onError: (error) => {
-      toast.error(error.message || "Something went wrong. Please try again.");
+    onError: (error: any) => {
+      if (error.errors) {
+        toast.error(error.errors[0].message);
+      } else if (error.message) {
+        console.log(error.message);
+        toast.error(error.message);
+      } else {
+        console.log(error.message);
+        toast.error("Something went wrong. Please try again.");
+      }
     },
     onSuccess: async (data: IEditPostResponse) => {
       toast.success("Successfully edited post.");

@@ -1,28 +1,17 @@
-import { useImageCropContext } from "@/providers/image-crop-provider";
+import { useImageCropContext } from "@/context/image-crop";
 import EasyCropper from "react-easy-crop";
 
 const Cropper = () => {
-  const {
-    imageToCrop,
-    zoom,
-    setZoom,
-    rotation,
-    setRotation,
-    crop,
-    setCrop,
-    onCropComplete,
-    aspect,
-    cropShape,
-  } = useImageCropContext();
+  const { imageToCrop, zoom, setZoom, rotation, setRotation, crop, setCrop, onCropComplete, aspect, cropShape } = useImageCropContext();
 
   return (
     <EasyCropper
-      image={imageToCrop || undefined}
+      image={imageToCrop || ""}
       crop={crop}
       zoom={zoom}
       rotation={rotation}
       cropShape={cropShape}
-      aspect={undefined}
+      aspect={aspect}
       onCropChange={setCrop}
       onCropComplete={onCropComplete}
       onRotationChange={setRotation}

@@ -11,11 +11,7 @@ interface MultiImageUploaderProps {
   onChange: (images: { url: string }[]) => void;
   value?: { url: string }[];
 }
-const MultiImageUploader: React.FC<MultiImageUploaderProps> = ({
-  onChange,
-  value = [],
-  imageShape,
-}) => {
+const MultiImageUploader: React.FC<MultiImageUploaderProps> = ({ onChange, value = [], imageShape }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [images, setImages] = useState<{ url: string }[]>([]);
@@ -25,9 +21,9 @@ const MultiImageUploader: React.FC<MultiImageUploaderProps> = ({
   const [isPendingDelete, setisPendingDelete] = useState(false);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
 
-
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
+    setIsPendingUpload(true);
     if (!e.target.files) return;
 
     const files = Array.from(e.target.files);
@@ -39,17 +35,14 @@ const MultiImageUploader: React.FC<MultiImageUploaderProps> = ({
     }
     setImages([...images, ...uploadedImages]);
     onChange([...value, ...uploadedImages]); // Append new images to the existing value
+    setIsPendingUpload(false);
   };
 
-  const handleDeleteImage = async (
-    e: React.MouseEvent<HTMLButtonElement>,
-    image: string
-  ) => {
+  const handleDeleteImage = async (e: React.MouseEvent<HTMLButtonElement>, image: string) => {
     e.preventDefault();
-
-    setImages((prevImages) =>
-      prevImages?.filter((prevImage) => prevImage.url !== image)
-    );
+    setisPendingDelete(true);
+    setImages((prevImages) => prevImages?.filter((prevImage) => prevImage.url !== image));
+    setisPendingDelete(false);
   };
 
   const handleDragOver = (e: React.DragEvent<HTMLButtonElement>) => {
@@ -64,6 +57,7 @@ const MultiImageUploader: React.FC<MultiImageUploaderProps> = ({
 
   const handleOnDrop = async (e: React.DragEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    setIsPendingUpload(true);
     setIsDragging(false);
     const files = Array.from(e.dataTransfer.files);
     if (!files) return;
@@ -71,13 +65,10 @@ const MultiImageUploader: React.FC<MultiImageUploaderProps> = ({
       const dataUrl = await blobToDataURL(file);
       setImages((prevImages) => [...prevImages, { url: dataUrl }]);
     }
+    setIsPendingUpload(false);
   };
 
-  const handleOpenCropModal = async (
-    e: React.MouseEvent<HTMLButtonElement>,
-    image: string,
-    i: number
-  ) => {
+  const handleOpenCropModal = async (e: React.MouseEvent<HTMLButtonElement>, image: string, i: number) => {
     e.preventDefault();
     setIsOpen(true);
     setImageToCrop(image);
@@ -87,31 +78,12 @@ const MultiImageUploader: React.FC<MultiImageUploaderProps> = ({
   return (
     <>
       {images.map((image, i) => (
-        <div
-          key={image.url}
-          className="relative w-full flex justify-center items-center"
-        >
+        <div key={image.url} className="relative w-full flex justify-center items-center">
           <img src={image.url} className={`object-cover w-full h-full`} />
-          <Button
-            className="absolute -top-1 -right-1"
-            onClick={(e) => handleDeleteImage(e, image.url)}
-            type="button"
-            size="icon"
-            variant="link"
-          >
-            {isPendingDelete ? (
-              <Spinner size="2" />
-            ) : (
-              <BsXCircleFill color="gray" />
-            )}
+          <Button className="absolute -top-1 -right-1" onClick={(e) => handleDeleteImage(e, image.url)} type="button" size="icon" variant="link">
+            {isPendingDelete ? <Spinner size="2" /> : <BsXCircleFill color="gray" />}
           </Button>
-          <Button
-            className="absolute -top-1 -left-1"
-            onClick={(e) => handleOpenCropModal(e, image.url, i)}
-            type="button"
-            size="icon"
-            variant="link"
-          >
+          <Button className="absolute -top-1 -left-1" onClick={(e) => handleOpenCropModal(e, image.url, i)} type="button" size="icon" variant="link">
             {isPendingUpload ? <Spinner size="2" /> : <CropIcon color="gray" />}
           </Button>
         </div>
@@ -130,14 +102,7 @@ const MultiImageUploader: React.FC<MultiImageUploaderProps> = ({
         Add image
       </Button>
 
-      <input
-        ref={imageInputRef}
-        hidden
-        multiple
-        type="file"
-        accept="image/*"
-        onChange={handleFileChange}
-      />
+      <input ref={imageInputRef} hidden multiple type="file" accept="image/*" onChange={handleFileChange} />
       <CropImageModal
         onChange={onChange}
         setImages={setImages}

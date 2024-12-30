@@ -5,7 +5,7 @@ export interface IPost {
   username: string;
   name: string;
   display_image: string;
-  post_images: { id: string; url: string }[];
+  images: { id: string; url: string }[];
   like_count: number;
   comment_count: number;
   is_liked: boolean;

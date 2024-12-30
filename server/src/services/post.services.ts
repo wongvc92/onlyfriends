@@ -38,13 +38,15 @@ const createpost = async (post: string, currentUserId: string): Promise<IPost> =
 };
 
 const createPostImage = async (imageUrl: string, createdPostId: string) => {
-  return await pool.query(
+  const result = await pool.query(
     `
         INSERT into post_images
-        (url,post_id) values($1,$2);
+        (url,post_id) values($1,$2)
+        RETURNING id, url;
      `,
     [imageUrl, createdPostId]
   );
+  return result.rows[0];
 };
 
 const editPostById = async (post: string, postId: string) => {
@@ -113,6 +115,7 @@ const getPostsByUsername = async (userId: string, username: string, limit: numbe
           posts.post,
           posts.created_at,
           posts.updated_at,
+          posts.author_id,
           users.username,
           profiles.name,
           profiles.display_image,

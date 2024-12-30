@@ -7,21 +7,13 @@ import Spinner from "@/components/ui/spinner";
 import { blobToDataURL } from "@/utils/fileUtils";
 import { useState } from "react";
 
-interface CropImageProps {
-  value?: { url: string }[];
-  onChange: (images: { url: string }[]) => void;
+interface SingleCropImageProps {
+  value?: string;
+  onChange: (url: string) => void;
   isOpen: boolean;
   onClose: () => void;
-  cropIndex: number | null;
-  setImages: React.Dispatch<
-    React.SetStateAction<
-      {
-        url: string;
-      }[]
-    >
-  >;
 }
-const CropImageModal: React.FC<CropImageProps> = ({ onClose, isOpen, onChange, value, setImages, cropIndex }) => {
+const SingleCropImageModal: React.FC<SingleCropImageProps> = ({ onClose, isOpen, onChange }) => {
   const { getProcessedImage, resetStates, zoom, setZoom, rotation, setRotation } = useImageCropContext();
   const [isCropping, setIsCropping] = useState(false);
   const handleCropImage = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -35,13 +27,7 @@ const CropImageModal: React.FC<CropImageProps> = ({ onClose, isOpen, onChange, v
       return;
     }
     const url = await blobToDataURL(file);
-
-    if (cropIndex !== null && cropIndex >= 0) {
-      const updatedImages = [...(value ?? [])];
-      updatedImages[cropIndex].url = url;
-      onChange(updatedImages);
-      setImages(updatedImages);
-    }
+    onChange(url);
     setIsCropping(false);
     resetStates();
     onClose();
@@ -81,4 +67,4 @@ const CropImageModal: React.FC<CropImageProps> = ({ onClose, isOpen, onChange, v
   );
 };
 
-export default CropImageModal;
+export default SingleCropImageModal;

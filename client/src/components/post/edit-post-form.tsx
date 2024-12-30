@@ -16,7 +16,6 @@ interface EditPostFormProps {
 }
 const EditPostForm: React.FC<EditPostFormProps> = ({ post, setIsEdit }) => {
   const tag = useTagging();
-
   const { mutate, isPending } = useEditPost();
 
   const form = useForm<TPostSchema>({

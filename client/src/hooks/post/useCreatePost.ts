@@ -4,60 +4,63 @@ import { InfiniteData, useMutation, useQueryClient } from "@tanstack/react-query
 import { toast } from "sonner";
 import apiClient from "@/utils/apiClient";
 import { postKeys } from "./postKeys";
-import { useAuth } from "@/context/auth";
 import { IGetAllPostsResponse } from "@/data/post/getAllPosts";
 import { IPost } from "@/types/IPost";
 import { IGetPostsByUsernameResponse } from "@/data/post/getPostsByUsername";
+import { postSchema, TPostSchema } from "@/validation/postsSchema";
 
 interface ICreatePostResponse {
   post: IPost;
   message: string;
 }
 
-const createPost = async ({
-  post,
-  images,
-}: {
-  post: string;
-  images?: {
-    url: string;
-  }[];
-}): Promise<ICreatePostResponse> => {
-  // const { uploadImageToS3 } = useImageUploadManager();
-
-  // const signedImages: { url: string }[] = [];
-  // if (images) {
-  //   for (const uploadedImage of images) {
-  //     const convertedUrlToFile = await urlToFile(uploadedImage.url, "image-file.png", "image/png");
-  //     const signedUrl = await uploadImageToS3(convertedUrlToFile);
-
-  //     if (!signedUrl) return;
-  //     signedImages.push({ url: signedUrl });
-  //   }
-  // }
-
+const createPost = async ({ post, images }: TPostSchema): Promise<ICreatePostResponse> => {
   const url = "/api/posts";
   const res = await apiClient.post(url, {
-    post: post,
-    // images: signedImages,
+    post,
+    images,
   });
 
   return res.data;
 };
 
 export const useCreatePost = () => {
-  const auth = useAuth();
   const queryClient = useQueryClient();
+  const { uploadImageToS3 } = useImageUploadManager();
   return useMutation({
-    mutationFn: (data: {
-      post: string;
-      images?: {
-        url: string;
-      }[];
-    }) => createPost(data),
-    onError: (error) => {
-      console.log(error.message);
-      toast.error("Something went wrong. Please try again.");
+    mutationFn: async (payload: TPostSchema) => {
+      const getSignedUrls = async () => {
+        const signedUrls: { url: string }[] = [];
+        if (payload.images) {
+          for (const payloadImage of payload.images) {
+            const convertedUrlToFile = await urlToFile(payloadImage.url, "image-file.png", "image/png");
+            const signedUrl = await uploadImageToS3(convertedUrlToFile);
+
+            if (signedUrl) {
+              signedUrls.push({ url: signedUrl });
+            }
+          }
+        }
+        return signedUrls;
+      };
+      const signedUrls = await getSignedUrls();
+      const validationResult = postSchema.safeParse({ post: payload.post, images: signedUrls });
+      console.log("payload", payload);
+      if (!validationResult.success) {
+        throw new Error(validationResult.error.errors[0].message);
+      }
+      return createPost({ post: payload.post, images: signedUrls });
+    },
+    onError: (error: any) => {
+      if (error.errors) {
+        toast.error(error.errors[0].message);
+      } else if (error.message) {
+        console.log(error.message);
+        toast.error(error.message);
+      } else {
+        console.log(error.message);
+        toast.error("Something went wrong. Please try again.");
+      }
     },
 
     onSuccess: (data: ICreatePostResponse) => {
