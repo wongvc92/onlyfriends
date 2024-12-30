@@ -47,6 +47,7 @@ const getFriendRequests = async (currentUserId: string, offset: number, limit: n
             users.username,
             profiles.name,
             profiles.bio,
+            profiles.display_image,
             profiles.location,
             profiles.website
           FROM friends
@@ -142,6 +143,7 @@ const getSentFriendRequests = async (currentUserId: string, offset: number, limi
             users.username,
             profiles.name,
             profiles.bio,
+            profiles.display_image,
             profiles.location,
             profiles.website
           FROM friends
