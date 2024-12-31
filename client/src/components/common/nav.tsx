@@ -5,6 +5,7 @@ import { IoHomeOutline } from "react-icons/io5";
 import LogoutButton from "../auth/logout-button";
 import { useAuth } from "@/context/auth";
 import { cn } from "@/lib/utils";
+import { ModeToggle } from "./mode-toggle";
 
 const Nav = ({ isMobileNav = false, onClose }: { isMobileNav?: boolean; onClose?: () => void }) => {
   const { user } = useAuth();
@@ -32,32 +33,41 @@ const Nav = ({ isMobileNav = false, onClose }: { isMobileNav?: boolean; onClose?
   ];
 
   return (
-    <nav className="flex flex-col gap-2 text-lg  items-start">
-      {NAV_LINKS.map((nav) => {
-        const {
-          location: { pathname },
-        } = useRouterState();
-        const isActive = nav.path.split("/")[1] === pathname.split("/")[1];
-        return (
-          <Link
-            key={nav.label}
-            to={nav.path}
-            className={cn(
-              `flex items-center w-full py-4 px-4 rounded-full  lg:py-1 lg:px-4 lg:rounded-md capitalize hover:bg-muted gap-2 text-left`,
-              isActive && "font-bold bg-muted"
-            )}
-            activeOptions={{ exact: true }}
-            onClick={onClose}
-          >
-            <span>{nav.icon}</span>
-            <p className={cn("hidden lg:block", isMobileNav && "block")}>{nav.label}</p>
-          </Link>
-        );
-      })}
-      <div className="pl-4 pt-4 md:pl-0 lg:pl-4">
-        <LogoutButton isMobileNav={isMobileNav} />
+    <div className="h-full">
+      <div>
+        <nav className="flex flex-col gap-2 text-lg items-start">
+          {NAV_LINKS.map((nav) => {
+            const {
+              location: { pathname },
+            } = useRouterState();
+            const isActive = nav.path.split("/")[1] === pathname.split("/")[1];
+            return (
+              <Link
+                key={nav.label}
+                to={nav.path}
+                className={cn(
+                  `flex items-center w-full py-4 px-4 rounded-full lg:py-1 lg:px-4 lg:rounded-md capitalize hover:bg-muted gap-2 text-left`,
+                  isActive && "font-bold bg-muted"
+                )}
+                activeOptions={{ exact: true }}
+                onClick={onClose}
+              >
+                <span>{nav.icon}</span>
+                <p className={cn("hidden lg:block", isMobileNav && "block")}>{nav.label}</p>
+              </Link>
+            );
+          })}
+        </nav>
       </div>
-    </nav>
+      <div>
+        <div className="pt-4 md:pl-0 lg:pl-4">
+          <LogoutButton isMobileNav={isMobileNav} />
+        </div>
+        <div className="pt-4 md:pl-0 lg:pl-4">
+          <ModeToggle />
+        </div>
+      </div>
+    </div>
   );
 };
 
