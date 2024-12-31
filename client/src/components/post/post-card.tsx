@@ -24,7 +24,7 @@ const PostCard = ({ post }: { post: IPost }) => {
 
   return (
     <Card key={post.id} className="border-0 shadow-none px-0 border-b rounded-none">
-      <CardHeader className={cn(pathname === `/posts/${post.id}` && `sticky top-0 bg-white z-10`)}>
+      <CardHeader className={cn(pathname === `/posts/${post.id}` && `sticky top-0 bg-white dark:bg-background z-10`)}>
         <div className="flex gap-1">
           <Link to={`/${post.username}`}>
             <ProfileImage image={post.display_image} username={post.username} />

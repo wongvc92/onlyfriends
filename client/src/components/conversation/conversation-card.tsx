@@ -25,7 +25,7 @@ const ConversationCard: React.FC<CardProps> = ({ conversation }) => {
   const profileUsername = auth.user?.id === conversation.sender_id ? conversation.recipient_username : conversation.sender_username;
   const profileName = auth.user?.id === conversation.sender_id ? (conversation.recipient_name as string) : (conversation.sender_name as string);
   const activeCard =
-    (auth.user?.id === conversation.sender_id ? conversation.recipient_username : conversation.sender_username) === username && "bg-gray-50";
+    (auth.user?.id === conversation.sender_id ? conversation.recipient_username : conversation.sender_username) === username && "bg-muted";
 
   const isOnline = onlineUsers.includes(otherUserId);
 

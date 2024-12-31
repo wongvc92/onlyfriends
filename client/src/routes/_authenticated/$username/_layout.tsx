@@ -32,7 +32,7 @@ function Layout() {
             <ProfileInfo />
           </section>
 
-          <div className="sticky top-0 z-10 bg-white">
+          <div className="sticky top-0 z-10  bg-white dark:bg-background">
             <nav className="flex items-center gap-2 text-lg border-b p-4 capitalize">
               {NAV_LINKS.map((nav) => {
                 const {

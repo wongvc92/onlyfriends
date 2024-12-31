@@ -5,7 +5,7 @@ import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated/messages/_layout/conversations/_layout/$conversationId/")({
   component: () => (
-    <div className="h-full flex flex-col bg-gray-50">
+    <div className="h-full flex flex-col bg-gray-50 dark:bg-background">
       {/* Profile at the top */}
       <MessageProfile />
 
@@ -15,7 +15,7 @@ export const Route = createFileRoute("/_authenticated/messages/_layout/conversat
       </div>
 
       {/* Message form at the bottom */}
-      <div className="sticky bottom-0 bg-white p-4">
+      <div className="sticky bottom-0 bg-white dark:bg-background p-4">
         <MessageForm />
       </div>
     </div>

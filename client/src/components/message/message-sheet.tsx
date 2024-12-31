@@ -9,22 +9,12 @@ interface MessageSheetProps {
   openMessageSheet: boolean;
   onClose: () => void;
 }
-const MessageSheet: React.FC<MessageSheetProps> = ({
-  openMessageSheet,
-  onClose,
-}) => {
+const MessageSheet: React.FC<MessageSheetProps> = ({ openMessageSheet, onClose }) => {
   return (
     <Sheet open={openMessageSheet} onOpenChange={onClose}>
       <SheetContent className="w-full p-0">
         <div className="flex flex-col h-full">
-          <div className="flex items-center pl-2">
-            <Button
-              type="button"
-              className="bg-gray-500 rounded-full w-10 h-10"
-              onClick={onClose}
-            >
-              <ArrowLeftIcon />
-            </Button>
+          <div className="pl-2">
             <MessageProfile />
           </div>
           {/* Scrollable message list */}
@@ -33,7 +23,7 @@ const MessageSheet: React.FC<MessageSheetProps> = ({
           </div>
 
           {/* Message form at the bottom */}
-          <div className="bg-white p-4">
+          <div className="p-4">
             <MessageForm />
           </div>
         </div>

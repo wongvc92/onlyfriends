@@ -23,11 +23,11 @@ const PostPage = () => {
   }
 
   return (
-    <>
+    <div className="h-screen">
       <PostCard post={post} />
       <CommentList post={post} />
       <PostComment post={post} />
-    </>
+    </div>
   );
 };
 export default PostPage;

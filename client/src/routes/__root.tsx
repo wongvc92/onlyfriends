@@ -2,6 +2,7 @@ import { Outlet, createRootRouteWithContext, useLocation } from "@tanstack/react
 import { QueryClient } from "@tanstack/react-query";
 import { IAuthContext } from "@/context/auth";
 import MobileNav from "@/components/common/mobile-nav";
+import { ModeToggle } from "@/components/common/mode-toggle";
 
 interface MyRouterContext {
   auth: IAuthContext;
@@ -17,13 +18,15 @@ function RootComponent() {
   });
 
   return (
-    <div>
+    <div className="dark:bg-background">
       <div className="flex items-center justify-between p-2 w-full md:hidden ">
         <MobileNav />
         <div>
           <h1 className="truncate ...">{pathname.split("/")[1].toLocaleUpperCase()}</h1>
         </div>
-        <div>Dark mode</div>
+        <div>
+          <ModeToggle />
+        </div>
       </div>
       <Outlet />
       {/* 

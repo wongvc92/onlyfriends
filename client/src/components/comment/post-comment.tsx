@@ -37,7 +37,7 @@ const PostComment = ({ post }: { post: IPost }) => {
   };
   return (
     <Form {...form}>
-      <form className="space-y-4 sticky bottom-0 bg-white z-10 p-4" onSubmit={onSubmit}>
+      <form className="space-y-4 sticky bottom-0 bg-white dark:bg-background z-10 p-4" onSubmit={onSubmit}>
         <p className="text-xs">
           Reply to <span className="text-sky-500">@{post.username}</span>
         </p>

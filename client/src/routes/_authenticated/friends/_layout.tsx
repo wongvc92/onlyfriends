@@ -26,7 +26,7 @@ function Layout() {
 
   return (
     <>
-      <div className="sticky top-0 z-10 bg-white">
+      <div className="sticky top-0 z-10 bg-white dark:bg-background">
         <nav className="flex items-center gap-4 text-lg border-b p-2 capitalize">
           {NAV_LINKS.map((nav) => {
             const {

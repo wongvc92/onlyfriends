@@ -44,7 +44,7 @@ const ProfileInfo = () => {
               classname="absolute top-1/2 left-5 w-24 h-24 md:w-32 md:h-32 border-white shadow-lg border-4"
             />
           </div>
-          <Card className="rounded-none rounded-b-md pt-8 ">
+          <Card className="rounded-none rounded-b-md pt-8">
             <CardHeader>
               <div className="space-y-2">
                 <div className="flex justify-between items-center">

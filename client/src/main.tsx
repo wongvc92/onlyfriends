@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from "./context/auth";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
 import { SocketProvider } from "./context/socket";
+import { ThemeProvider } from "./context/theme-provider";
 
 const queryClient = new QueryClient();
 // Set up a Router instance
@@ -38,8 +39,10 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <SocketProvider>
-          <Toaster richColors position="top-center" />
-          <InnerApp />
+          <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+            <Toaster richColors position="top-center" />
+            <InnerApp />
+          </ThemeProvider>
         </SocketProvider>
       </AuthProvider>
     </QueryClientProvider>

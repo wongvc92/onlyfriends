@@ -15,7 +15,7 @@ const MessageProfile = () => {
       <CardHeader>
         <div className="flex gap-2 items-center">
           <ProfileImage image={profile.display_image} username={profile.username} />
-          <div className="flex items-center flex-wrap gap-1 bg-white">
+          <div className="flex items-center flex-wrap gap-1 ">
             <ProfileName name={profile.name} />
             <ProfileUsername username={profile.username} classname="text-muted-foreground text-xs" />
 
