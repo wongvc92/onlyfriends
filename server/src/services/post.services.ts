@@ -37,7 +37,7 @@ const createpost = async (post: string, currentUserId: string): Promise<IPost> =
   return createdPost.rows[0];
 };
 
-const createPostImage = async (imageUrl: string, createdPostId: string) => {
+const createPostImage = async (imageUrl: string, createdPostId: string): Promise<{ id: string; url: string }> => {
   const result = await pool.query(
     `
         INSERT into post_images

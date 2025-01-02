@@ -17,7 +17,7 @@ const createPost = asyncHandler(async (req: Request, res: Response) => {
 
   const createdPost = await postServices.createpost(post, currentUser.id);
 
-  const createdPostImages = [];
+  const createdPostImages: { id: string; url: string }[] = [];
   if (images && images.length > 0) {
     for (const image of images) {
       const createdPostImage = await postServices.createPostImage(image.url, createdPost.id);
