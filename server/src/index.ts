@@ -1,6 +1,4 @@
 import dotenv from "dotenv";
-dotenv.config(); // Remove the path option to look for .env in root
-
 import express from "express";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes";
@@ -21,6 +19,8 @@ import { config } from "./config/app.config";
 import s3Routes from "./routes/imageRoutes";
 import logRequestPath from "./middleware/logRequestPath";
 import { app, server } from "./socket/socket";
+
+dotenv.config();
 
 app.use(
   cors({
@@ -56,5 +56,5 @@ app.use("/api/conversations", authenticateJWT, conversationRoutes);
 app.use(errorHandler);
 
 server.listen(config.PORT, () => {
-  console.log(`Server is listening on http://localhost:${config.PORT} in ${config.NODE_ENV}`);
+  console.log(`Server is listening on PORT ${config.PORT} in ${config.NODE_ENV}`);
 });
