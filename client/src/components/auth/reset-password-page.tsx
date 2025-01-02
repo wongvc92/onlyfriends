@@ -4,7 +4,7 @@ import ResetForm from "./reset-password-form";
 const ResetPasswordPage = () => {
   return (
     <WidthWrapper>
-      <div className="px-4 pt-10 max-w-md mx-auto">
+      <div className="px-4 pt-10 max-w-md mx-auto h-screen">
         <ResetForm />
       </div>
     </WidthWrapper>

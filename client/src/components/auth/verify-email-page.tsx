@@ -18,8 +18,10 @@ const VerifyEmailPage = () => {
   }
   return (
     <WidthWrapper>
-      <h1>Email Verification</h1>
-      <p>Your token is: {token}</p>
+      <div className="px-4 pt-10 max-w-md mx-auto h-screen">
+        <h1>Email Verification</h1>
+        <p>Your token is: {token}</p>
+      </div>
     </WidthWrapper>
   );
 };
