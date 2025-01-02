@@ -1,7 +1,7 @@
 import { Response } from "express";
 
 const secure = process.env.NODE_ENV! === "production";
-const sameSite = process.env.NODE_ENV! === "production" ? "strict" : "lax";
+const sameSite = process.env.NODE_ENV! === "production" ? "none" : "lax";
 
 interface SetCookieProps {
   res: Response;
