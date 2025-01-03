@@ -12,7 +12,7 @@ jobs:
     steps:
       # 1. Checkout the repository
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       # 2. Set up Docker Buildx
       - name: Set up Docker Buildx
@@ -20,7 +20,7 @@ jobs:
 
       # 3. Log in to Docker Hub
       - name: Log in to Docker Hub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
@@ -45,7 +45,7 @@ jobs:
 
       # 7. Deploy to EC2 via SSH
       - name: Deploy to EC2
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v0.1.5 # Use stable version
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
@@ -59,25 +59,25 @@ jobs:
 
             # Create/update the .env file with necessary environment variables
             cat <<EOF > .env
-            NODE_ENV=${{ secrets.NODE_ENV }}
-            VITE_SERVER_URL=${{ secrets.VITE_SERVER_URL }}
-            VITE_ALLOWED_IMAGE_DOMAIN=${{ secrets.VITE_ALLOWED_IMAGE_DOMAIN }}
-            PORT=${{ secrets.PORT }}
-            APP_ORIGIN=${{ secrets.APP_ORIGIN }}
+            NODE_ENV=production
+            VITE_SERVER_URL=http://wvcdev.xyz
+            VITE_ALLOWED_IMAGE_DOMAIN=onlyfriends-1.s3.ap-southeast-1.amazonaws.com
+            PORT=5000
+            APP_ORIGIN=http://wvcdev.xyz
             DATABASE_URL=${{ secrets.DATABASE_URL }}
             ACCESS_TOKEN_SECRET=${{ secrets.ACCESS_TOKEN_SECRET }}
             REFRESH_TOKEN_SECRET=${{ secrets.REFRESH_TOKEN_SECRET }}
             RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}
-            RESEND_VERIFIED_DOMAIN=${{ secrets.RESEND_VERIFIED_DOMAIN }}
-            ALLOWED_IMAGE_DOMAIN=${{ secrets.ALLOWED_IMAGE_DOMAIN }}
-            AWS_REGION=${{ secrets.AWS_REGION }}
+            RESEND_VERIFIED_DOMAIN=wvcdev.com
+            ALLOWED_IMAGE_DOMAIN=onlyfriends-1.s3.ap-southeast-1.amazonaws.com
+            AWS_REGION=ap-southeast-1
             AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
             AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            AWS_BUCKET_NAME=${{ secrets.AWS_BUCKET_NAME }}
+            AWS_BUCKET_NAME=onlyfriends-1
             EOF
 
             # Pull the latest Docker images
-            docker-compose pull
+            docker compose pull
 
             # Rebuild and restart the containers
-            docker-compose up -d --build
+            docker compose up -d --build
