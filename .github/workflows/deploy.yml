@@ -76,8 +76,8 @@ jobs:
             AWS_BUCKET_NAME=onlyfriends-1
             EOF
 
-            # Pull the latest Docker images
+
             docker compose pull
 
-            # Rebuild and restart the containers
+
             docker compose up -d --build
