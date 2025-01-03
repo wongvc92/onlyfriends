@@ -84,7 +84,13 @@ jobs:
               echo "Docker Compose is already installed."
             fi
 
+            # Log in to Docker Hub
+            echo "Logging in to Docker Hub..."
+            echo "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
 
+            # Verify Docker Login
+            echo "Verifying Docker login..."
+            docker info | grep "Username"
 
             # Navigate to the deployment directory
             cd ${{ secrets.REMOTE_PATH }}
@@ -135,7 +141,7 @@ jobs:
 
             # Recreate and start containers without building
             echo "Starting containers with the latest images..."
-            docker compose up -d --no-build
+            docker compose up -d --no-build --no-pull
 
             # Optional: Verify running containers
             echo "Verifying running containers..."
