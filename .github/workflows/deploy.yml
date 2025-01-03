@@ -55,6 +55,35 @@ jobs:
             set -e
             mkdir -p ${{ secrets.REMOTE_PATH }}
 
+            # Check if Docker is installed
+            if ! command -v docker &>/dev/null; then
+              echo "Docker not found. Installing Docker..."
+              sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+              curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+              echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+              sudo apt-get update
+              sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+            else
+              echo "Docker is already installed."
+            fi
+
+            # Add the specified AWS username to the Docker group
+            echo "Adding ${{ secrets.EC2_USER }} to the Docker group..."
+            sudo usermod -aG docker ${{ secrets.EC2_USER }}
+
+            # Check if Docker Compose is installed
+            if ! docker compose version &>/dev/null; then
+              echo "Docker Compose not found. Installing Docker Compose v2..."
+              mkdir -p ~/.docker/cli-plugins/
+              curl -SL https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-linux-x86_64 -o ~/.docker/cli-plugins/docker-compose
+              chmod +x ~/.docker/cli-plugins/docker-compose
+            else
+              echo "Docker Compose is already installed."
+            fi
+
+            # Navigate to the deployment directory
+            cd ${{ secrets.REMOTE_PATH }}
+
             # Navigate to the deployment directory
             cd ${{ secrets.REMOTE_PATH }}
 
