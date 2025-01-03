@@ -99,6 +99,29 @@ jobs:
             echo "Stopping and removing existing containers..."
             docker compose down
 
+            # Update the .env file with the latest environment variables
+            echo "Updating .env file with environment variables..."
+            cat <<EOF > .env
+            NODE_ENV=production
+            VITE_SERVER_URL=https://wvcdev.xyz
+            VITE_ALLOWED_IMAGE_DOMAIN=https://onlyfriends-1.s3.ap-southeast-1.amazonaws.com
+            PORT=5000
+            APP_ORIGIN=https://wvcdev.xyz
+            DATABASE_URL=${{ secrets.DATABASE_URL }}
+            ACCESS_TOKEN_SECRET=${{ secrets.ACCESS_TOKEN_SECRET }}
+            REFRESH_TOKEN_SECRET=${{ secrets.REFRESH_TOKEN_SECRET }}
+            RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}
+            RESEND_VERIFIED_DOMAIN=wvcdev.com
+            ALLOWED_IMAGE_DOMAIN=https://onlyfriends-1.s3.ap-southeast-1.amazonaws.com
+            AWS_REGION=ap-southeast-1
+            AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+            AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            AWS_BUCKET_NAME=onlyfriends-1
+            CLIENT_IMAGE=${{ secrets.CLIENT_IMAGE }}
+            SERVER_IMAGE=${{ secrets.SERVER_IMAGE }}
+            NGINX_IMAGE=${{ secrets.NGINX_IMAGE }}
+            EOF
+
             # Pull images with explicit tags
             echo "Pulling client image..."
             docker pull ${{ secrets.CLIENT_IMAGE }}
