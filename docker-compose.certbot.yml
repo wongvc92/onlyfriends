@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  certbot:
+    image: certbot/certbot
+    container_name: onlyfriends_certbot_initial
+    volumes:
+      - cert-data:/etc/letsencrypt
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - /usr/share/nginx/html
+    command: certonly --webroot --webroot-path=/usr/share/nginx/html -d wvcdev.xyz -d www.wvcdev.xyz --email wongvuichung92@gmail.com --agree-tos --no-eff-email
+
+volumes:
+  cert-data:
+
+networks:
+  onlyfriends_network:
+    external: true
