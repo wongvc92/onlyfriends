@@ -122,7 +122,7 @@ jobs:
             NGINX_IMAGE=${{ secrets.NGINX_IMAGE }}
             EOF
 
-            # Optional: Display the .env file for debugging (remove in production)
+            # Print .env file for debugging (remove in production)
             echo "Contents of .env file:"
             cat .env
 
