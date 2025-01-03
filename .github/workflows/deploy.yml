@@ -10,28 +10,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout the repository
-      - name: Checkout
+      #  Checkout the repository
+      - name: Checkout Code
         uses: actions/checkout@v3
 
-      # 2. Set up Docker Buildx
+      #  Set up Docker Buildx
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      # 3. Log in to Docker Hub
+      #  Log in to Docker Hub
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-      # 4. Build and push Client Docker image
+      #  Build and push Client Docker image
       - name: Build and push Client
         run: |
           docker build -t ${{ secrets.CLIENT_IMAGE }} ./client
           docker push ${{ secrets.CLIENT_IMAGE }}
 
-      # 5. Build and push Server Docker image
+      #  Build and push Server Docker image
       - name: Build and push Server
         run: |
           docker build -t ${{ secrets.SERVER_IMAGE }} ./server
@@ -53,7 +53,16 @@ jobs:
           port: 22
           script: |
             set -e
-            mkdir -p ${{ secrets.REMOTE_PATH }}
+
+            # Check and create the deployment directory
+            echo "Checking if deployment directory exists..."
+            if [ ! -d "${{ secrets.REMOTE_PATH }}" ]; then
+              echo "Creating deployment directory..."
+              mkdir -p ${{ secrets.REMOTE_PATH }}
+            fi
+
+            # Navigate to the deployment directory
+            cd ${{ secrets.REMOTE_PATH }}
 
             # Check if Docker is installed
             if ! command -v docker &>/dev/null; then
@@ -80,12 +89,6 @@ jobs:
             else
               echo "Docker Compose is already installed."
             fi
-
-            # Navigate to the deployment directory
-            cd ${{ secrets.REMOTE_PATH }}
-
-            # Navigate to the deployment directory
-            cd ${{ secrets.REMOTE_PATH }}
 
             # Stop and remove existing containers
             echo "Stopping and removing existing containers..."
