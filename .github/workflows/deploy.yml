@@ -55,7 +55,7 @@ jobs:
           target: ${{ secrets.REMOTE_PATH }}
 
       - name: SSH commands
-        uses: appleboy/ssh-action@v0.1.3
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
