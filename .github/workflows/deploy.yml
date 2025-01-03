@@ -10,28 +10,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      #  Checkout the repository
+      # 1. Checkout the repository
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      #  Set up Docker Buildx
+      # 2. Set up Docker Buildx
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      #  Log in to Docker Hub
+      # 3. Log in to Docker Hub
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-      #  Build and push Client Docker image
+      # 4. Build and push Client Docker image
       - name: Build and push Client
         run: |
           docker build -t ${{ secrets.CLIENT_IMAGE }} ./client
           docker push ${{ secrets.CLIENT_IMAGE }}
 
-      #  Build and push Server Docker image
+      # 5. Build and push Server Docker image
       - name: Build and push Server
         run: |
           docker build -t ${{ secrets.SERVER_IMAGE }} ./server
@@ -43,7 +43,14 @@ jobs:
           docker build -t ${{ secrets.NGINX_IMAGE }} ./nginx
           docker push ${{ secrets.NGINX_IMAGE }}
 
-      # 7. Deploy to EC2 via SSH
+      # 7. Copy docker-compose.yml to EC2
+      - name: Copy docker-compose.yml to EC2
+        run: |
+          echo "${{ secrets.EC2_SSH_KEY }}" > ec2_key.pem
+          chmod 600 ec2_key.pem
+          scp -i ec2_key.pem ./docker-compose.yml ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:${{ secrets.REMOTE_PATH }}/docker-compose.yml
+
+      # 8. Deploy to EC2 via SSH
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v0.1.7
         with:
@@ -53,8 +60,6 @@ jobs:
           port: 22
           script: |
             set -e
-
-            # Check and create the deployment directory
             echo "Checking if deployment directory exists..."
             if [ ! -d "${{ secrets.REMOTE_PATH }}" ]; then
               echo "Creating deployment directory..."
@@ -64,9 +69,6 @@ jobs:
             # Navigate to the deployment directory
             cd ${{ secrets.REMOTE_PATH }}
 
-            echo "Copying docker-compose.yml to EC2..."
-            scp -i ${{ secrets.EC2_SSH_KEY }} ./docker-compose.yml ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:${{ secrets.REMOTE_PATH }}/docker-compose.yml
-            
             # Check if Docker is installed
             if ! command -v docker &>/dev/null; then
               echo "Docker not found. Installing Docker..."
@@ -96,29 +98,6 @@ jobs:
             # Stop and remove existing containers
             echo "Stopping and removing existing containers..."
             docker compose down
-
-            # Update the .env file with the latest environment variables
-            echo "Updating .env file with environment variables..."
-            cat <<EOF > .env
-            NODE_ENV=production
-            VITE_SERVER_URL=https://wvcdev.xyz
-            VITE_ALLOWED_IMAGE_DOMAIN=https://onlyfriends-1.s3.ap-southeast-1.amazonaws.com
-            PORT=5000
-            APP_ORIGIN=https://wvcdev.xyz
-            DATABASE_URL=${{ secrets.DATABASE_URL }}
-            ACCESS_TOKEN_SECRET=${{ secrets.ACCESS_TOKEN_SECRET }}
-            REFRESH_TOKEN_SECRET=${{ secrets.REFRESH_TOKEN_SECRET }}
-            RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}
-            RESEND_VERIFIED_DOMAIN=wvcdev.com
-            ALLOWED_IMAGE_DOMAIN=https://onlyfriends-1.s3.ap-southeast-1.amazonaws.com
-            AWS_REGION=ap-southeast-1
-            AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
-            AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            AWS_BUCKET_NAME=onlyfriends-1
-            CLIENT_IMAGE=${{ secrets.CLIENT_IMAGE }}
-            SERVER_IMAGE=${{ secrets.SERVER_IMAGE }}
-            NGINX_IMAGE=${{ secrets.NGINX_IMAGE }}
-            EOF
 
             # Pull images with explicit tags
             echo "Pulling client image..."
