@@ -1,0 +1,58 @@
+version: "3.8"
+
+services:
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: onlyfriends_client
+    restart: unless-stopped
+    environment:
+      - VITE_SERVER_URL: ${NODE_ENV}
+      - VITE_ALLOWED_IMAGE_DOMAIN: ${VITE_ALLOWED_IMAGE_DOMAIN}
+    networks:
+      - onlyfriends_network
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: onlyfriends_server
+    restart: unless-stopped
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      PORT: ${PORT}
+      APP_ORIGIN: ${APP_ORIGIN}
+      DATABASE_URL: ${DATABASE_URL}
+      ACCESS_TOKEN_SECRET: ${ACCESS_TOKEN_SECRET}
+      REFRESH_TOKEN_SECRET: ${REFRESH_TOKEN_SECRET}
+      RESEND_API_KEY: ${RESEND_API_KEY}
+      RESEND_VERIFIED_DOMAIN: ${RESEND_VERIFIED_DOMAIN}
+      ALLOWED_IMAGE_DOMAIN: ${ALLOWED_IMAGE_DOMAIN}
+      AWS_REGION: ${AWS_REGION}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_BUCKET_NAME: ${AWS_BUCKET_NAME}
+    ports:
+      - "5000:5000"
+    networks:
+      - onlyfriends_network
+
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: onlyfriends_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - client
+      - server
+    networks:
+      - onlyfriends_network
+
+networks:
+  onlyfriends_network:
+    driver: bridge
