@@ -45,14 +45,41 @@ jobs:
 
       # Deploy to EC2 via SSH
       - name: Deploy to EC2
-        uses: appleboy/scp-action@v0.1.3
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22
-          source: "."
-          target: ${{ secrets.REMOTE_PATH }}
+          script: |
+            set -e
+
+            cd ${{ secrets.REMOTE_PATH }}
+
+
+            cat <<EOF > .env
+            NODE_ENV=${{ secrets.NODE_ENV }}
+            VITE_SERVER_URL=${{ secrets.VITE_SERVER_URL }}
+            VITE_ALLOWED_IMAGE_DOMAIN=${{ secrets.VITE_ALLOWED_IMAGE_DOMAIN }}
+            PORT=${{ secrets.PORT }}
+            APP_ORIGIN=${{ secrets.APP_ORIGIN }}
+            DATABASE_URL=${{ secrets.DATABASE_URL }}
+            ACCESS_TOKEN_SECRET=${{ secrets.ACCESS_TOKEN_SECRET }}
+            REFRESH_TOKEN_SECRET=${{ secrets.REFRESH_TOKEN_SECRET }}
+            RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}
+            RESEND_VERIFIED_DOMAIN=${{ secrets.RESEND_VERIFIED_DOMAIN }}
+            ALLOWED_IMAGE_DOMAIN=${{ secrets.ALLOWED_IMAGE_DOMAIN }}
+            AWS_REGION=${{ secrets.AWS_REGION }}
+            AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+            AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            AWS_BUCKET_NAME=${{ secrets.AWS_BUCKET_NAME }}
+            EOF
+
+
+            docker-compose pull
+
+
+            docker-compose up -d --build
 
       - name: SSH commands
         uses: appleboy/ssh-action@master
