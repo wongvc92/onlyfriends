@@ -137,7 +137,7 @@ jobs:
 
             # Recreate and start containers without building
             echo "Starting containers with the latest images..."
-            docker compose up -d
+            docker compose --env-file .env up -d
 
             # Optional: Verify running containers
             echo "Verifying running containers..."
