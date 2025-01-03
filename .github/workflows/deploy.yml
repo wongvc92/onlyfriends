@@ -124,6 +124,9 @@ jobs:
 
             # Print .env file for debugging (remove in production)
             echo "Contents of .env file:"
+            echo "CLIENT_IMAGE=${CLIENT_IMAGE}"
+            echo "SERVER_IMAGE=${SERVER_IMAGE}"
+            echo "NGINX_IMAGE=${NGINX_IMAGE}"
             cat .env
 
             # Pull the latest Docker images
