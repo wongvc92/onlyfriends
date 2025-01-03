@@ -26,80 +26,26 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
       # 4. Build and push Client Docker image
-      - name: Determine Client Version
-        run: |
-          # Define the base version (major and minor hardcoded)
-          BASE_VERSION="v1.2"
-      
-          echo "Fetching existing tags for the client..."
-          EXISTING_TAGS=$(curl -s -u ${{ secrets.DOCKER_HUB_USERNAME }}:${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} \
-            https://hub.docker.com/v2/repositories/${{ secrets.DOCKER_HUB_USERNAME }}/onlyfriends-client/tags | jq -r '.results[].name')
-          echo "Existing tags: $EXISTING_TAGS"
-      
-          # Filter tags matching the base version (e.g., v1.2.x)
-          LATEST_VERSION=$(echo "$EXISTING_TAGS" | grep -E "^${BASE_VERSION}\.[0-9]+$" | sort -V | tail -n 1)
-          echo "Latest version: $LATEST_VERSION"
-      
-          # Increment the patch version
-          if [[ -z "$LATEST_VERSION" ]]; then
-            NEW_VERSION="${BASE_VERSION}.0"
-          else
-            PATCH=$(echo $LATEST_VERSION | awk -F '.' '{print $NF}')
-            NEW_VERSION="${BASE_VERSION}.$((PATCH + 1))"
-          fi
-          echo "New version: $NEW_VERSION"
-      
-          # Save the new version for the next step
-          echo "NEW_CLIENT_VERSION=$NEW_VERSION" >> $GITHUB_ENV
-      
       - name: Build and push Client
         run: |
-          echo "Building and pushing client image..."
-          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/onlyfriends-client:$NEW_CLIENT_VERSION ./client
-          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/onlyfriends-client:$NEW_CLIENT_VERSION
+          docker build -t ${{ secrets.CLIENT_IMAGE }} ./client
+          docker push ${{ secrets.CLIENT_IMAGE }}
 
       # 5. Build and push Server Docker image
-      - name: Determine Server Version
-        run: |
-          # Define the base version (major and minor hardcoded)
-          BASE_VERSION="v1.2"
-
-          echo "Fetching existing tags for the server..."
-          EXISTING_TAGS=$(curl -s -u ${{ secrets.DOCKER_HUB_USERNAME }}:${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} \
-            https://hub.docker.com/v2/repositories/${{ secrets.DOCKER_HUB_USERNAME }}/onlyfriends-server/tags | jq -r '.results[].name')
-          echo "Existing tags: $EXISTING_TAGS"
-
-          # Filter tags matching the base version (e.g., v1.2.x)
-          LATEST_VERSION=$(echo "$EXISTING_TAGS" | grep -E "^${BASE_VERSION}\.[0-9]+$" | sort -V | tail -n 1)
-          echo "Latest version: $LATEST_VERSION"
-
-          # Increment the patch version
-          if [[ -z "$LATEST_VERSION" ]]; then
-            NEW_VERSION="${BASE_VERSION}.0"
-          else
-            PATCH=$(echo $LATEST_VERSION | awk -F '.' '{print $NF}')
-            NEW_VERSION="${BASE_VERSION}.$((PATCH + 1))"
-          fi
-          echo "New version: $NEW_VERSION"
-
-          # Save the new version for the next step
-          echo "NEW_SERVER_VERSION=$NEW_VERSION" >> $GITHUB_ENV
-
       - name: Build and push Server
         run: |
-          echo "Building and pushing server image..."
-          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/onlyfriends-server:$NEW_SERVER_VERSION ./server
-          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/onlyfriends-server:$NEW_SERVER_VERSION
+          docker build -t ${{ secrets.SERVER_IMAGE }} ./server
+          docker push ${{ secrets.SERVER_IMAGE }}
 
       # 6. Build and push Nginx Docker image
       - name: Build and push Nginx
         run: |
-          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/onlyfriends-nginx:latest ./nginx
-          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/onlyfriends-nginx:latest
+          docker build -t ${{ secrets.NGINX_IMAGE }} ./nginx
+          docker push ${{ secrets.NGINX_IMAGE }}
 
       # 7. Deploy to EC2 via SSH
       - name: Deploy to EC2
-        uses: appleboy/ssh-action@v0.1.5
+        uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
@@ -141,27 +87,45 @@ jobs:
             # Navigate to the deployment directory
             cd ${{ secrets.REMOTE_PATH }}
 
+            # Stop and remove existing containers
+            echo "Stopping and removing existing containers..."
+            docker compose down
+
+            # Optional: Remove all unused Docker resources
+            echo "Cleaning up unused Docker images and containers..."
+            docker system prune -a -f --volumes
+
             # Create/update the .env file with necessary environment variables
+            echo "Updating .env file with environment variables..."
             cat <<EOF > .env
             NODE_ENV=production
-            VITE_SERVER_URL=http://wvcdev.xyz
-            VITE_ALLOWED_IMAGE_DOMAIN=onlyfriends-1.s3.ap-southeast-1.amazonaws.com
+            VITE_SERVER_URL=https://wvcdev.xyz/api
+            VITE_ALLOWED_IMAGE_DOMAIN=https://onlyfriends-1.s3.ap-southeast-1.amazonaws.com
             PORT=5000
-            APP_ORIGIN=http://wvcdev.xyz
+            APP_ORIGIN=https://wvcdev.xyz
             DATABASE_URL=${{ secrets.DATABASE_URL }}
             ACCESS_TOKEN_SECRET=${{ secrets.ACCESS_TOKEN_SECRET }}
             REFRESH_TOKEN_SECRET=${{ secrets.REFRESH_TOKEN_SECRET }}
             RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}
             RESEND_VERIFIED_DOMAIN=wvcdev.com
-            ALLOWED_IMAGE_DOMAIN=onlyfriends-1.s3.ap-southeast-1.amazonaws.com
+            ALLOWED_IMAGE_DOMAIN=https://onlyfriends-1.s3.ap-southeast-1.amazonaws.com
             AWS_REGION=ap-southeast-1
             AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
             AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
             AWS_BUCKET_NAME=onlyfriends-1
+            CLIENT_IMAGE=${{ secrets.CLIENT_IMAGE }}
+            SERVER_IMAGE=${{ secrets.SERVER_IMAGE }}
+            NGINX_IMAGE=${{ secrets.NGINX_IMAGE }}
             EOF
 
             # Pull the latest Docker images
+            echo "Pulling the latest Docker images..."
             docker compose pull
 
-            # Rebuild and restart the containers
-            docker compose up -d --build
+            # Recreate and start containers without building
+            echo "Starting containers with the latest images..."
+            docker compose up -d --no-build
+
+            # Optional: Verify running containers
+            echo "Verifying running containers..."
+            docker ps
