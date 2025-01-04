@@ -127,13 +127,13 @@ jobs:
 
             # Pull images with explicit tags
             echo "Pulling client image..."
-            docker pull ${{ secrets.CLIENT_IMAGE }}
+            docker pull melkhywong92/onlyfriends-client:v1.2.5
 
             echo "Pulling server image..."
-            docker pull ${{ secrets.SERVER_IMAGE }}
+            docker pull melkhywong92/onlyfriends-server:v1.2.5
 
             echo "Pulling nginx image..."
-            docker pull ${{ secrets.NGINX_IMAGE }}
+            docker pull melkhywong92/onlyfriends-nginx:v1.2.5
 
             # Recreate and start containers without building
             echo "Starting containers with the latest images..."
