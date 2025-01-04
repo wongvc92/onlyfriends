@@ -19,7 +19,7 @@ FROM nginx:stable-alpine
 # Remove default Nginx static assets
 RUN rm -rf /usr/share/nginx/html/*
 
-# Copy the build from the previous stage
+# Copy the build output from the previous stage
 COPY --from=build /app/dist /usr/share/nginx/html
 
 # Expose port 80

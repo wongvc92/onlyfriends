@@ -52,7 +52,8 @@ services:
       - server
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d
-      - ./nginx/ssl:/etc/ssl
+      - /etc/letsencrypt/live/wvcdev.xyz:/etc/ssl/certs
+      - /etc/letsencrypt/archive:/etc/letsencrypt/archive
     networks:
       - onlyfriends_network
 
