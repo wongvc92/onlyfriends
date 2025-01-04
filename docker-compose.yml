@@ -2,9 +2,7 @@ version: "3.8"
 
 services:
   client:
-    build:
-      context: ./client
-      dockerfile: Dockerfile
+    image: ${{ secrets.CLIENT_IMAGE }}
     container_name: onlyfriends_client
     restart: unless-stopped
     environment:
@@ -14,9 +12,7 @@ services:
       - onlyfriends_network
 
   server:
-    build:
-      context: ./server
-      dockerfile: Dockerfile
+    image: ${{ secrets.SERVER_IMAGE }}
     container_name: onlyfriends_server
     restart: unless-stopped
     environment:
@@ -39,9 +35,7 @@ services:
       - onlyfriends_network
 
   nginx:
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile
+    image: ${{ secrets.NGINX_IMAGE }}
     container_name: onlyfriends_nginx
     restart: unless-stopped
     ports:
