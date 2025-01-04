@@ -51,8 +51,8 @@ services:
       - client
       - server
     volumes:
-      - ./certs/fullchain.pem:/etc/ssl/certs/fullchain.pem:ro
-      - ./certs/privkey.pem:/etc/ssl/private/privkey.pem:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/ssl:/etc/ssl
     networks:
       - onlyfriends_network
 

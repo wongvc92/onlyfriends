@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import express from "express";
+import express, { Request, Response } from "express";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes";
 import cookieParser from "cookie-parser";
@@ -39,6 +39,10 @@ export const s3Client = new S3Client({
     accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
   },
+});
+
+app.get("/", (req: Request, res: Response) => {
+  res.send("Hello World");
 });
 
 app.use("/api/auth", authRoutes);
