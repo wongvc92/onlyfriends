@@ -41,6 +41,8 @@ jobs:
           echo "${{ secrets.EC2_SSH_KEY }}" > ec2_key.pem
           chmod 600 ec2_key.pem
           scp -i ec2_key.pem -o StrictHostKeyChecking=no ./docker-compose.yml ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:${{ secrets.REMOTE_PATH }}/docker-compose.yml
+          scp -i ec2_key.pem -o StrictHostKeyChecking=no -r ./nginx ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:${{ secrets.REMOTE_PATH }}/nginx
+          rm -f ec2_key.pem
 
       # Deploy to EC2 via SSH
       - name: Deploy to EC2
@@ -99,6 +101,9 @@ jobs:
             SERVER_IMAGE=${{ secrets.SERVER_IMAGE }}
             NGINX_IMAGE=${{ secrets.NGINX_IMAGE }}
             EOF
+
+            echo "Teardown existing containers..."
+            docker compose down
 
             # Pull the latest images
             echo "Pulling Docker images..."
