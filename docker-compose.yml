@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   client:
-    image: ${{ secrets.CLIENT_IMAGE }}
+    image: ${CLIENT_IMAGE}
     container_name: onlyfriends_client
     restart: unless-stopped
     environment:
@@ -12,7 +12,7 @@ services:
       - onlyfriends_network
 
   server:
-    image: ${{ secrets.SERVER_IMAGE }}
+    image: ${SERVER_IMAGE}
     container_name: onlyfriends_server
     restart: unless-stopped
     environment:
@@ -35,7 +35,7 @@ services:
       - onlyfriends_network
 
   nginx:
-    image: ${{ secrets.NGINX_IMAGE }}
+    image: ${NGINX_IMAGE}
     container_name: onlyfriends_nginx
     restart: unless-stopped
     ports:
@@ -45,8 +45,7 @@ services:
       - client
       - server
     volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d
-      - /etc/letsencrypt/live/wvcdev.xyz:/etc/ssl/certs
+      - /etc/letsencrypt/live/wvcdev.xyz:/etc/letsencrypt/live/wvcdev.xyz
       - /etc/letsencrypt/archive:/etc/letsencrypt/archive
     networks:
       - onlyfriends_network
