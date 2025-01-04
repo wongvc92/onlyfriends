@@ -50,6 +50,9 @@ services:
     depends_on:
       - client
       - server
+    volumes:
+      - ./certs/fullchain.pem:/etc/ssl/certs/fullchain.pem:ro
+      - ./certs/privkey.pem:/etc/ssl/private/privkey.pem:ro
     networks:
       - onlyfriends_network
 
