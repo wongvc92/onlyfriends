@@ -10,96 +10,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout the repository
-      - name: Checkout
+      # Checkout the repository
+      - name: Checkout Code
         uses: actions/checkout@v3
 
-      # 2. Set up Docker Buildx
+      # Set up Docker Buildx
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      # 3. Log in to Docker Hub
+      # Log in to Docker Hub
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-      # 4. Build and push Client Docker image
-      - name: Determine Client Version
+      # Build and push Docker images
+      - name: Build and push Docker images
         run: |
-          # Define the base version (major and minor hardcoded)
-          BASE_VERSION="v1.2"
-      
-          echo "Fetching existing tags for the client..."
-          EXISTING_TAGS=$(curl -s -u ${{ secrets.DOCKER_HUB_USERNAME }}:${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} \
-            https://hub.docker.com/v2/repositories/${{ secrets.DOCKER_HUB_USERNAME }}/onlyfriends-client/tags | jq -r '.results[].name')
-          echo "Existing tags: $EXISTING_TAGS"
-      
-          # Filter tags matching the base version (e.g., v1.2.x)
-          LATEST_VERSION=$(echo "$EXISTING_TAGS" | grep -E "^${BASE_VERSION}\.[0-9]+$" | sort -V | tail -n 1)
-          echo "Latest version: $LATEST_VERSION"
-      
-          # Increment the patch version
-          if [[ -z "$LATEST_VERSION" ]]; then
-            NEW_VERSION="${BASE_VERSION}.0"
-          else
-            PATCH=$(echo $LATEST_VERSION | awk -F '.' '{print $NF}')
-            NEW_VERSION="${BASE_VERSION}.$((PATCH + 1))"
-          fi
-          echo "New version: $NEW_VERSION"
-      
-          # Save the new version for the next step
-          echo "NEW_CLIENT_VERSION=$NEW_VERSION" >> $GITHUB_ENV
-      
-      - name: Build and push Client
-        run: |
-          echo "Building and pushing client image..."
-          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/onlyfriends-client:$NEW_CLIENT_VERSION ./client
-          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/onlyfriends-client:$NEW_CLIENT_VERSION
+          docker build -t ${{ secrets.CLIENT_IMAGE }} ./client
+          docker push ${{ secrets.CLIENT_IMAGE }}
+          docker build -t ${{ secrets.SERVER_IMAGE }} ./server
+          docker push ${{ secrets.SERVER_IMAGE }}
+          docker build -t ${{ secrets.NGINX_IMAGE }} ./nginx
+          docker push ${{ secrets.NGINX_IMAGE }}
 
-      # 5. Build and push Server Docker image
-      - name: Determine Server Version
-        run: |
-          # Define the base version (major and minor hardcoded)
-          BASE_VERSION="v1.2"
-
-          echo "Fetching existing tags for the server..."
-          EXISTING_TAGS=$(curl -s -u ${{ secrets.DOCKER_HUB_USERNAME }}:${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} \
-            https://hub.docker.com/v2/repositories/${{ secrets.DOCKER_HUB_USERNAME }}/onlyfriends-server/tags | jq -r '.results[].name')
-          echo "Existing tags: $EXISTING_TAGS"
-
-          # Filter tags matching the base version (e.g., v1.2.x)
-          LATEST_VERSION=$(echo "$EXISTING_TAGS" | grep -E "^${BASE_VERSION}\.[0-9]+$" | sort -V | tail -n 1)
-          echo "Latest version: $LATEST_VERSION"
-
-          # Increment the patch version
-          if [[ -z "$LATEST_VERSION" ]]; then
-            NEW_VERSION="${BASE_VERSION}.0"
-          else
-            PATCH=$(echo $LATEST_VERSION | awk -F '.' '{print $NF}')
-            NEW_VERSION="${BASE_VERSION}.$((PATCH + 1))"
-          fi
-          echo "New version: $NEW_VERSION"
-
-          # Save the new version for the next step
-          echo "NEW_SERVER_VERSION=$NEW_VERSION" >> $GITHUB_ENV
-
-      - name: Build and push Server
-        run: |
-          echo "Building and pushing server image..."
-          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/onlyfriends-server:$NEW_SERVER_VERSION ./server
-          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/onlyfriends-server:$NEW_SERVER_VERSION
-
-      # 6. Build and push Nginx Docker image
-      - name: Build and push Nginx
-        run: |
-          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/onlyfriends-nginx:latest ./nginx
-          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/onlyfriends-nginx:latest
-
-      # 7. Deploy to EC2 via SSH
+      # Deploy to EC2 via SSH
       - name: Deploy to EC2
-        uses: appleboy/ssh-action@v0.1.5
+        uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
@@ -108,60 +46,62 @@ jobs:
           script: |
             set -e
 
-            # Update package lists
-            echo "Updating package lists..."
-            sudo apt update
+            # Ensure deployment directory exists
+            if [ ! -d "${{ secrets.REMOTE_PATH }}" ]; then
+              echo "Creating deployment directory..."
+              mkdir -p ${{ secrets.REMOTE_PATH }}
+            fi
+            cd ${{ secrets.REMOTE_PATH }}
 
-            # Check if Docker is installed
+            # Ensure Docker is installed
             if ! command -v docker &>/dev/null; then
-              echo "Docker not found. Installing Docker..."
+              echo "Installing Docker..."
               sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
               curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
               echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-              sudo apt-get update
-              sudo apt-get install -y docker-ce docker-ce-cli containerd.io
-            else
-              echo "Docker is already installed."
+              sudo apt-get update && sudo apt-get install -y docker-ce docker-ce-cli containerd.io
             fi
 
-            # Add the specified AWS username to the Docker group
-            echo "Adding ${{ secrets.EC2_USER }} to the Docker group..."
-            sudo usermod -aG docker ${{ secrets.EC2_USER }}
-
-            # Check if Docker Compose is installed
+            # Ensure Docker Compose is installed
             if ! docker compose version &>/dev/null; then
-              echo "Docker Compose not found. Installing Docker Compose v2..."
+              echo "Installing Docker Compose..."
               mkdir -p ~/.docker/cli-plugins/
               curl -SL https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-linux-x86_64 -o ~/.docker/cli-plugins/docker-compose
               chmod +x ~/.docker/cli-plugins/docker-compose
-            else
-              echo "Docker Compose is already installed."
             fi
 
-            # Navigate to the deployment directory
-            cd ${{ secrets.REMOTE_PATH }}
-
-            # Create/update the .env file with necessary environment variables
+            # Create or update .env file
+            echo "Creating/updating .env file..."
             cat <<EOF > .env
             NODE_ENV=production
-            VITE_SERVER_URL=http://wvcdev.xyz
-            VITE_ALLOWED_IMAGE_DOMAIN=onlyfriends-1.s3.ap-southeast-1.amazonaws.com
-            PORT=5000
-            APP_ORIGIN=http://wvcdev.xyz
+            VITE_SERVER_URL=${{ secrets.VITE_SERVER_URL }}
+            VITE_ALLOWED_IMAGE_DOMAIN=${{ secrets.VITE_ALLOWED_IMAGE_DOMAIN }}
+            PORT=${{ secrets.PORT }}
+            APP_ORIGIN=${{ secrets.APP_ORIGIN }}
             DATABASE_URL=${{ secrets.DATABASE_URL }}
             ACCESS_TOKEN_SECRET=${{ secrets.ACCESS_TOKEN_SECRET }}
             REFRESH_TOKEN_SECRET=${{ secrets.REFRESH_TOKEN_SECRET }}
             RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}
-            RESEND_VERIFIED_DOMAIN=wvcdev.com
-            ALLOWED_IMAGE_DOMAIN=onlyfriends-1.s3.ap-southeast-1.amazonaws.com
-            AWS_REGION=ap-southeast-1
+            RESEND_VERIFIED_DOMAIN=${{ secrets.RESEND_VERIFIED_DOMAIN }}
+            ALLOWED_IMAGE_DOMAIN=${{ secrets.ALLOWED_IMAGE_DOMAIN }}
+            AWS_REGION=${{ secrets.AWS_REGION }}
             AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
             AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            AWS_BUCKET_NAME=onlyfriends-1
+            AWS_BUCKET_NAME=${{ secrets.AWS_BUCKET_NAME }}
+            CLIENT_IMAGE=${{ secrets.CLIENT_IMAGE }}
+            SERVER_IMAGE=${{ secrets.SERVER_IMAGE }}
+            NGINX_IMAGE=${{ secrets.NGINX_IMAGE }}
             EOF
 
-            # Pull the latest Docker images
-            docker compose pull
+            # Pull the latest images
+            echo "Pulling Docker images..."
+            docker pull ${{ secrets.CLIENT_IMAGE }}
+            docker pull ${{ secrets.SERVER_IMAGE }}
+            docker pull ${{ secrets.NGINX_IMAGE }}
 
-            # Rebuild and restart the containers
-            docker compose up -d --build
+            # Restart containers
+            echo "Starting Docker Compose..."
+            docker compose --env-file .env up -d
+
+            # Verify running containers
+            docker ps
