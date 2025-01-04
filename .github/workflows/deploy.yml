@@ -98,6 +98,10 @@ jobs:
             NGINX_IMAGE=${{ secrets.NGINX_IMAGE }}
             EOF
 
+            # remove existing containers
+            echo "Stopping and removing existing Docker containers..."
+            docker compose down
+
             # Pull the latest images
             echo "Pulling Docker images..."
             docker pull ${{ secrets.CLIENT_IMAGE }}
