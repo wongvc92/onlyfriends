@@ -77,7 +77,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22
           source: "docker-compose.yml"
-          target: "${{ secrets.REMOTE_PATH }}/docker-compose.yml"
+          target: "${{ secrets.REMOTE_PATH }}/"
 
       # Deploy to EC2 via SSH
       - name: Deploy to EC2
@@ -89,15 +89,6 @@ jobs:
           port: 22
           script: |
             set -e
-
-            # Ensure deployment directory exists
-            if [ ! -d "${{ secrets.REMOTE_PATH }}" ]; then
-              echo "Creating deployment directory..."
-              mkdir -p ${{ secrets.REMOTE_PATH }}
-            fi
-
-            echo "Setting ownership for the deployment directory..."
-            sudo chown -R ${{ secrets.EC2_USER }}:ubuntu ${{ secrets.REMOTE_PATH }}
 
             echo "Changing to new project file directory..."
             cd ${{ secrets.REMOTE_PATH }}
