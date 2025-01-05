@@ -37,12 +37,27 @@ jobs:
           docker build -t ${{ secrets.NGINX_IMAGE }} ./nginx
           docker push ${{ secrets.NGINX_IMAGE }}
 
+      - name: Create Target Directory on Server
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          script: |
+            if [ ! -d "${{ secrets.REMOTE_PATH }}" ]; then
+              echo "Directory does not exist. Creating it now."
+              mkdir -p ${{ secrets.REMOTE_PATH }}
+            else
+              echo "Directory already exists. Skipping creation."
+            fi
+
       - name: SCP files to server
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
-          password: ${{ secrets.EC2_SSH_KEY }}
+          key: ${{ secrets.EC2_SSH_KEY }}
           source: "docker-compose.yml"
           target: ~/
 
