@@ -5,9 +5,9 @@ services:
     image: ${CLIENT_IMAGE}
     container_name: onlyfriends_client
     restart: unless-stopped
-    args:
-      VITE_SERVER_URL: ${VITE_SERVER_URL}
-      VITE_ALLOWED_IMAGE_DOMAIN: ${VITE_ALLOWED_IMAGE_DOMAIN}
+    environment:
+      - VITE_SERVER_URL=${VITE_SERVER_URL}
+      - VITE_ALLOWED_IMAGE_DOMAIN=${VITE_ALLOWED_IMAGE_DOMAIN}
     networks:
       - onlyfriends_network
 
