@@ -52,4 +52,5 @@ services:
 
 networks:
   onlyfriends_network:
+    name: onlyfriends_network
     driver: bridge

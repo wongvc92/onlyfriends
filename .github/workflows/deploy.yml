@@ -28,7 +28,9 @@ jobs:
       # Build and push Docker images
       - name: Build and push Docker images
         run: |
-          docker build -t ${{ secrets.CLIENT_IMAGE }} ./client
+          docker build --build-arg VITE_SERVER_URL=${{ secrets.VITE_SERVER_URL }} \
+                 --build-arg VITE_ALLOWED_IMAGE_DOMAIN=${{ secrets.VITE_ALLOWED_IMAGE_DOMAIN }} \
+                 -t ${{ secrets.CLIENT_IMAGE }} ./client
           docker push ${{ secrets.CLIENT_IMAGE }}
           docker build -t ${{ secrets.SERVER_IMAGE }} ./server
           docker push ${{ secrets.SERVER_IMAGE }}
