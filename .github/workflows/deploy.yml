@@ -54,6 +54,21 @@ jobs:
               echo "Directory already exists. Skipping creation."
             fi
 
+      - name: Check and Delete Existing docker-compose.yml
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          script: |
+            if [ -f "${{ secrets.REMOTE_PATH }}/docker-compose.yml" ]; then
+              echo "docker-compose.yml exists. Deleting it now."
+              rm -f "${{ secrets.REMOTE_PATH }}/docker-compose.yml"
+            else
+              echo "docker-compose.yml does not exist. Skipping deletion."
+            fi
+
       - name: SCP files to server
         uses: appleboy/scp-action@v0.1.4
         with:
@@ -63,8 +78,6 @@ jobs:
           port: 22
           source: "docker-compose.yml"
           target: "${{ secrets.REMOTE_PATH }}/docker-compose.yml"
-          overwrite: true
-          debug: true
 
       # Deploy to EC2 via SSH
       - name: Deploy to EC2
