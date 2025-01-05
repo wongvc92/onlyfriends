@@ -61,6 +61,7 @@ jobs:
           port: 22
           source: "docker-compose.yml"
           target: "${{ secrets.REMOTE_PATH }}/docker-compose.yml"
+          overwrite: true
 
       # Deploy to EC2 via SSH
       - name: Deploy to EC2
