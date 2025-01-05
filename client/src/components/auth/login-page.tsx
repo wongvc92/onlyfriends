@@ -6,7 +6,7 @@ const LoginPage = () => {
     <WidthWrapper>
       <div className="max-w-sm mx-auto px-4 pt-10 h-screen">
         <div className="space-y-4">
-          <div className="text-center font-bold">Welcome to onlyfriends</div>
+          <div className="text-center font-bold">Welcome to onlyfriends page.</div>
           <LoginForm />
         </div>
       </div>
