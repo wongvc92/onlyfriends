@@ -58,8 +58,9 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
           source: "docker-compose.yml"
-          target: ~/
+          target: ~/docker-compose-new.yml
 
       # Deploy to EC2 via SSH
       - name: Deploy to EC2
