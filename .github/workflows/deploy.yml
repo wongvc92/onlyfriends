@@ -1,0 +1,155 @@
+name: Deploy to AWS EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Set up Docker Buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      # Log in to Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      # Build and push Docker images
+      - name: Build and push Docker images
+        run: |
+          docker build --build-arg VITE_SERVER_URL=${{ secrets.VITE_SERVER_URL }} \
+                 --build-arg VITE_ALLOWED_IMAGE_DOMAIN=${{ secrets.VITE_ALLOWED_IMAGE_DOMAIN }} \
+                 -t ${{ secrets.CLIENT_IMAGE }} ./client
+          docker push ${{ secrets.CLIENT_IMAGE }}
+          docker build -t ${{ secrets.SERVER_IMAGE }} ./server
+          docker push ${{ secrets.SERVER_IMAGE }}
+          docker build -t ${{ secrets.NGINX_IMAGE }} ./nginx
+          docker push ${{ secrets.NGINX_IMAGE }}
+
+      - name: Create Target Directory on Server
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          script: |
+            if [ ! -d "${{ secrets.REMOTE_PATH }}" ]; then
+              echo "Directory does not exist. Creating it now."
+              mkdir -p ${{ secrets.REMOTE_PATH }}
+              sudo chown -R ${{ secrets.EC2_USER }}:ubuntu ${{ secrets.REMOTE_PATH }}
+              sudo chmod -R 755 ${{ secrets.REMOTE_PATH }}
+            else
+              echo "Directory already exists. Skipping creation."
+            fi
+
+      - name: Check and Delete Existing docker-compose.yml
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          script: |
+            if [ -f "${{ secrets.REMOTE_PATH }}/docker-compose.yml" ]; then
+              echo "docker-compose.yml exists. Deleting it now."
+              rm -f "${{ secrets.REMOTE_PATH }}/docker-compose.yml"
+            else
+              echo "docker-compose.yml does not exist. Skipping deletion."
+            fi
+
+      - name: SCP files to server
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          source: "docker-compose.yml"
+          target: "${{ secrets.REMOTE_PATH }}/"
+
+      # Deploy to EC2 via SSH
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          script: |
+            set -e
+
+            echo "Changing to new project file directory..."
+            cd ${{ secrets.REMOTE_PATH }}
+
+            # Ensure Docker is installed
+            if ! command -v docker &>/dev/null; then
+              echo "Installing Docker..."
+              sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+              curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+              echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+              sudo apt-get update && sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+            fi
+
+            # Ensure Docker Compose is installed
+            if ! docker compose version &>/dev/null; then
+              echo "Installing Docker Compose..."
+              mkdir -p ~/.docker/cli-plugins/
+              curl -SL https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-linux-x86_64 -o ~/.docker/cli-plugins/docker-compose
+              chmod +x ~/.docker/cli-plugins/docker-compose
+            fi
+
+            # Create or update .env file
+            echo "Creating/updating .env file..."
+            cat <<EOF > .env
+            NODE_ENV=production
+            VITE_SERVER_URL=${{ secrets.VITE_SERVER_URL }}
+            VITE_ALLOWED_IMAGE_DOMAIN=${{ secrets.VITE_ALLOWED_IMAGE_DOMAIN }}
+            PORT=${{ secrets.PORT }}
+            APP_ORIGIN=${{ secrets.APP_ORIGIN }}
+            DATABASE_URL=${{ secrets.DATABASE_URL }}
+            ACCESS_TOKEN_SECRET=${{ secrets.ACCESS_TOKEN_SECRET }}
+            REFRESH_TOKEN_SECRET=${{ secrets.REFRESH_TOKEN_SECRET }}
+            RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}
+            RESEND_VERIFIED_DOMAIN=${{ secrets.RESEND_VERIFIED_DOMAIN }}
+            ALLOWED_IMAGE_DOMAIN=${{ secrets.ALLOWED_IMAGE_DOMAIN }}
+            AWS_REGION=${{ secrets.AWS_REGION }}
+            AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+            AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            AWS_BUCKET_NAME=${{ secrets.AWS_BUCKET_NAME }}
+            CLIENT_IMAGE=${{ secrets.CLIENT_IMAGE }}
+            SERVER_IMAGE=${{ secrets.SERVER_IMAGE }}
+            NGINX_IMAGE=${{ secrets.NGINX_IMAGE }}
+            EOF
+
+            # remove existing containers
+            echo "Stopping and removing existing Docker containers..."
+            docker compose down
+
+            # remove all unused images
+            echo "remove all unused images"
+            docker image prune -a
+
+            # Pull the latest images
+            echo "Pulling Docker images..."
+            docker pull ${{ secrets.CLIENT_IMAGE }}
+            docker pull ${{ secrets.SERVER_IMAGE }}
+            docker pull ${{ secrets.NGINX_IMAGE }}
+
+            # Restart containers
+            echo "Starting Docker Compose..."
+            docker compose --env-file .env up -d
+
+            # Verify running containers
+            docker ps
