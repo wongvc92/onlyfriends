@@ -48,6 +48,8 @@ jobs:
             if [ ! -d "${{ secrets.REMOTE_PATH }}" ]; then
               echo "Directory does not exist. Creating it now."
               mkdir -p ${{ secrets.REMOTE_PATH }}
+              sudo chown -R ${{ secrets.EC2_USER }}:ubuntu ${{ secrets.REMOTE_PATH }}
+              sudo chmod -R 755 ${{ secrets.REMOTE_PATH }}
             else
               echo "Directory already exists. Skipping creation."
             fi
