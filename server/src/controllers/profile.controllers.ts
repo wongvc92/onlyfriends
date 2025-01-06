@@ -43,9 +43,9 @@ const editProfileById = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const parsedData = profileSchema.parse(req.body);
-  console.log("parsedData", parsedData);
+
   const createdProfile = await profileServices.editProfileById(parsedData, profileId);
-  console.log("createdProfile", createdProfile);
+
   res.status(HTTPSTATUS.OK).json({ profile: createdProfile, message: "Successfully updated profile!" });
 });
 

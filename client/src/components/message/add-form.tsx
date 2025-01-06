@@ -19,7 +19,7 @@ const AddForm = () => {
   const { mutate, isPending } = useCreateMessage();
   const [inputValue, setInputValue] = useState("");
 
-  console.log("profile", profile);
+
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     e.preventDefault();
     setInputValue(e.target.value);

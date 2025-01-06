@@ -45,7 +45,7 @@ export const useCreatePost = () => {
       };
       const signedUrls = await getSignedUrls();
       const validationResult = postSchema.safeParse({ post: payload.post, images: signedUrls });
-      console.log("payload", payload);
+
       if (!validationResult.success) {
         throw new Error(validationResult.error.errors[0].message);
       }
