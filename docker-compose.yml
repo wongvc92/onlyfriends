@@ -45,7 +45,7 @@ services:
       - client
       - server
     volumes:
-      - /etc/letsencrypt/live/wvcdev.xyz:/etc/letsencrypt/live/wvcdev.xyz
+      - /etc/letsencrypt/live/onlyfriends.wvcdev.xyz:/etc/letsencrypt/live/onlyfriends.wvcdev.xyz
       - /etc/letsencrypt/archive:/etc/letsencrypt/archive
     networks:
       - onlyfriends_network
