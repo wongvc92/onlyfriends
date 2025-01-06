@@ -1,6 +1,6 @@
 import { Outlet, createRootRouteWithContext, useLocation } from "@tanstack/react-router";
 import { QueryClient } from "@tanstack/react-query";
-import { IAuthContext } from "@/context/auth";
+import { IAuthContext, useAuth } from "@/context/auth";
 import MobileNav from "@/components/common/mobile-nav";
 import { ModeToggle } from "@/components/common/mode-toggle";
 
@@ -13,6 +13,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 });
 
 function RootComponent() {
+  const { user } = useAuth();
   const pathname = useLocation({
     select: (location) => location.pathname,
   });
@@ -20,7 +21,7 @@ function RootComponent() {
   return (
     <div className="dark:bg-background">
       <div className="flex items-center justify-between p-2 w-full md:hidden ">
-        <MobileNav />
+        {user && user.id ? <MobileNav /> : "onlyfriends"}
         <div>
           <h1 className="truncate ...">{pathname.split("/")[1].toLocaleUpperCase()}</h1>
         </div>
