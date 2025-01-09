@@ -23,13 +23,24 @@ import {
 import { jwtUtils } from "../utils/jwt";
 import { config } from "../config/app.config";
 import { cookieUtils } from "../utils/cookie";
-import { resetPasswordSchema } from "../validation/resetPasswordSchema";
 import ResourceNotFoundError from "../error/ResourceNotFoundError";
 import { sendPasswordResetEmail } from "../utils/email";
-import { newPasswordSchema } from "../validation/newPasswordSchema";
+import {
+  loginUserSchema,
+  newPasswordSchema,
+  registerSchema,
+  renewAccessTokenCookieSchema,
+  resetPasswordSchema,
+  TLoginUserSchema,
+  TNewPasswordSchema,
+  TRegisterSchema,
+  TResetPasswordSchema,
+  TVerifyEmailByTokenSchema,
+  verifyEmailByTokenSchema,
+} from "../validation/authSchema";
 
-const registerUser = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-  const { username, password, email } = req.body;
+const registerUser = asyncHandler(async (req: Request<{}, {}, TRegisterSchema>, res: Response) => {
+  const { username, password, email } = registerSchema.parse(req.body);
 
   const existingUsername = await authServices.getExistinguserByUsername(username);
   if (existingUsername) {
@@ -52,8 +63,8 @@ const registerUser = asyncHandler(async (req: Request, res: Response): Promise<v
   res.status(HTTPSTATUS.CREATED).json({ message: "Please check email for confirmation." });
 });
 
-const verifyEmailByToken = asyncHandler(async (req: Request, res: Response) => {
-  const { token } = req.body;
+const verifyEmailByToken = asyncHandler(async (req: Request<{}, {}, TVerifyEmailByTokenSchema>, res: Response) => {
+  const { token } = verifyEmailByTokenSchema.parse(req.body);
 
   const existingToken = await getVerificationToken(token);
   if (!existingToken) {
@@ -76,8 +87,8 @@ const verifyEmailByToken = asyncHandler(async (req: Request, res: Response) => {
   res.status(HTTPSTATUS.ACCEPTED).json({ message: "Email verified! Please login." });
 });
 
-const loginUser = asyncHandler(async (req: Request, res: Response) => {
-  const { email, password, code } = req.body;
+const loginUser = asyncHandler(async (req: Request<{}, {}, TLoginUserSchema>, res: Response) => {
+  const { email, password, code } = loginUserSchema.parse(req.body);
 
   if (!email || !password) {
     throw new BadRequestError("Please provide email or password!");
@@ -175,7 +186,7 @@ const logoutUser = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const renewAccessToken = asyncHandler(async (req: Request, res: Response) => {
-  const refreshToken = req.cookies.refreshToken;
+  const { refreshToken } = renewAccessTokenCookieSchema.parse(req.cookies);
 
   if (!refreshToken) {
     throw new AuthError("Refresh token not found");
@@ -199,7 +210,7 @@ const renewAccessToken = asyncHandler(async (req: Request, res: Response) => {
   res.status(HTTPSTATUS.CREATED).json({ accessToken: newAccessToken });
 });
 
-const resetPassword = asyncHandler(async (req: Request, res: Response) => {
+const resetPassword = asyncHandler(async (req: Request<{}, {}, TResetPasswordSchema>, res: Response) => {
   const { email } = resetPasswordSchema.parse(req.body);
 
   const existingUser = await authServices.getExistingUserByEmail(email);
@@ -217,8 +228,8 @@ const resetPassword = asyncHandler(async (req: Request, res: Response) => {
   return res.status(HTTPSTATUS.CREATED).json({ message: "Reset email sent!" });
 });
 
-const newPassword = asyncHandler(async (req: Request, res: Response) => {
-  const { password, confirmPassword, token } = newPasswordSchema.parse(req.body);
+const newPassword = asyncHandler(async (req: Request<{}, {}, TNewPasswordSchema>, res: Response) => {
+  const { password, token } = newPasswordSchema.parse(req.body);
 
   const passwordResetToken = await getPasswordResetTokenByToken(token);
   if (!passwordResetToken) {
