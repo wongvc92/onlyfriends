@@ -8,3 +8,9 @@ export const messageSchema = z.object({
 });
 
 export type TMessageSchema = z.infer<typeof messageSchema>;
+
+export const getMessagesByConversationIdSchema = z.object({
+  conversationId: z.string().uuid(),
+});
+
+export type TGetMessagesByConversationId = z.infer<typeof getMessagesByConversationIdSchema>;

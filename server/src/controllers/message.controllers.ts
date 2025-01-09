@@ -3,16 +3,12 @@ import { messageServices } from "../services/message.services";
 import { asyncHandler } from "../middleware/asyncHandler";
 import BadRequestError from "../error/BadRequestError";
 import { HTTPSTATUS } from "../config/http.config";
-import { messageSchema } from "../validation/messageSchema";
+import { getMessagesByConversationIdSchema, messageSchema } from "../validation/messageSchema";
 import { getReceiverSocketId, io } from "../socket/socket";
 
 const getMessagesByConversationId = asyncHandler(async (req: Request, res: Response) => {
-  const conversationId = req.params.conversationId;
-
-  if (!conversationId) {
-    throw new BadRequestError("conversation id  is required.");
-  }
-
+  const { params } = getMessagesByConversationIdSchema.parse(req);
+  const { conversationId } = params;
   const messages = await messageServices.getMessagesByConversationId(conversationId);
   res.status(HTTPSTATUS.OK).json({
     messages,
