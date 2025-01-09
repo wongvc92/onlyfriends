@@ -1,16 +1,19 @@
-import { basePath } from "@/utils/basePath";
 import { InfiniteData, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { IComment } from "@/types/IComment";
 import { postKeys } from "../post/postKeys";
 import { commentKeys } from "./commentKeys";
 import { IGetAllPostsResponse } from "@/data/post/getAllPosts";
 import { IPost } from "@/types/IPost";
 import apiClient from "@/utils/apiClient";
-import { IGetCommentsByPostIdResponse } from "@/data/comment/getCommentsByPostId";
+import { deleteCommentSchema } from "@/validation/commentSchema";
 
 const deleteComment = async ({ commentId }: { commentId: string }) => {
-  const url = `/api/comments/${commentId}`;
+  const parsed = deleteCommentSchema.safeParse({ commentId });
+  if (!parsed.success) {
+    throw new Error(`${parsed.error.issues[0].message} - ${parsed.error.issues[0].path}`);
+  }
+
+  const url = `/api/comments/${parsed.data.commentId}`;
   const res = await apiClient.delete(url);
   return res.data;
 };

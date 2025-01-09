@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "../ui/form";
 import { Button } from "../ui/button";
-import { commentMaxLimit, commentSchema, TCommentSchema } from "@/validation/commentSchema";
+import { commentMaxLimit, createCommentSchema, TCreateCommentSchema } from "@/validation/commentSchema";
 import { IPost } from "@/types/IPost";
 import Spinner from "../ui/spinner";
 import { IoSend } from "react-icons/io5";
@@ -13,10 +13,10 @@ import { useCreateComment } from "@/hooks/comment/useCreateComment";
 
 const PostComment = ({ post }: { post: IPost }) => {
   const tag = useTagging();
-  const { mutate, isPending, isSuccess } = useCreateComment(post.id);
+  const { mutate, isPending } = useCreateComment(post.id);
 
-  const form = useForm<TCommentSchema>({
-    resolver: zodResolver(commentSchema),
+  const form = useForm<TCreateCommentSchema>({
+    resolver: zodResolver(createCommentSchema),
     mode: "onChange",
     defaultValues: {
       comment: "",

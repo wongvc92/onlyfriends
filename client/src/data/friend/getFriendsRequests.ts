@@ -1,6 +1,7 @@
 import { IFriend } from "@/types/IFriend";
 import apiClient from "@/utils/apiClient";
-import { buildSearchParams } from "@/utils/basePath";
+import { buildSearchParams } from "@/utils/buildSearchParams";
+
 
 export const getFriendsRequests = async ({
   pageParam,

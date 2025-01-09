@@ -4,11 +4,11 @@ import { useInView } from "react-intersection-observer";
 import CommentCard from "./comment-card";
 import Spinner from "../ui/spinner";
 import { Button } from "../ui/button";
-import { useGetAllComments } from "@/hooks/comment/useGetAllComments";
+import { useGetCommentsByPostId } from "@/hooks/comment/useGetCommentsByPostId";
 
 const CommentList = ({ post }: { post: IPost }) => {
   const { ref, inView } = useInView();
-  const { status, data, error, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage } = useGetAllComments({ postId: post.id });
+  const { status, data, error, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage } = useGetCommentsByPostId({ postId: post.id });
 
   // Trigger fetching new comments when the button comes into view
   useEffect(() => {

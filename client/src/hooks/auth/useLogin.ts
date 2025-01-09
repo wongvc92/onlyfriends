@@ -1,11 +1,11 @@
 import { basePath } from "@/utils/basePath";
-import { TSignInSchema } from "@/validation/signInSchema";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { authKeys } from "./authKeys";
+import { TLoginUserSchema } from "@/validation/authSchema";
 
-const login = async (formData: TSignInSchema) => {
+const login = async (formData: TLoginUserSchema) => {
   const url = basePath("/api/auth/login");
   const res = await fetch(url, {
     method: "POST",
@@ -28,7 +28,7 @@ export const useLogin = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate({ from: "/login" });
   return useMutation({
-    mutationFn: (formData: TSignInSchema) => login(formData),
+    mutationFn: (formData: TLoginUserSchema) => login(formData),
     onSuccess: (data) => {
       if (data.twoFactor === true) {
         navigate({ search: (prev) => ({ ...prev, showTwoFactor: "true" }) });

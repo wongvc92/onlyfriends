@@ -10,20 +10,18 @@ interface IEditCommentResponse {
   message: string;
 }
 
-const editComment = async ({ tagContent, comment }: { tagContent: string; comment: IComment }): Promise<IEditCommentResponse> => {
-  const url = `/api/comments/${comment.id}`;
+const editComment = async ({ tagContent, commentId }: { tagContent: string; commentId: string }): Promise<IEditCommentResponse> => {
+  const url = `/api/comments/${commentId}`;
   const res = await apiClient.put(url, {
     comment: tagContent,
-    post_id: comment.post_id,
   });
-
   return res.data;
 };
 
 export const useEditComment = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: { tagContent: string; comment: IComment }) => editComment(data),
+    mutationFn: (data: { tagContent: string; commentId: string }) => editComment(data),
     onSuccess: (data: IEditCommentResponse) => {
       toast.success("Comment edited.");
 

@@ -19,11 +19,7 @@ export const errorHandler: ErrorRequestHandler = (error, req, res, next): any =>
   if (error instanceof ZodError) {
     // Handle zod errors
     return res.status(HTTPSTATUS.BAD_REQUEST).json({
-      message: "Validation Error",
-      errors: error.errors.map((e) => ({
-        path: e.path,
-        message: e.message,
-      })),
+      message: `${error.issues[0].message} - ${error.issues[0].path} `,
     });
   }
   // Handle generic errors

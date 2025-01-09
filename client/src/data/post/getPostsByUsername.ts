@@ -1,6 +1,7 @@
 import { IPost } from "@/types/IPost";
 import apiClient from "@/utils/apiClient";
-import { buildSearchParams } from "@/utils/basePath";
+import { buildSearchParams } from "@/utils/buildSearchParams";
+
 
 export interface IGetPostsByUsernameResponse {
   data: IPost[];

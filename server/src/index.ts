@@ -24,7 +24,7 @@ dotenv.config();
 
 app.use(
   cors({
-    origin: [config.APP_ORIGIN, "http://localhost"],
+    origin: [config.APP_ORIGIN, "http://localhost:3000"],
     credentials: true, // Allow credentials (cookies)
   })
 );

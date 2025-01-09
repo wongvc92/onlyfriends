@@ -1,5 +1,5 @@
 import { basePath } from "@/utils/basePath";
-import { TNewPasswordSchema } from "@/validation/newPasswordSchema";
+import { TNewPasswordSchema } from "@/validation/authSchema";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 

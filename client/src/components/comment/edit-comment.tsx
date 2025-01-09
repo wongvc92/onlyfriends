@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "../ui/form";
 import { Button } from "../ui/button";
-import { commentMaxLimit, commentSchema, TCommentSchema } from "@/validation/commentSchema";
+import { commentMaxLimit, editCommentSchema, TEditCommentSchema } from "@/validation/commentSchema";
 import Spinner from "../ui/spinner";
 import { IoSend } from "react-icons/io5";
 import TagFriend from "./tag-friend";
@@ -19,9 +19,9 @@ interface EditCommentProps {
 
 const EditComment: React.FC<EditCommentProps> = ({ comment, setIsEdit }) => {
   const tag = useTagging();
-  const { mutate, isPending, isSuccess } = useEditComment({ postId: comment.post_id });
-  const form = useForm<TCommentSchema>({
-    resolver: zodResolver(commentSchema),
+  const { mutate, isPending, isSuccess } = useEditComment();
+  const form = useForm<TEditCommentSchema>({
+    resolver: zodResolver(editCommentSchema),
     mode: "onChange",
     defaultValues: {
       comment: "",
@@ -38,7 +38,7 @@ const EditComment: React.FC<EditCommentProps> = ({ comment, setIsEdit }) => {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     mutate(
-      { tagContent: tag.content, comment },
+      { tagContent: tag.content, commentId: comment.id },
       {
         onSuccess: () => {
           setIsEdit(false);

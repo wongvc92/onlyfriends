@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { commentSchema } from "../validation/commentSchema";
+import { createCommentSchema, deleteCommentSchema, editCommentSchema, getCommentsByPostIdSchema } from "../validation/commentSchema";
 import { asyncHandler } from "../middleware/asyncHandler";
 import AuthError from "../error/AuthError";
 import { commentServices } from "../services/comment.services";
@@ -12,21 +12,21 @@ export const addComment = asyncHandler(async (req: Request, res: Response) => {
     throw new AuthError("Please login");
   }
 
-  const { comment, post_id } = commentSchema.parse(req.body);
+  const { comment, post_id } = createCommentSchema.parse(req.body);
   const createdComment = await commentServices.addComment(post_id, comment, currentUser.id);
   res.status(HTTPSTATUS.CREATED).json({ comment: createdComment, message: "Successfully add comment" });
 });
 
 export const getCommentsByPostId = asyncHandler(async (req: Request, res: Response) => {
-  const postId = req.params.postId;
-  if (!postId) {
-    throw new BadRequestError("post id is required");
-  }
+  const parsed = getCommentsByPostIdSchema.parse({
+    params: req.params,
+    query: req.query,
+  });
 
-  const page = parseInt(req.query.page as string, 10) || 1;
-  const limit = parseInt(req.query.limit as string) || 10;
+  const { postId } = parsed.params;
+  const { page, limit } = parsed.query;
+
   const offset = (page - 1) * limit;
-
   const totalComments = await commentServices.getCommentsCountByPostId(postId);
   const totalPages = Math.ceil(totalComments / limit);
   const comments = await commentServices.getCommentsByPostId(postId, limit, offset);
@@ -40,32 +40,18 @@ export const getCommentsByPostId = asyncHandler(async (req: Request, res: Respon
   });
 });
 
-export const getCommentsCountByPostId = asyncHandler(async (req: Request, res: Response) => {
-  const postId = req.params.postId;
-  if (!postId) {
-    throw new BadRequestError("postId is required");
-  }
-
-  const totalComments = await commentServices.getCommentsCountByPostId(postId);
-  res.status(HTTPSTATUS.OK).json({ count: totalComments });
-});
-
 export const deleteCommentById = asyncHandler(async (req: Request, res: Response) => {
-  const commentId = req.params.commentId;
-  if (!commentId) {
-    throw new BadRequestError("commentId is required.");
-  }
+  const { commentId } = deleteCommentSchema.parse(req.params);
   await commentServices.deleteCommentById(commentId);
   res.status(HTTPSTATUS.OK).json({ message: "Comment deleted." });
 });
 
 export const editCommentById = asyncHandler(async (req: Request, res: Response) => {
-  const commentId = req.params.commentId;
-  if (!commentId) {
-    throw new BadRequestError("commentId is required.");
-  }
+  const { body, params } = editCommentSchema.parse(req);
 
-  const { comment } = commentSchema.parse(req.body);
+  const { comment } = body;
+  const { commentId } = params;
+
   const updatedComment = await commentServices.editCommentById(comment, commentId);
   res.status(HTTPSTATUS.CREATED).json({ comment: updatedComment, message: "Comment edited." });
 });
@@ -73,7 +59,6 @@ export const editCommentById = asyncHandler(async (req: Request, res: Response) 
 export const commentsControllers = {
   addComment,
   getCommentsByPostId,
-  getCommentsCountByPostId,
   deleteCommentById,
   editCommentById,
 };
