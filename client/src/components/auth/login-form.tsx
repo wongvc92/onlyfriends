@@ -3,16 +3,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { signInSchema, TSignInSchema } from "@/validation/signInSchema";
 import { Link, useSearch } from "@tanstack/react-router";
 import { useLogin } from "@/hooks/auth/useLogin";
 import SubmitButton from "../common/submit-button";
+import { loginUserSchema, TLoginUserSchema } from "@/validation/authSchema";
 
 export const LoginForm = () => {
   const { mutate, isPending } = useLogin();
   const { showTwoFactor } = useSearch({ from: "/login" });
-  const form = useForm<TSignInSchema>({
-    resolver: zodResolver(signInSchema),
+  const form = useForm<TLoginUserSchema>({
+    resolver: zodResolver(loginUserSchema),
     mode: "onChange",
     defaultValues: {
       email: "",

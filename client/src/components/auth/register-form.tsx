@@ -1,16 +1,16 @@
 import { Input } from "../ui/input";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signUpSchema, TSignUpFormSchema } from "@/validation/registerSchema";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Link } from "@tanstack/react-router";
 import { useRegister } from "@/hooks/auth/useRegister";
 import SubmitButton from "../common/submit-button";
+import { registerSchema, TRegisterSchema } from "@/validation/authSchema";
 
 const RegisterForm = () => {
   const { mutate, isPending } = useRegister();
-  const form = useForm<TSignUpFormSchema>({
-    resolver: zodResolver(signUpSchema),
+  const form = useForm<TRegisterSchema>({
+    resolver: zodResolver(registerSchema),
     mode: "all",
     defaultValues: {
       username: "",

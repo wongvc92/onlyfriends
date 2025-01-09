@@ -1,13 +1,12 @@
-import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { newPasswordSchema, TNewPasswordSchema } from "@/validation/newPasswordSchema";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import useNewPassword from "@/hooks/auth/useNewPassword";
 import { useEffect } from "react";
 import SubmitButton from "../common/submit-button";
+import { newPasswordSchema, TNewPasswordSchema } from "@/validation/authSchema";
 
 const NewPasswordForm = () => {
   const { token } = useSearch({ from: "/(auth)/new-password/" });

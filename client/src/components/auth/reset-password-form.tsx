@@ -1,10 +1,10 @@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useResetPassword } from "@/hooks/auth/useResetPassword";
-import { resetPasswordSchema, TResetPasswordSchema } from "@/validation/resetPasswordSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import SubmitButton from "../common/submit-button";
+import { resetPasswordSchema, TResetPasswordSchema } from "@/validation/authSchema";
 
 const ResetPasswordForm = () => {
   const { mutate, isPending } = useResetPassword();

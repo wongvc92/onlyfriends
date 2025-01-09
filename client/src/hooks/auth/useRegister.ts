@@ -1,9 +1,9 @@
 import { basePath } from "@/utils/basePath";
-import { TSignUpFormSchema } from "@/validation/registerSchema";
+import { TRegisterSchema } from "@/validation/authSchema";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-const register = async (formData: TSignUpFormSchema) => {
+const register = async (formData: TRegisterSchema) => {
   const url = basePath("/api/auth/register");
 
   const body = {
