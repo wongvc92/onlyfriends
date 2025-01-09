@@ -6,9 +6,14 @@ import { IPost } from "@/types/IPost";
 import { useParams } from "@tanstack/react-router";
 import { IGetAllPostsResponse } from "@/data/post/getAllPosts";
 import { IGetPostsByUsernameResponse } from "@/data/post/getPostsByUsername";
+import { likeSchema } from "@/validation/likeSchema";
 
 const createLikeByPostId = async (postId: string) => {
-  const url = `/api/likes/${postId}`;
+  const parsed = likeSchema.safeParse({ postId });
+  if (!parsed.success) {
+    throw new Error(`${parsed.error.issues[0].message} - ${parsed.error.issues[0].path}`);
+  }
+  const url = `/api/likes/${parsed.data.postId}`;
   const res = await apiClient.post(url);
   return res.data;
 };
