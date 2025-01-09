@@ -7,9 +7,7 @@ export const createConversationSchema = z.object({
 export type TCreateConversationSchema = z.infer<typeof createConversationSchema>;
 
 export const getAllConversationSchema = z.object({
-  query: z.object({
-    query: z.optional(z.string().min(1)),
-  }),
+  query: z.optional(z.string().min(1)),
 });
 
 export type TGetAllConversationSchema = z.infer<typeof createConversationSchema>;

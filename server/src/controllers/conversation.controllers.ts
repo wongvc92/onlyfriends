@@ -1,9 +1,8 @@
 import { Request, Response } from "express";
 import { conversationServices } from "../services/conversation.services";
-import BadRequestError from "../error/BadRequestError";
 import AuthError from "../error/AuthError";
 import { asyncHandler } from "../middleware/asyncHandler";
-import { createConversationSchema } from "../validation/conversationSchema";
+import { createConversationSchema, getAllConversationSchema } from "../validation/conversationSchema";
 import { HTTPSTATUS } from "../config/http.config";
 import { authServices } from "../services/auth.services";
 
@@ -12,8 +11,8 @@ export const getAllConversations = asyncHandler(async (req: Request, res: Respon
   if (!currentUser) {
     throw new AuthError("Please login.");
   }
-  const query = req.query.query as string | undefined;
-  const conversations = await conversationServices.getAllConversations(currentUser.id, query);
+  const { query } = getAllConversationSchema.parse(req);
+  const conversations = await conversationServices.getAllConversations(currentUser.id, query.query);
   res.status(HTTPSTATUS.OK).json({ conversations });
 });
 
@@ -23,13 +22,10 @@ export const createConversation = asyncHandler(async (req: Request, res: Respons
     throw new AuthError("Please login.");
   }
   const { peopleId } = createConversationSchema.parse(req.body);
-  if (!peopleId) {
-    throw new BadRequestError("peopleId is required.");
-  }
 
   const existingConversation = await conversationServices.getConversation(currentUser.id, peopleId);
 
-  let conversation;
+  let conversation: { id: string };
 
   if (!existingConversation) {
     conversation = await conversationServices.createConversation(currentUser.id, peopleId);

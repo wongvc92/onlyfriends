@@ -6,9 +6,15 @@ import { getRouteApi } from "@tanstack/react-router";
 import { conversationKeys } from "./conversationKeys";
 import { buildSearchParams } from "@/utils/buildSearchParams";
 import { basePath } from "@/utils/basePath";
+import { getAllConversationSchema } from "@/validation/converstationSchema";
 
 export const getAllConversations = async (query?: string): Promise<Iconversation[]> => {
-  const url = basePath("/api/conversations") + buildSearchParams({ query });
+  const parsed = getAllConversationSchema.safeParse({ query });
+  if (!parsed.success) {
+    throw new Error(`${parsed.error.issues[0].message} - ${parsed.error.issues[0].path}`);
+  }
+
+  const url = basePath("/api/conversations") + buildSearchParams({ query: parsed.data.query });
   const res = await apiClient.get(url);
   const { conversations } = res.data;
   return conversations;
