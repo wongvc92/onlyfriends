@@ -10,6 +10,7 @@ const register = async (formData: TRegisterSchema) => {
     username: formData.username,
     email: formData.email,
     password: formData.password,
+    confirmPassword: formData.confirmPassword,
   };
 
   const res = await fetch(url, {
