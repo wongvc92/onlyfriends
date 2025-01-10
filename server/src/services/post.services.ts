@@ -49,7 +49,7 @@ const createPostImage = async (imageUrl: string, createdPostId: string): Promise
   return result.rows[0];
 };
 
-const editPostById = async (post: string, postId: string) => {
+const editPostById = async (post: string | undefined, postId: string) => {
   const editPostResult = await pool.query(
     `
     WITH edited_post AS 

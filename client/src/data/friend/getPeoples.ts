@@ -11,13 +11,8 @@ export const getPeoples = async ({
   query?: string;
 }): Promise<{ data: IPeople[]; currentPage: number; nextPage: number; totalCount: number; totalPages: number }> => {
   const LIMIT = 10;
-  const searchParams = {
-    page: pageParam.toString(),
-    limit: LIMIT.toString(),
-    query,
-  };
 
-  const parsed = getPeopleSchema.safeParse(searchParams);
+  const parsed = getPeopleSchema.safeParse({ query, pageParam, LIMIT });
 
   if (!parsed.success) {
     throw new Error(`${parsed.error.issues[0].message} - ${parsed.error.issues[0].path}`);

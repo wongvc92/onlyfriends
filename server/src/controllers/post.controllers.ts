@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { postSchema } from "../validation/postsSchema";
+import { deletePostSchema, editPostSchema, getAllPostSchema, getPostByPostIdSchema, postSchema } from "../validation/postsSchema";
 import AuthError from "../error/AuthError";
 import { postServices } from "../services/post.services";
 import { HTTPSTATUS } from "../config/http.config";
@@ -30,13 +30,10 @@ const createPost = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const editPostById = asyncHandler(async (req: Request, res: Response) => {
-  const postId = req.params.postId;
-  if (!postId) {
-    throw new BadRequestError("postId is required");
-  }
-
-  const { post } = postSchema.parse(req.body);
-
+  const parsed = editPostSchema.parse(req);
+  const { body, params } = parsed;
+  const { post } = body;
+  const { postId } = params;
   const editedPost = await postServices.editPostById(post, postId);
   res.status(HTTPSTATUS.CREATED).json({ post: editedPost, message: "Post updated" });
 });
@@ -78,11 +75,8 @@ const deletePost = asyncHandler(async (req: Request, res: Response) => {
     throw new AuthError("Please login");
   }
 
-  const postId = req.params.postId as string;
-
-  if (!postId) {
-    throw new BadRequestError("postId is required");
-  }
+  const { params } = deletePostSchema.parse(req);
+  const { postId } = params;
 
   await postServices.deletePost(postId, currentUser.id);
   res.status(HTTPSTATUS.OK).json({ message: "Post deleted!" });
@@ -94,9 +88,9 @@ const getAllPosts = asyncHandler(async (req: Request, res: Response) => {
   if (!currentUser) {
     throw new AuthError("Please login");
   }
+  const { query } = getAllPostSchema.parse(req);
+  const { limit, page } = query;
 
-  const page = parseInt(req.query.page as string) || 1;
-  const limit = parseInt(req.query.limit as string) || 10;
   const offset = (page - 1) * limit;
 
   const totalPosts = await postServices.getAllPostsCount();
@@ -119,11 +113,8 @@ const getSinglePostById = asyncHandler(async (req: Request, res: Response) => {
   if (!currentUser) {
     throw new AuthError("Please login");
   }
-  const postId = req.params.postId;
-
-  if (!postId) {
-    throw new BadRequestError("postId is required");
-  }
+  const { params } = getPostByPostIdSchema.parse(req);
+  const { postId } = params;
 
   const post = await postServices.getSinglePostById(postId, currentUser.id);
 

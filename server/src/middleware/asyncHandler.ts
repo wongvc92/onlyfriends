@@ -1,19 +1,13 @@
-import { Request, Response, NextFunction } from "express";
+import { NextFunction, Request, Response } from "express";
 
-export type AsyncControllerType<P = Record<string, any>, ResBody = any, ReqBody = any, ReqQuery = any> = (
-  req: Request<P, ResBody, ReqBody, ReqQuery>,
-  res: Response,
-  next: NextFunction
-) => Promise<any>;
+type AsynControllerType = (req: Request, res: Response, next: NextFunction) => Promise<any>;
 
-export const asyncHandler = <P, ResBody, ReqBody, ReqQuery>(
-  controller: AsyncControllerType<P, ResBody, ReqBody, ReqQuery>
-): AsyncControllerType<P, ResBody, ReqBody, ReqQuery> => {
-  return async (req, res, next) => {
+export const asyncHandler =
+  (controller: AsynControllerType): AsynControllerType =>
+  async (req, res, next) => {
     try {
-      return await controller(req, res, next);
+      await controller(req, res, next);
     } catch (error) {
       next(error);
     }
   };
-};
