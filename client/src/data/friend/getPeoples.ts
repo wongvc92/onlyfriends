@@ -1,7 +1,7 @@
 import { IPeople } from "@/types/IPeople";
 import apiClient from "@/utils/apiClient";
 import { buildSearchParams } from "@/utils/buildSearchParams";
-
+import { getPeopleSchema } from "@/validation/peopleValidation";
 
 export const getPeoples = async ({
   pageParam,
@@ -10,13 +10,20 @@ export const getPeoples = async ({
   pageParam: number;
   query?: string;
 }): Promise<{ data: IPeople[]; currentPage: number; nextPage: number; totalCount: number; totalPages: number }> => {
-  const LIMIT = 2;
+  const LIMIT = 10;
   const searchParams = {
     page: pageParam.toString(),
     limit: LIMIT.toString(),
     query,
   };
-  const url = "/api/peoples" + buildSearchParams(searchParams);
+
+  const parsed = getPeopleSchema.safeParse(searchParams);
+
+  if (!parsed.success) {
+    throw new Error(`${parsed.error.issues[0].message} - ${parsed.error.issues[0].path}`);
+  }
+
+  const url = "/api/peoples" + buildSearchParams(parsed.data);
   const res = await apiClient.get(url);
 
   return res.data;

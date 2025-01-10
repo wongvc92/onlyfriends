@@ -1,14 +1,8 @@
 import FindPeoplePage from "@/components/people/find-people-page";
+import { getPeopleSchema } from "@/validation/peopleValidation";
 import { createFileRoute } from "@tanstack/react-router";
-import { z } from "zod";
-
-const peopleSchema = z.object({
-  query: z.string().optional(),
-});
-
-export type TPeopleSchema = z.infer<typeof peopleSchema>;
 
 export const Route = createFileRoute("/_authenticated/friends/_layout/find/")({
-  validateSearch: (search) => peopleSchema.parse(search),
+  validateSearch: getPeopleSchema,
   component: FindPeoplePage,
 });

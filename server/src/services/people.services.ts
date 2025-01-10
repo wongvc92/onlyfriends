@@ -35,7 +35,7 @@ const getPeoples = async (currentUserId: string, offset: number, limit: number, 
 
   if (query) {
     values.push(`%${query}%`);
-    queryCondition += `AND u.username ILIKE $4`;
+    queryCondition += `AND (u.username ILIKE $4 OR p.name ILIKE $4)`;
   }
 
   const peopleResult = await pool.query(
