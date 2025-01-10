@@ -26,7 +26,7 @@ const PostCard = ({ post }: { post: IPost }) => {
     <Card key={post.id} className="border-0 shadow-none px-0 border-b rounded-none">
       <CardHeader className={cn(pathname === `/posts/${post.id}` && `sticky top-0 bg-white dark:bg-background z-10`)}>
         <div className="flex gap-1">
-          <Link to={`/${post.username}`}>
+          <Link to={"/posts/$postId"} params={{ postId: post.id }}>
             <ProfileImage image={post.display_image} username={post.username} />
           </Link>
           <CardTitle className="flex flex-wrap items-center gap-1">
@@ -35,7 +35,7 @@ const PostCard = ({ post }: { post: IPost }) => {
             <DotFilledIcon />
             <p className="text-muted-foreground font-light">{getrelativeTime(post.created_at)}</p>
           </CardTitle>
-          <Link to={`/posts/${post.id}`} className="flex-grow">
+          <Link to={"/posts/$postId"} params={{ postId: post.id }} className="flex-grow">
             <div className="flex-grow w-full border opacity-0">click here</div>
           </Link>
           <div className="ml-auto">
