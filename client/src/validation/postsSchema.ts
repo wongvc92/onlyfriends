@@ -17,8 +17,10 @@ export const editPostSchema = z.object({
 export type TEditPostSchema = z.infer<typeof editPostSchema>;
 
 export const getAllPostSchema = z.object({
-  page: z.coerce.string().min(1).default("1"),
-  limit: z.coerce.string().min(1).default("10"),
+  query: z.object({
+    page: z.coerce.string().min(1).default("1"),
+    limit: z.coerce.string().min(1).default("10"),
+  }),
 });
 
 export type TGetAllPostSchema = z.infer<typeof getAllPostSchema>;

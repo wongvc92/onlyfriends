@@ -12,7 +12,7 @@ export interface IGetPostsByUsernameResponse {
 export const getPostsByUsername = async ({ pageParam, username }: { pageParam: number; username: string }): Promise<IGetPostsByUsernameResponse> => {
   const LIMIT = 10;
 
-  const parsed = getPostByUsernameSchema.safeParse({ params: { username }, query: { pageParam, LIMIT } });
+  const parsed = getPostByUsernameSchema.safeParse({ params: { username }, query: { page: pageParam, limit: LIMIT } });
   if (!parsed.success) {
     throw new Error(`${parsed.error.issues[0].message} - ${parsed.error.issues[0].path}`);
   }
