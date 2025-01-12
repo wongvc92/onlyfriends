@@ -22,10 +22,10 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, user } = useAuth();
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && user) {
       const socketInstance = io(URL, {
         query: {
-          userId: user?.id,
+          userId: user.id,
         },
         withCredentials: true,
       });
@@ -41,7 +41,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
         setSocket(null);
       }
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, user]);
 
   useEffect(() => {
     if (socket) {
