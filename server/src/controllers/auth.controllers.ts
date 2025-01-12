@@ -146,6 +146,7 @@ const loginUser = asyncHandler(async (req: Request<{}, {}, TLoginUserSchema>, re
     id: existingUser.id,
     email: existingUser.email,
     username: existingUser.username,
+    name: existingUser.name,
   };
   // Generate Access Token (short-lived)
   const accessToken = jwtUtils.signToken({ jwtInfo, jwtSecret: config.JWT.ACCESS_TOKEN_SECRET, expiresIn: config.JWT.ACCESS_TOKEN_EXPIRES_IN });

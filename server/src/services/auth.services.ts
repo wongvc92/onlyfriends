@@ -1,8 +1,17 @@
-import { IUser } from "../types/Users";
+import { IUser, IUserWithProfile } from "../types/Users";
 import pool from "../config/db";
 
-export const getUserByEmail = async (email: string): Promise<IUser> => {
-  const userData = await pool.query("SELECT * from users where email=$1;", [email]);
+export const getUserByEmail = async (email: string): Promise<IUserWithProfile> => {
+  const userData = await pool.query(
+    `
+    SELECT users.*,
+    profiles.name
+    FROM users
+    LEFT JOIN profiles ON users.id = profiles.user_id
+    WHERE email = $1;
+    `,
+    [email]
+  );
   return userData.rows[0];
 };
 

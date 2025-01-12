@@ -21,10 +21,9 @@ export const getReceiverSocketId = (recipient_id: string) => {
 };
 
 io.on("connection", (socket) => {
-
-
+  console.log(`User connected socket ID: ${socket.id}`);
   const userId = socket.handshake.query.userId;
-
+  console.log("userId", userId);
   if (typeof userId === "string") {
     users[userId] = socket.id;
   }
@@ -32,7 +31,6 @@ io.on("connection", (socket) => {
   io.emit("getOnlineUsers", Object.keys(users));
 
   socket.on("disconnect", () => {
-
     delete users[userId as string];
     io.emit("getOnlineUsers", Object.keys(users));
   });

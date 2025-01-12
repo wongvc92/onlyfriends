@@ -12,8 +12,8 @@ import ProfileImage from "../profile/profile-image";
 import ProfileName from "../profile/profile-name";
 import ProfileUsername from "../profile/profile-username";
 import { cn } from "@/lib/utils";
-import Likes from "../like/like-status";
 import PostAction from "./post-action";
+import LikeStatus from "../like/like-status";
 
 const PostCard = ({ post }: { post: IPost }) => {
   const [isEdit, setIsEdit] = useState(false);
@@ -46,7 +46,7 @@ const PostCard = ({ post }: { post: IPost }) => {
 
       <CardContent>{isEdit ? <EditPostForm setIsEdit={setIsEdit} post={post} /> : <PostContent post={post} />}</CardContent>
       <CardFooter className="flex items-center justify-start gap-6">
-        <Likes is_liked={post.is_liked} like_count={post.like_count} postId={post.id} />
+        <LikeStatus post={post} />
         <Comments comment_count={post.comment_count} postId={post.id} />
         <PiShareFatBold />
       </CardFooter>

@@ -1,7 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { CgMail, CgProfile } from "react-icons/cg";
 import { FaUserFriends } from "react-icons/fa";
-import { IoHomeOutline } from "react-icons/io5";
+import { IoHomeOutline, IoNotificationsOutline } from "react-icons/io5";
 import LogoutButton from "../auth/logout-button";
 import { useAuth } from "@/context/auth";
 import { cn } from "@/lib/utils";
@@ -29,6 +29,11 @@ const Nav = ({ isMobileNav = false, onClose }: { isMobileNav?: boolean; onClose?
       label: "messages",
       path: "/messages",
       icon: <CgMail />,
+    },
+    {
+      label: "notifications",
+      path: "/notifications",
+      icon: <IoNotificationsOutline />,
     },
   ];
 
@@ -62,9 +67,6 @@ const Nav = ({ isMobileNav = false, onClose }: { isMobileNav?: boolean; onClose?
       <div>
         <div className="pt-4 md:pl-0 lg:pl-4">
           <LogoutButton isMobileNav={isMobileNav} />
-        </div>
-        <div className="pt-4 md:pl-0 lg:pl-4">
-          <ModeToggle />
         </div>
       </div>
     </div>

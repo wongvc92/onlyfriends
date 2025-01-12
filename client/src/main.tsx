@@ -8,8 +8,16 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
 import { SocketProvider } from "./context/socket";
 import { ThemeProvider } from "./context/theme-provider";
+import { NotificationProvider } from "./context/notification";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: Infinity,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 // Set up a Router instance
 const router = createRouter({
   context: {
@@ -39,10 +47,12 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <SocketProvider>
-          <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-            <Toaster richColors position="top-center" />
-            <InnerApp />
-          </ThemeProvider>
+          <NotificationProvider>
+            <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+              <Toaster richColors position="top-center" />
+              <InnerApp />
+            </ThemeProvider>
+          </NotificationProvider>
         </SocketProvider>
       </AuthProvider>
     </QueryClientProvider>

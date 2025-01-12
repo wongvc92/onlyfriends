@@ -19,6 +19,7 @@ import { config } from "./config/app.config";
 import s3Routes from "./routes/imageRoutes";
 import logRequestPath from "./middleware/logRequestPath";
 import { app, server } from "./socket/socket";
+import notificationRoutes from "./routes/notificationRoutes";
 
 dotenv.config();
 
@@ -56,6 +57,7 @@ app.use("/api/comments", authenticateJWT, commentRoutes);
 app.use("/api/s3", authenticateJWT, s3Routes);
 app.use("/api/messages", authenticateJWT, messageRoutes);
 app.use("/api/conversations", authenticateJWT, conversationRoutes);
+app.use("/api/notifications", authenticateJWT, notificationRoutes);
 
 app.use(errorHandler);
 

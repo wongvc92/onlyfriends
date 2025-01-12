@@ -16,6 +16,7 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as LoginImport } from './routes/login'
 import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as IndexImport } from './routes/index'
+import { Route as AuthenticatedNotificationsIndexImport } from './routes/_authenticated/notifications/index'
 import { Route as AuthenticatedMessagesIndexImport } from './routes/_authenticated/messages/index'
 import { Route as AuthenticatedHomeIndexImport } from './routes/_authenticated/home/index'
 import { Route as AuthenticatedFriendsIndexImport } from './routes/_authenticated/friends/index'
@@ -85,6 +86,13 @@ const AuthenticatedUsernameRoute = AuthenticatedUsernameImport.update({
   path: '/$username',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+
+const AuthenticatedNotificationsIndexRoute =
+  AuthenticatedNotificationsIndexImport.update({
+    id: '/notifications/',
+    path: '/notifications/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 const AuthenticatedMessagesIndexRoute = AuthenticatedMessagesIndexImport.update(
   {
@@ -359,6 +367,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMessagesIndexImport
       parentRoute: typeof AuthenticatedMessagesImport
     }
+    '/_authenticated/notifications/': {
+      id: '/_authenticated/notifications/'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof AuthenticatedNotificationsIndexImport
+      parentRoute: typeof AuthenticatedImport
+    }
     '/_authenticated/$username/add/': {
       id: '/_authenticated/$username/add/'
       path: '/add'
@@ -555,6 +570,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedFriendsRoute: typeof AuthenticatedFriendsRouteWithChildren
   AuthenticatedMessagesRoute: typeof AuthenticatedMessagesRouteWithChildren
   AuthenticatedHomeIndexRoute: typeof AuthenticatedHomeIndexRoute
+  AuthenticatedNotificationsIndexRoute: typeof AuthenticatedNotificationsIndexRoute
   AuthenticatedPostsPostIdIndexRoute: typeof AuthenticatedPostsPostIdIndexRoute
 }
 
@@ -563,6 +579,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedFriendsRoute: AuthenticatedFriendsRouteWithChildren,
   AuthenticatedMessagesRoute: AuthenticatedMessagesRouteWithChildren,
   AuthenticatedHomeIndexRoute: AuthenticatedHomeIndexRoute,
+  AuthenticatedNotificationsIndexRoute: AuthenticatedNotificationsIndexRoute,
   AuthenticatedPostsPostIdIndexRoute: AuthenticatedPostsPostIdIndexRoute,
 }
 
@@ -585,6 +602,7 @@ export interface FileRoutesByFullPath {
   '/friends/': typeof AuthenticatedFriendsIndexRoute
   '/home': typeof AuthenticatedHomeIndexRoute
   '/messages/': typeof AuthenticatedMessagesIndexRoute
+  '/notifications': typeof AuthenticatedNotificationsIndexRoute
   '/$username/add': typeof AuthenticatedUsernameAddIndexRoute
   '/$username/edit': typeof AuthenticatedUsernameEditIndexRoute
   '/posts/$postId': typeof AuthenticatedPostsPostIdIndexRoute
@@ -610,6 +628,7 @@ export interface FileRoutesByTo {
   '/reset': typeof authResetIndexRoute
   '/verify-email': typeof authVerifyEmailIndexRoute
   '/home': typeof AuthenticatedHomeIndexRoute
+  '/notifications': typeof AuthenticatedNotificationsIndexRoute
   '/$username/add': typeof AuthenticatedUsernameAddIndexRoute
   '/$username/edit': typeof AuthenticatedUsernameEditIndexRoute
   '/posts/$postId': typeof AuthenticatedPostsPostIdIndexRoute
@@ -642,6 +661,7 @@ export interface FileRoutesById {
   '/_authenticated/friends/': typeof AuthenticatedFriendsIndexRoute
   '/_authenticated/home/': typeof AuthenticatedHomeIndexRoute
   '/_authenticated/messages/': typeof AuthenticatedMessagesIndexRoute
+  '/_authenticated/notifications/': typeof AuthenticatedNotificationsIndexRoute
   '/_authenticated/$username/add/': typeof AuthenticatedUsernameAddIndexRoute
   '/_authenticated/$username/edit/': typeof AuthenticatedUsernameEditIndexRoute
   '/_authenticated/posts/$postId/': typeof AuthenticatedPostsPostIdIndexRoute
@@ -672,6 +692,7 @@ export interface FileRouteTypes {
     | '/friends/'
     | '/home'
     | '/messages/'
+    | '/notifications'
     | '/$username/add'
     | '/$username/edit'
     | '/posts/$postId'
@@ -696,6 +717,7 @@ export interface FileRouteTypes {
     | '/reset'
     | '/verify-email'
     | '/home'
+    | '/notifications'
     | '/$username/add'
     | '/$username/edit'
     | '/posts/$postId'
@@ -726,6 +748,7 @@ export interface FileRouteTypes {
     | '/_authenticated/friends/'
     | '/_authenticated/home/'
     | '/_authenticated/messages/'
+    | '/_authenticated/notifications/'
     | '/_authenticated/$username/add/'
     | '/_authenticated/$username/edit/'
     | '/_authenticated/posts/$postId/'
@@ -789,6 +812,7 @@ export const routeTree = rootRoute
         "/_authenticated/friends",
         "/_authenticated/messages",
         "/_authenticated/home/",
+        "/_authenticated/notifications/",
         "/_authenticated/posts/$postId/"
       ]
     },
@@ -874,6 +898,10 @@ export const routeTree = rootRoute
     "/_authenticated/messages/": {
       "filePath": "_authenticated/messages/index.tsx",
       "parent": "/_authenticated/messages"
+    },
+    "/_authenticated/notifications/": {
+      "filePath": "_authenticated/notifications/index.tsx",
+      "parent": "/_authenticated"
     },
     "/_authenticated/$username/add/": {
       "filePath": "_authenticated/$username/add/index.tsx",

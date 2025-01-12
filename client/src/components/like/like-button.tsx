@@ -1,13 +1,23 @@
 import { HeartIcon } from "@radix-ui/react-icons";
 import { Button } from "../ui/button";
-import { useCreateLike } from "@/hooks/like/useCreateLike";
+import { ICreateLikePayload, useCreateLike } from "@/hooks/like/useCreateLike";
+import { useAuth } from "@/context/auth";
+import { IPost } from "@/types/IPost";
 
-const LikeButton = ({ postId }: { postId: string }) => {
-  const { mutate, isPending } = useCreateLike({ postId });
+const LikeButton = ({ post }: { post: IPost }) => {
+  const { mutate, isPending } = useCreateLike();
+  const { user } = useAuth();
+  const content = `${user?.name || user?.username} has liked your post "${post.post.length > 10 ? post.post.substring(0, 10) + "..." : post.post}"`;
+
+  const payload: ICreateLikePayload = {
+    author_id: post.author_id,
+    content,
+    postId: post.id,
+  };
 
   const onLikePost = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    mutate();
+    mutate(payload);
   };
 
   return (

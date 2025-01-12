@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 
 interface SignTokenProps {
-  jwtInfo: { [key: string]: string };
+  jwtInfo: { [key: string]: string | null };
   jwtSecret: string;
   expiresIn: string;
 }

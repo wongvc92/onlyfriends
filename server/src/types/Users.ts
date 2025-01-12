@@ -15,3 +15,7 @@ export interface IUserClient {
   username: string;
   email: string;
 }
+
+export interface IUserWithProfile extends IUser {
+  name: string | null;
+}
