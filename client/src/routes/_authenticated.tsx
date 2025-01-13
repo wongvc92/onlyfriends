@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import Sidebar from "@/components/common/sidebar";
 import WidthWrapper from "@/components/common/width-wrapper";
+import MobileNav from "@/components/common/mobile-nav";
 
 export const Route = createFileRoute("/_authenticated")({
   beforeLoad: async ({ location, context }) => {
@@ -23,7 +24,7 @@ function Layout() {
     <WidthWrapper>
       <div className="flex">
         {/* grid 1 */}
-        <div className="hidden md:block md:h-screen sticky top-0 border-r p-4 ">
+        <div className="hidden md:block md:top-[64px] md:h-[calc(100vh-64px)] sticky top-0 border-r p-4 ">
           <Sidebar />
         </div>
         {/* grid 2 */}
@@ -31,6 +32,8 @@ function Layout() {
           <Outlet />
         </div>
       </div>
+
+      <MobileNav />
     </WidthWrapper>
   );
 }

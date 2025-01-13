@@ -14,10 +14,10 @@ import { useEditComment } from "@/hooks/comment/useEditComment";
 
 interface EditCommentProps {
   comment: IComment;
-  setIsEdit: React.Dispatch<React.SetStateAction<boolean>>;
+  stopEdit: () => void;
 }
 
-const EditComment: React.FC<EditCommentProps> = ({ comment, setIsEdit }) => {
+const EditComment: React.FC<EditCommentProps> = ({ comment, stopEdit }) => {
   const tag = useTagging();
   const { mutate, isPending, isSuccess } = useEditComment();
   const form = useForm<TEditCommentSchema>({
@@ -41,7 +41,7 @@ const EditComment: React.FC<EditCommentProps> = ({ comment, setIsEdit }) => {
       { tagContent: tag.content, commentId: comment.id },
       {
         onSuccess: () => {
-          setIsEdit(false);
+          stopEdit();
           tag.setContent("");
           form.reset();
         },
@@ -51,7 +51,7 @@ const EditComment: React.FC<EditCommentProps> = ({ comment, setIsEdit }) => {
 
   return (
     <Form {...form}>
-      <form className="relative w-[400px] py-4" onSubmit={onSubmit}>
+      <form className="relative py-4" onSubmit={onSubmit}>
         <FormField
           name="comment"
           render={({ field }) => (
@@ -71,7 +71,7 @@ const EditComment: React.FC<EditCommentProps> = ({ comment, setIsEdit }) => {
                   disabled={isPending}
                   onChange={tag.handleInputChange}
                   ref={tag.textareaRef}
-                  className="pb-8 bg-white"
+                  className="pb-14 bg-white  dark:bg-background w-[300px] md:w-[500px] xl:w-[600px]"
                 />
               </FormControl>
 
@@ -80,12 +80,15 @@ const EditComment: React.FC<EditCommentProps> = ({ comment, setIsEdit }) => {
           )}
         />
 
-        <div className="flex items-center justify-end  gap-2 absolute right-3 bottom-3 rounded-full">
+        <div className="flex items-center justify-end  gap-2 absolute right-3 bottom-5 rounded-full">
           <p
             className={`text-xs ${tag.content.length > 0 ? "block" : "hidden"} ${tag.content.length > commentMaxLimit ? "text-red-500" : "text-muted-foreground"}`}
           >
             {tag.content.length}/{commentMaxLimit}
           </p>
+          <Button type="button" variant="destructive" onClick={stopEdit} size="sm">
+            cancel
+          </Button>
           <Button
             type="submit"
             variant="link"

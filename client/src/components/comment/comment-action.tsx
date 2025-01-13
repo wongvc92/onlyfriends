@@ -11,44 +11,37 @@ import { useDeleteComment } from "@/hooks/comment/useDeleteComment";
 import SubmitButton from "../common/submit-button";
 
 interface CommentActionProps {
-  setIsEdit: React.Dispatch<React.SetStateAction<boolean>>;
+  startEdit: () => void;
   comment: IComment;
 }
 
-const CommentAction: React.FC<CommentActionProps> = ({ comment, setIsEdit }) => {
+const CommentAction: React.FC<CommentActionProps> = ({ comment, startEdit }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { isPending, mutate } = useDeleteComment(comment.post_id);
   const auth = useAuth();
+
+  const openModal = () => setIsOpen(true);
+  const closeModal = () => setIsOpen(false);
 
   const onDelete = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     mutate(
       { commentId: comment.id },
       {
-        onSuccess: () => {
-          setIsOpen(false);
-        },
-        onError: () => {
-          setIsOpen(false);
-        },
+        onSuccess: closeModal,
+        onError: closeModal,
       }
     );
   };
 
   return (
     <>
-      <Modal
-        isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
-        title="Delete post"
-        description="Are you sure to perform this action?"
-        classname="w-[400px]"
-      >
+      <Modal isOpen={isOpen} onClose={closeModal} title="Delete post" description="Are you sure to perform this action?" classname="w-[400px]">
         <div className="flex items-center gap-2 justify-end">
           <form onSubmit={onDelete}>
             <SubmitButton defaultTitle="Yes" isLoadingTitle="Deleting..." isLoading={isPending} className="rounded-full" variant="destructive" />
           </form>
-          <Button type="button" variant="outline" className="rounded-full" onClick={() => setIsOpen(false)}>
+          <Button type="button" variant="outline" className="rounded-full" onClick={closeModal}>
             Cancel
           </Button>
         </div>
@@ -58,11 +51,11 @@ const CommentAction: React.FC<CommentActionProps> = ({ comment, setIsEdit }) => 
           <BsThreeDots color="gray" />
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuItem onClick={() => setIsOpen(true)} className={`${comment.user_id === auth.user?.id ? "flex" : "hidden"}`}>
+          <DropdownMenuItem onClick={openModal} className={`${comment.user_id === auth.user?.id ? "flex" : "hidden"}`}>
             <FaRegTrashCan />
             Delete
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setIsEdit(true)} className={`${comment.user_id === auth.user?.id ? "flex" : "hidden"}`}>
+          <DropdownMenuItem onClick={startEdit} className={`${comment.user_id === auth.user?.id ? "flex" : "hidden"}`}>
             <Pencil1Icon />
             Edit
           </DropdownMenuItem>

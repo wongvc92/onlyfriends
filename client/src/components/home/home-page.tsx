@@ -5,19 +5,27 @@ import PostModal from "../post/post-modal";
 import AllPostList from "../post/all-post-list";
 import PeoplesList from "../people/peoples-list";
 import FriendRequestList from "../friend/received-request-list";
+import { Button } from "../ui/button";
+import { Plus } from "lucide-react";
+import { useScrollStatus } from "@/hooks/common/useScrollStatus";
 
 const HomePage = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { isScrolling } = useScrollStatus(300);
   const pathname = useLocation({
     select: (location) => location.pathname,
   });
+
+  const openModal = () => setIsOpen(true);
+  const closeModal = () => setIsOpen(false);
+
   return (
     <main className="flex">
       <div className="w-full py-4 xl:w-2/3">
-        <div className="flex items-center justify-between border rounded-md p-4 text-muted-foreground mx-4" onClick={() => setIsOpen(true)}>
+        <div className="flex items-center justify-between border rounded-md p-4 text-muted-foreground mx-4" onClick={openModal}>
           what's on your mind... <ImageIcon />
         </div>
-        <PostModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
+        <PostModal isOpen={isOpen} onClose={closeModal} />
         <AllPostList />
       </div>
 
@@ -33,6 +41,13 @@ const HomePage = () => {
           </div>
         </div>
       </div>
+      <Button
+        className={`fixed bottom-16 right-2 rounded-full w-8 h-8 opacity-50 hover:opacity-100 md:hidden ${isScrolling && "hidden"}`}
+        type="button"
+        onClick={openModal}
+      >
+        <Plus />
+      </Button>
     </main>
   );
 };

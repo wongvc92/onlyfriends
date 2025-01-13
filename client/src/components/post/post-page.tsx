@@ -6,6 +6,7 @@ import CommentList from "../comment/comment-list";
 import PostComment from "../comment/post-comment";
 
 const PostPage = () => {
+  
   const { postId } = useParams({ strict: false });
 
   const { data: post, isLoading, error } = useGetPostById({ postId });
@@ -23,7 +24,7 @@ const PostPage = () => {
   }
 
   return (
-    <div className="h-screen">
+    <div className="pb-40">
       <PostCard post={post} />
       <CommentList post={post} />
       <PostComment post={post} />

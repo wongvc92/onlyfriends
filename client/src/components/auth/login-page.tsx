@@ -22,7 +22,7 @@ const LoginPage = () => {
   };
   return (
     <WidthWrapper>
-      <div className="max-w-3xl mx-auto px-4 pt-10 h-screen">
+      <div className="max-w-3xl mx-auto px-4 pt-10">
         <div className="flex flex-col gap-10 xl:flex-row">
           <div className="space-y-4 xl:w-1/2">
             <div className="text-center font-bold">Welcome to onlyfriends</div>

@@ -18,7 +18,7 @@ const CommentList = ({ post }: { post: IPost }) => {
   }, [fetchNextPage, inView]);
 
   return (
-    <div className="flex flex-col gap-2 p-4">
+    <div className="flex flex-col gap-2 p-4 overflow-y-scroll no-scrollbar w-full">
       {data?.pages[0]?.data.length === 0 ? (
         <p className="text-sm text-muted-foreground text-center">No comment yet. Be the first to comment.</p>
       ) : (

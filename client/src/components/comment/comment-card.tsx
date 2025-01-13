@@ -9,6 +9,10 @@ import EditComment from "./edit-comment";
 
 const CommentCard = ({ comment }: { comment: IComment }) => {
   const [isEdit, setIsEdit] = useState(false);
+
+  const startEdit = () => setIsEdit(true);
+  const stopEdit = () => setIsEdit(false);
+
   const renderCommentWithMentions = (text: string) => {
     // Regular expression to detect words that start with "@"
     const parts = text.split(/(@\w+)/g);
@@ -17,7 +21,7 @@ const CommentCard = ({ comment }: { comment: IComment }) => {
       if (part.startsWith("@")) {
         // Style the mention with blue color
         return (
-          <Link key={index} className="text-sky-600" to={`/${part.slice(1, part.length)}`}>
+          <Link key={index} className="text-sky-600" to={`/$username`} params={{ username: part.slice(1, part.length) }}>
             {part}
           </Link>
         );
@@ -37,10 +41,10 @@ const CommentCard = ({ comment }: { comment: IComment }) => {
           <div className="flex items-center gap-2">
             <ProfileName name={comment.name} />
             <ProfileUsername username={comment.username} />
-            <CommentAction comment={comment} setIsEdit={setIsEdit} />
+            <CommentAction comment={comment} startEdit={startEdit} />
           </div>
           {isEdit ? (
-            <EditComment comment={comment} setIsEdit={setIsEdit} />
+            <EditComment comment={comment} stopEdit={stopEdit} />
           ) : (
             <p className="text-sm break-words">{renderCommentWithMentions(comment.comment)}</p>
           )}

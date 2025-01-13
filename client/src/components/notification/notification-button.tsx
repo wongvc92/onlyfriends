@@ -7,7 +7,7 @@ const NotificationButton = () => {
   const { count } = useNotification();
 
   return (
-    <Button type="button" variant="link" className="relative">
+    <Button type="button" variant="link" className="relative hidden md:block">
       <div
         className={cn(
           "absolute flex  justify-center items-center rounded-full w-4 h-4  top-1 right-1.5 bg-red-500 dark:bg-white text-white dark:text-black text-[10px]",

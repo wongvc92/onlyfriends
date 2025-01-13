@@ -4,7 +4,7 @@ import { Link } from "@tanstack/react-router";
 
 const Comments = ({ comment_count, postId }: { comment_count: number; postId: string }) => {
   return (
-    <Link to={`/posts/${postId}`}>
+    <Link to={`/posts/$postId`} params={{ postId }}>
       <div className="flex items-center">
         <Button type="button" size="icon" variant="link">
           <FaRegComment />

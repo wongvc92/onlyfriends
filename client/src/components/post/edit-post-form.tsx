@@ -10,12 +10,13 @@ import { useEffect } from "react";
 import { useEditPost } from "@/hooks/post/useEditPost";
 import SubmitButton from "../common/submit-button";
 import { Input } from "../ui/input";
+import { Button } from "../ui/button";
 
 interface EditPostFormProps {
   post: IPost;
-  setIsEdit: React.Dispatch<React.SetStateAction<boolean>>;
+  stopEdit: () => void;
 }
-const EditPostForm: React.FC<EditPostFormProps> = ({ post, setIsEdit }) => {
+const EditPostForm: React.FC<EditPostFormProps> = ({ post, stopEdit }) => {
   const tag = useTagging();
   const { mutate, isPending } = useEditPost();
 
@@ -42,7 +43,7 @@ const EditPostForm: React.FC<EditPostFormProps> = ({ post, setIsEdit }) => {
       {
         onSuccess: () => {
           tag.setContent("");
-          setIsEdit(false);
+          stopEdit();
           form.reset();
         },
       }
@@ -95,6 +96,9 @@ const EditPostForm: React.FC<EditPostFormProps> = ({ post, setIsEdit }) => {
           >
             {tag.content.length}/{contentMaxLimit}
           </p>
+          <Button type="button" variant="destructive" onClick={stopEdit}>
+            Cancel
+          </Button>
           <SubmitButton
             defaultTitle="Edit"
             isLoading={isPending}

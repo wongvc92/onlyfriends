@@ -8,11 +8,7 @@ interface PostModalProps {
 }
 const PostModal: React.FC<PostModalProps> = ({ isOpen, onClose }) => {
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      classname="overflow-y-scroll max-w-2xl"
-    >
+    <Modal isOpen={isOpen} onClose={onClose} classname="max-w-2xl top-32 md:top-44">
       <PostForm onClose={onClose} />
     </Modal>
   );

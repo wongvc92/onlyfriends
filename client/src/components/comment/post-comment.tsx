@@ -10,10 +10,14 @@ import TagFriend from "./tag-friend";
 import DynamicTextarea from "../ui/dynamic-textarea";
 import { useTagging } from "@/hooks/common/useTagging";
 import { useCreateComment } from "@/hooks/comment/useCreateComment";
+import { useScrollStatus } from "@/hooks/common/useScrollStatus";
+import { cn } from "@/lib/utils";
+import SubmitButton from "../common/submit-button";
 
 const PostComment = ({ post }: { post: IPost }) => {
   const tag = useTagging();
   const { mutate, isPending } = useCreateComment(post.id);
+  const { isScrolling } = useScrollStatus(300);
 
   const form = useForm<TCreateCommentSchema>({
     resolver: zodResolver(createCommentSchema),
@@ -37,7 +41,10 @@ const PostComment = ({ post }: { post: IPost }) => {
   };
   return (
     <Form {...form}>
-      <form className="space-y-4 sticky bottom-0 bg-white dark:bg-background z-10 p-4" onSubmit={onSubmit}>
+      <form
+        className={cn("space-y-4 fixed w-full md:max-w-xl bottom-10 md:bottom-0 bg-white dark:bg-background z-10 p-4", isScrolling && "hidden")}
+        onSubmit={onSubmit}
+      >
         <p className="text-xs">
           Reply to <span className="text-sky-500">@{post.username}</span>
         </p>
@@ -76,15 +83,13 @@ const PostComment = ({ post }: { post: IPost }) => {
             {tag.content.length}/{commentMaxLimit}
           </p>
 
-          <Button type="submit" variant="link" disabled={isPending || tag.content.length === 0 || tag.content.length > commentMaxLimit} size="icon">
-            {isPending ? (
-              <div className="flex items-center gap-2">
-                <Spinner size="4" color="black" />
-              </div>
-            ) : (
-              <IoSend size="4" />
-            )}
-          </Button>
+          <SubmitButton
+            Icon={<IoSend />}
+            isLoading={isPending}
+            disabled={isPending || tag.content.length === 0 || tag.content.length > commentMaxLimit}
+            size="icon"
+            variant="link"
+          />
         </div>
       </form>
     </Form>

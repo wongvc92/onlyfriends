@@ -5,7 +5,6 @@ import { IoHomeOutline, IoNotificationsOutline } from "react-icons/io5";
 import LogoutButton from "../auth/logout-button";
 import { useAuth } from "@/context/auth";
 import { cn } from "@/lib/utils";
-import { ModeToggle } from "./mode-toggle";
 
 const Nav = ({ isMobileNav = false, onClose }: { isMobileNav?: boolean; onClose?: () => void }) => {
   const { user } = useAuth();
