@@ -36,7 +36,9 @@ const MultiImageUploader: React.FC<MultiImageUploaderProps> = ({ onChange, value
   const handleDeleteImage = async (e: React.MouseEvent<HTMLButtonElement>, image: string) => {
     e.preventDefault();
     setisPendingDelete(true);
-    setImages((prevImages) => prevImages?.filter((prevImage) => prevImage.url !== image));
+    const newImages = images.filter((prevImage) => prevImage.url !== image);
+    setImages(newImages);
+    onChange(newImages);
     setisPendingDelete(false);
   };
 

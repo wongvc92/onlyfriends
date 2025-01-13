@@ -4,7 +4,6 @@ import { asyncHandler } from "../middleware/asyncHandler";
 import AuthError from "../error/AuthError";
 import { commentServices } from "../services/comment.services";
 import { HTTPSTATUS } from "../config/http.config";
-import BadRequestError from "../error/BadRequestError";
 
 export const addComment = asyncHandler(async (req: Request, res: Response) => {
   const currentUser = req.user;

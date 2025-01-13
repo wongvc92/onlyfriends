@@ -3,4 +3,5 @@ export interface IUserClient {
   username: string;
   email: string;
   name: string | null;
+  display_image: string | null;
 }

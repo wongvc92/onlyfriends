@@ -6,12 +6,12 @@ import { Link } from "@tanstack/react-router";
 import CommentAction from "./comment-action";
 import { useState } from "react";
 import EditComment from "./edit-comment";
+import EditCommentModal from "./edit-comment-modal";
 
 const CommentCard = ({ comment }: { comment: IComment }) => {
-  const [isEdit, setIsEdit] = useState(false);
-
-  const startEdit = () => setIsEdit(true);
-  const stopEdit = () => setIsEdit(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const openEditModal = () => setIsOpen(true);
+  const closeEditModal = () => setIsOpen(false);
 
   const renderCommentWithMentions = (text: string) => {
     // Regular expression to detect words that start with "@"
@@ -41,15 +41,12 @@ const CommentCard = ({ comment }: { comment: IComment }) => {
           <div className="flex items-center gap-2">
             <ProfileName name={comment.name} />
             <ProfileUsername username={comment.username} />
-            <CommentAction comment={comment} startEdit={startEdit} />
+            <CommentAction comment={comment} openEditModal={openEditModal} />
           </div>
-          {isEdit ? (
-            <EditComment comment={comment} stopEdit={stopEdit} />
-          ) : (
-            <p className="text-sm break-words">{renderCommentWithMentions(comment.comment)}</p>
-          )}
+          <p className="text-sm break-words">{renderCommentWithMentions(comment.comment)}</p>
         </div>
       </div>
+      <EditCommentModal isOpen={isOpen} closeEditModal={closeEditModal} comment={comment} />
     </div>
   );
 };

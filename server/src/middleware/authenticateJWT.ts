@@ -12,7 +12,7 @@ export const authenticateJWT = (req: Request, res: Response, next: NextFunction)
 
     const decoded = jwtUtils.decodeToken({ requestToken: accessToken, tokenSecret: config.JWT.ACCESS_TOKEN_SECRET });
 
-    req.user = decoded as { id: string; username: string; email: string; name: string };
+    req.user = decoded as { id: string; username: string; email: string; name: string; display_image: string };
     next();
   } catch (error) {
     next(error);

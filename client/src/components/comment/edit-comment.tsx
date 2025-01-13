@@ -5,7 +5,7 @@ import { Button } from "../ui/button";
 import { commentMaxLimit, editCommentSchema, TEditCommentSchema } from "@/validation/commentSchema";
 import Spinner from "../ui/spinner";
 import { IoSend } from "react-icons/io5";
-import TagFriend from "./tag-friend";
+import TagFriend from "../common/tag-friend";
 import DynamicTextarea from "../ui/dynamic-textarea";
 import { useTagging } from "@/hooks/common/useTagging";
 import { IComment } from "@/types/IComment";
@@ -14,10 +14,10 @@ import { useEditComment } from "@/hooks/comment/useEditComment";
 
 interface EditCommentProps {
   comment: IComment;
-  stopEdit: () => void;
+  closeEditModal: () => void;
 }
 
-const EditComment: React.FC<EditCommentProps> = ({ comment, stopEdit }) => {
+const EditComment: React.FC<EditCommentProps> = ({ comment, closeEditModal }) => {
   const tag = useTagging();
   const { mutate, isPending, isSuccess } = useEditComment();
   const form = useForm<TEditCommentSchema>({
@@ -41,7 +41,7 @@ const EditComment: React.FC<EditCommentProps> = ({ comment, stopEdit }) => {
       { tagContent: tag.content, commentId: comment.id },
       {
         onSuccess: () => {
-          stopEdit();
+          closeEditModal();
           tag.setContent("");
           form.reset();
         },
@@ -51,18 +51,11 @@ const EditComment: React.FC<EditCommentProps> = ({ comment, stopEdit }) => {
 
   return (
     <Form {...form}>
-      <form className="relative py-4" onSubmit={onSubmit}>
+      <form className="relative py-4 w-full" onSubmit={onSubmit}>
         <FormField
           name="comment"
           render={({ field }) => (
             <FormItem>
-              {tag.isTagging && (
-                <TagFriend
-                  classname="-top-7"
-                  debouncedSearch={tag.debouncedSearch}
-                  handleTaggedFriend={(username: string) => tag.handleTaggedFriend(username)}
-                />
-              )}
               <FormControl>
                 <DynamicTextarea
                   {...field}
@@ -71,7 +64,7 @@ const EditComment: React.FC<EditCommentProps> = ({ comment, stopEdit }) => {
                   disabled={isPending}
                   onChange={tag.handleInputChange}
                   ref={tag.textareaRef}
-                  className="pb-14 bg-white  dark:bg-background w-[300px] md:w-[500px] xl:w-[600px]"
+                  className="pb-14 bg-white  dark:bg-background"
                 />
               </FormControl>
 
@@ -80,15 +73,12 @@ const EditComment: React.FC<EditCommentProps> = ({ comment, stopEdit }) => {
           )}
         />
 
-        <div className="flex items-center justify-end  gap-2 absolute right-3 bottom-5 rounded-full">
+        <div className="flex items-center justify-end gap-2 absolute right-3 bottom-5 rounded-full">
           <p
             className={`text-xs ${tag.content.length > 0 ? "block" : "hidden"} ${tag.content.length > commentMaxLimit ? "text-red-500" : "text-muted-foreground"}`}
           >
             {tag.content.length}/{commentMaxLimit}
           </p>
-          <Button type="button" variant="destructive" onClick={stopEdit} size="sm">
-            cancel
-          </Button>
           <Button
             type="submit"
             variant="link"
@@ -105,6 +95,13 @@ const EditComment: React.FC<EditCommentProps> = ({ comment, stopEdit }) => {
             )}
           </Button>
         </div>
+        {tag.isTagging && (
+          <TagFriend
+            classname="-top-7"
+            debouncedSearch={tag.debouncedSearch}
+            handleTaggedFriend={(username: string) => tag.handleTaggedFriend(username)}
+          />
+        )}
       </form>
     </Form>
   );

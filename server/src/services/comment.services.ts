@@ -13,7 +13,8 @@ export const addComment = async (post_id: string, comment: string, user_id: stri
       SELECT 
         ic.*, 
         u.username, 
-        p.name
+        p.name,
+        p.display_image
       FROM inserted_comment ic
       LEFT JOIN users u ON u.id = ic.user_id
       LEFT JOIN profiles p ON p.user_id = ic.user_id;

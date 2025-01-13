@@ -5,13 +5,15 @@ export const getUserByEmail = async (email: string): Promise<IUserWithProfile> =
   const userData = await pool.query(
     `
     SELECT users.*,
-    profiles.name
+    profiles.name,
+    profiles.display_image
     FROM users
     LEFT JOIN profiles ON users.id = profiles.user_id
     WHERE email = $1;
     `,
     [email]
   );
+
   return userData.rows[0];
 };
 

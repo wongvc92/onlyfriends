@@ -8,7 +8,7 @@ export const useGetPeoples = () => {
     strict: false,
   });
   return useInfiniteQuery({
-    queryKey: peopleKeys.list(search),
+    queryKey: peopleKeys.query("all", search.query || ""),
     queryFn: ({ pageParam }) => getPeoples({ pageParam, query: search.query }),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => lastPage.nextPage,

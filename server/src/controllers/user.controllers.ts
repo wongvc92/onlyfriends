@@ -14,6 +14,8 @@ const getUser = asyncHandler(async (req: Request, res: Response) => {
     username: currentUser.username,
     email: currentUser.email,
     id: currentUser.id,
+    display_image: currentUser.display_image,
+    name: currentUser.name,
   };
   res.status(HTTPSTATUS.OK).json({
     user: clientUserInfo,

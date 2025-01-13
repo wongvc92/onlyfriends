@@ -11,11 +11,11 @@ import { useDeleteComment } from "@/hooks/comment/useDeleteComment";
 import SubmitButton from "../common/submit-button";
 
 interface CommentActionProps {
-  startEdit: () => void;
+  openEditModal: () => void;
   comment: IComment;
 }
 
-const CommentAction: React.FC<CommentActionProps> = ({ comment, startEdit }) => {
+const CommentAction: React.FC<CommentActionProps> = ({ comment, openEditModal }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { isPending, mutate } = useDeleteComment(comment.post_id);
   const auth = useAuth();
@@ -55,7 +55,7 @@ const CommentAction: React.FC<CommentActionProps> = ({ comment, startEdit }) => 
             <FaRegTrashCan />
             Delete
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={startEdit} className={`${comment.user_id === auth.user?.id ? "flex" : "hidden"}`}>
+          <DropdownMenuItem onClick={openEditModal} className={`${comment.user_id === auth.user?.id ? "flex" : "hidden"}`}>
             <Pencil1Icon />
             Edit
           </DropdownMenuItem>

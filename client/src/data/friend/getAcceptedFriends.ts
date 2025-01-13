@@ -2,7 +2,6 @@ import { IFriend } from "@/types/IFriend";
 import apiClient from "@/utils/apiClient";
 import { buildSearchParams } from "@/utils/buildSearchParams";
 
-
 export const getAcceptedFriends = async ({
   pageParam,
   query,
@@ -14,7 +13,7 @@ export const getAcceptedFriends = async ({
 
   const searchParams = {
     page: pageParam.toString(),
-    // query,
+    query,
     limit: LIMIT.toString(),
   };
   const url = "/api/friends/accepted" + buildSearchParams(searchParams);

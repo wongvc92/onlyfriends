@@ -9,7 +9,7 @@ interface ProfileImageProps {
 }
 const ProfileImage = ({ username, image, classname }: ProfileImageProps) => {
   return (
-    <Link to={`/${username}`}>
+    <Link to={`/$username`} params={{ username }}>
       <Avatar className={cn("w-8 h-8", classname)}>
         <AvatarImage src={image} className="object-cover" />
         <AvatarFallback className="capitalize">{username[0] || "OF"}</AvatarFallback>

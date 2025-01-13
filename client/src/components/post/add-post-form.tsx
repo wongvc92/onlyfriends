@@ -5,7 +5,7 @@ import { contentMaxLimit, postSchema, TPostSchema } from "@/validation/postsSche
 import { toast } from "sonner";
 import DynamicTextarea from "../ui/dynamic-textarea";
 import { useTagging } from "@/hooks/common/useTagging";
-import TagFriend from "../comment/tag-friend";
+import TagFriend from "../common/tag-friend";
 import MultiImageUploader from "../image/react-image-crop/multi-image-uploader";
 import { useCreatePost } from "@/hooks/post/useCreatePost";
 import SubmitButton from "../common/submit-button";
@@ -28,6 +28,7 @@ const AddPostForm: React.FC<PostFormProps> = ({ onClose }) => {
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     mutate(
       { post: tag.content, images: form.getValues("images") },
       {
@@ -40,6 +41,7 @@ const AddPostForm: React.FC<PostFormProps> = ({ onClose }) => {
       }
     );
   };
+  const isAtLeastOneFieldFilled = tag.content.trim().length > 0 || (form.getValues("images") || []).length > 0;
 
   return (
     <Form {...form}>
@@ -79,7 +81,7 @@ const AddPostForm: React.FC<PostFormProps> = ({ onClose }) => {
                   isLoading={isPending}
                   defaultTitle="Post"
                   className="w-fit"
-                  disabled={isPending || tag.content.length > contentMaxLimit}
+                  disabled={isPending || tag.content.length > contentMaxLimit || !isAtLeastOneFieldFilled}
                 />
               </div>
             </FormItem>

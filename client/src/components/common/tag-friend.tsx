@@ -1,5 +1,3 @@
-import { getAcceptedFriends } from "@/data/friend/getAcceptedFriends";
-import { useInfiniteQuery } from "@tanstack/react-query";
 import React, { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import Spinner from "../ui/spinner";
@@ -7,6 +5,7 @@ import ProfileImage from "../profile/profile-image";
 import ProfileName from "../profile/profile-name";
 import ProfileUsername from "../profile/profile-username";
 import { cn } from "@/lib/utils";
+import { useGetAcceptedFriends } from "@/hooks/friend/useGetAcceptedFriends";
 
 interface TagFriendProps {
   debouncedSearch: string;
@@ -16,13 +15,7 @@ interface TagFriendProps {
 
 const TagFriend: React.FC<TagFriendProps> = ({ debouncedSearch, handleTaggedFriend, classname }: TagFriendProps) => {
   const { ref, inView } = useInView();
-  const { status, data, error, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage, isPending, isLoading } = useInfiniteQuery({
-    queryKey: ["friends-accepted", debouncedSearch],
-    queryFn: ({ pageParam }) => getAcceptedFriends({ pageParam, debouncedSearch: debouncedSearch }),
-    initialPageParam: 1,
-    enabled: Boolean(debouncedSearch),
-    getNextPageParam: (lastPage) => lastPage.nextPage,
-  });
+  const { data, error, isFetchingNextPage, fetchNextPage, hasNextPage, isLoading } = useGetAcceptedFriends({ query: debouncedSearch });
 
   useEffect(() => {
     if (inView) {
@@ -41,9 +34,9 @@ const TagFriend: React.FC<TagFriendProps> = ({ debouncedSearch, handleTaggedFrie
   if (!data) return null;
 
   return (
-    <>
+    <div className="absolute">
       {data.pages[0].data.length > 0 && (
-        <div className={cn("absolute p-2 space-y-2 border rounded-md bg-white shadow-lg z-20", classname)}>
+        <div className={cn(" p-2 space-y-2 border rounded-md bg-white shadow-lg z-20", classname)}>
           {data?.pages?.map((page, pageIndex) => (
             <React.Fragment key={pageIndex}>
               {page.data.map((friend) => (
@@ -66,7 +59,7 @@ const TagFriend: React.FC<TagFriendProps> = ({ debouncedSearch, handleTaggedFrie
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };
 

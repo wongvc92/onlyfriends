@@ -5,9 +5,8 @@ import { useSearchFriend } from "@/hooks/friend/useSearchFriend";
 import { useGetAcceptedFriends } from "@/hooks/friend/useGetAcceptedFriends";
 
 const AcceptedListSearch = () => {
-  const { data } = useGetAcceptedFriends();
   const { query, setQuery } = useSearchFriend();
-
+  const { data } = useGetAcceptedFriends({ query });
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     setQuery(query);

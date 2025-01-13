@@ -6,13 +6,14 @@ import UnfriendButton from "./unfriend-button";
 import React, { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import { Button } from "../ui/button";
-import { Link } from "@tanstack/react-router";
+import { Link, useSearch } from "@tanstack/react-router";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { useGetAcceptedFriends } from "@/hooks/friend/useGetAcceptedFriends";
 
 const AcceptedList = () => {
   const { ref, inView } = useInView();
-  const { data, error, isFetchingNextPage, fetchNextPage, hasNextPage, isLoading } = useGetAcceptedFriends();
+  const { query } = useSearch({ from: "/_authenticated/friends/_layout/list/" });
+  const { data, error, isFetchingNextPage, fetchNextPage, hasNextPage, isLoading } = useGetAcceptedFriends({ query });
 
   useEffect(() => {
     if (inView) {

@@ -14,8 +14,11 @@ export interface IUserClient {
   id: string;
   username: string;
   email: string;
+  name: string | null;
+  display_image: string | null;
 }
 
 export interface IUserWithProfile extends IUser {
   name: string | null;
+  display_image: string | null;
 }

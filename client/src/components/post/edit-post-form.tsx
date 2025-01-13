@@ -4,7 +4,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { contentMaxLimit, editPostSchema, TEditPostSchema } from "@/validation/postsSchema";
 import DynamicTextarea from "../ui/dynamic-textarea";
 import { useTagging } from "@/hooks/common/useTagging";
-import TagFriend from "../comment/tag-friend";
+import TagFriend from "../common/tag-friend";
 import { IPost } from "@/types/IPost";
 import { useEffect } from "react";
 import { useEditPost } from "@/hooks/post/useEditPost";
