@@ -1,10 +1,10 @@
 import { useRef, useState } from "react";
-import { CropIcon, ImageIcon } from "@radix-ui/react-icons";
+import { ImageIcon } from "@radix-ui/react-icons";
 import { BsXCircleFill } from "react-icons/bs";
 import Spinner from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";
-import CropImageModal from "./crop-image-modal";
 import { blobToDataURL } from "@/utils/fileUtils";
+import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 
 interface MultiImageUploaderProps {
   imageShape?: "rounded-full";
@@ -13,17 +13,13 @@ interface MultiImageUploaderProps {
 }
 const MultiImageUploader: React.FC<MultiImageUploaderProps> = ({ onChange, value = [], imageShape }) => {
   const [isDragging, setIsDragging] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
   const [images, setImages] = useState<{ url: string }[]>([]);
-  const [imageToCrop, setImageToCrop] = useState("");
-  const [cropIndex, setcropIndex] = useState<number | null>(null);
-  const [isPendingUpload, setIsPendingUpload] = useState(false);
   const [isPendingDelete, setisPendingDelete] = useState(false);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
-    setIsPendingUpload(true);
+
     if (!e.target.files) return;
 
     const files = Array.from(e.target.files);
@@ -35,7 +31,6 @@ const MultiImageUploader: React.FC<MultiImageUploaderProps> = ({ onChange, value
     }
     setImages([...images, ...uploadedImages]);
     onChange([...value, ...uploadedImages]); // Append new images to the existing value
-    setIsPendingUpload(false);
   };
 
   const handleDeleteImage = async (e: React.MouseEvent<HTMLButtonElement>, image: string) => {
@@ -57,7 +52,7 @@ const MultiImageUploader: React.FC<MultiImageUploaderProps> = ({ onChange, value
 
   const handleOnDrop = async (e: React.DragEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    setIsPendingUpload(true);
+
     setIsDragging(false);
     const files = Array.from(e.dataTransfer.files);
     if (!files) return;
@@ -65,29 +60,32 @@ const MultiImageUploader: React.FC<MultiImageUploaderProps> = ({ onChange, value
       const dataUrl = await blobToDataURL(file);
       setImages((prevImages) => [...prevImages, { url: dataUrl }]);
     }
-    setIsPendingUpload(false);
-  };
-
-  const handleOpenCropModal = async (e: React.MouseEvent<HTMLButtonElement>, image: string, i: number) => {
-    e.preventDefault();
-    setIsOpen(true);
-    setImageToCrop(image);
-    setcropIndex(i);
   };
 
   return (
     <>
-      {images.map((image, i) => (
-        <div key={image.url} className="relative w-full flex justify-center items-center">
-          <img src={image.url} className={`object-cover w-full h-full`} />
-          <Button className="absolute -top-1 -right-1" onClick={(e) => handleDeleteImage(e, image.url)} type="button" size="icon" variant="link">
-            {isPendingDelete ? <Spinner size="2" /> : <BsXCircleFill color="gray" />}
-          </Button>
-          <Button className="absolute -top-1 -left-1" onClick={(e) => handleOpenCropModal(e, image.url, i)} type="button" size="icon" variant="link">
-            {isPendingUpload ? <Spinner size="2" /> : <CropIcon color="gray" />}
-          </Button>
-        </div>
-      ))}
+      <div>
+        <Carousel className="w-full">
+          <CarouselContent className="-ml-1">
+            {images &&
+              images.length > 0 &&
+              images.map((image, index) => (
+                <CarouselItem key={index} className="pl-1 basis-1/2 relative px-2">
+                  <img src={image.url} key={image.url} alt={`post image ${index + 1}`} className="object-cover  w-full rounded-md" />
+                  <Button
+                    className="absolute -top-1 right-1"
+                    onClick={(e) => handleDeleteImage(e, image.url)}
+                    type="button"
+                    size="icon"
+                    variant="link"
+                  >
+                    {isPendingDelete ? <Spinner size="2" /> : <BsXCircleFill color="gray" />}
+                  </Button>
+                </CarouselItem>
+              ))}
+          </CarouselContent>
+        </Carousel>
+      </div>
 
       <Button
         onClick={() => imageInputRef.current?.click()}
@@ -103,14 +101,6 @@ const MultiImageUploader: React.FC<MultiImageUploaderProps> = ({ onChange, value
       </Button>
 
       <input ref={imageInputRef} hidden multiple type="file" accept="image/*" onChange={handleFileChange} />
-      <CropImageModal
-        onChange={onChange}
-        setImages={setImages}
-        src={imageToCrop}
-        isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
-        cropIndex={cropIndex}
-      />
     </>
   );
 };

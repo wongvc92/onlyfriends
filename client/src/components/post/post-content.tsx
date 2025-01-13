@@ -31,11 +31,12 @@ const PostContent: React.FC<PostContentProps> = ({ post }) => {
   }, [post.post, pathname, post.id]);
 
   return (
-    <div onClick={() => setSeeMore(!seeMore)} className="w-full md:w-[500px] xl:w-[600px] 2xl:w-[800px]">
-      <p className={cn("mb-2 break-words overflow-hidden", !seeMore && isClamped ? "line-clamp-2" : "")} ref={postRef}>
-        {post.post}
-      </p>
-
+    <div onClick={() => setSeeMore(!seeMore)} className="w-full ">
+      <div className="md:w-[500px] xl:w-[600px] 2xl:w-[800px]">
+        <p className={cn("mb-2 break-words overflow-hidden", !seeMore && isClamped ? "line-clamp-2" : "")} ref={postRef}>
+          {post.post}
+        </p>
+      </div>
       {isClamped && (
         <Button variant="link" className="text-sky-500 p-0">
           {seeMore ? "" : "See more"}
