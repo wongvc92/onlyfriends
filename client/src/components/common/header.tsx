@@ -10,7 +10,7 @@ const Header = () => {
     select: (location) => location.pathname,
   });
   return (
-    <div className=" w-full flex items-center 2xl:justify-around justify-between p-2   md:sticky md:top-0 bg-white dark:bg-background z-20 shadow-md dark:shadow-slate-900">
+    <div className="max-w-screen flex items-center 2xl:justify-around justify-between p-2 md:sticky md:top-0 bg-white dark:bg-background z-20 border">
       {user && user.id ? <MobileSidebar /> : "onlyfriends"}
       <div className="hidden md:block">LOGO</div>
       <div>

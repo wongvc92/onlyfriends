@@ -14,7 +14,12 @@ const AllPostList = () => {
     }
   }, [fetchNextPage, inView]);
 
-  if (status === "pending") return <Spinner />;
+  if (status === "pending")
+    return (
+      <div className="flex justify-center items-center pt-10">
+        <Spinner />
+      </div>
+    );
 
   if (status === "error") return <h1>{`An error has occurred: " + ${error.message}`}</h1>;
 

@@ -5,7 +5,6 @@ import ProfileUsername from "../profile/profile-username";
 import { Link } from "@tanstack/react-router";
 import CommentAction from "./comment-action";
 import { useState } from "react";
-import EditComment from "./edit-comment";
 import EditCommentModal from "./edit-comment-modal";
 
 const CommentCard = ({ comment }: { comment: IComment }) => {

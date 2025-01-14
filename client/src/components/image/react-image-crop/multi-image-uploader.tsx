@@ -72,7 +72,7 @@ const MultiImageUploader: React.FC<MultiImageUploaderProps> = ({ onChange, value
             {images &&
               images.length > 0 &&
               images.map((image, index) => (
-                <CarouselItem key={index} className="pl-1 basis-1/2 relative px-2">
+                <CarouselItem key={index} className="pl-1 basis-1/2 md:basis-1/3 relative px-2">
                   <img src={image.url} key={image.url} alt={`post image ${index + 1}`} className="object-cover  w-full rounded-md" />
                   <Button
                     className="absolute -top-1 right-1"

@@ -56,7 +56,7 @@ const MobileNav = () => {
   return (
     <div
       className={cn(
-        "fixed bottom-2 w-full py-2 transition-all duration-500 ease-in-out transform md:hidden border rounded-full dark:shadow-inner dark:shadow-slate-900",
+        "fixed bottom-2 w-full py-2 transition-all duration-500 ease-in-out transform md:hidden border rounded-full",
         isScrolling ? "translate-y-full opacity-0 pointer-events-none" : "translate-y-0 opacity-100",
         "dark:bg-background bg-white"
       )}
