@@ -64,46 +64,40 @@ const MultiImageUploader: React.FC<MultiImageUploaderProps> = ({ onChange, value
     }
   };
 
+  const imageUploadedCount = images.length || 0;
   return (
-    <>
-      <div>
-        <Carousel className="w-full">
-          <CarouselContent className="-ml-1">
-            {images &&
-              images.length > 0 &&
-              images.map((image, index) => (
-                <CarouselItem key={index} className="pl-1 basis-1/2 md:basis-1/3 relative px-2">
-                  <img src={image.url} key={image.url} alt={`post image ${index + 1}`} className="object-cover  w-full rounded-md" />
-                  <Button
-                    className="absolute -top-1 right-1"
-                    onClick={(e) => handleDeleteImage(e, image.url)}
-                    type="button"
-                    size="icon"
-                    variant="link"
-                  >
-                    {isPendingDelete ? <Spinner size="2" /> : <BsXCircleFill color="gray" />}
-                  </Button>
-                </CarouselItem>
-              ))}
-          </CarouselContent>
-        </Carousel>
-      </div>
-
-      <Button
-        onClick={() => imageInputRef.current?.click()}
-        type="button"
-        variant="ghost"
-        className={`flex justify-center items-center border ${isDragging && "border-sky-500"}`}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleOnDrop}
-      >
-        <ImageIcon />
-        Add image
-      </Button>
-
+    <div className="space-y-4  pb-10">
       <input ref={imageInputRef} hidden multiple type="file" accept="image/*" onChange={handleFileChange} />
-    </>
+      <div className="flex items-center gap-2">
+        <Button
+          onClick={() => imageInputRef.current?.click()}
+          type="button"
+          variant="ghost"
+          className={`flex justify-center items-center border ${isDragging && "border-sky-500"}`}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleOnDrop}
+        >
+          <ImageIcon />
+          Add image
+        </Button>
+        {imageUploadedCount > 0 && <div className="text-xs text-muted-foreground">{imageUploadedCount} images</div>}
+      </div>
+      <Carousel className="w-full">
+        <CarouselContent className="-ml-1">
+          {images &&
+            images.length > 0 &&
+            images.map((image, index) => (
+              <CarouselItem key={index} className="pl-1 basis-1/2 md:basis-1/3 relative px-2">
+                <img src={image.url} key={image.url} alt={`post image ${index + 1}`} className="object-cover  w-full rounded-md" />
+                <Button className="absolute -top-1 right-1" onClick={(e) => handleDeleteImage(e, image.url)} type="button" size="icon" variant="link">
+                  {isPendingDelete ? <Spinner size="2" /> : <BsXCircleFill color="gray" />}
+                </Button>
+              </CarouselItem>
+            ))}
+        </CarouselContent>
+      </Carousel>
+    </div>
   );
 };
 

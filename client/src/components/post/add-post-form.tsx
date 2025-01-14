@@ -45,7 +45,7 @@ const AddPostForm: React.FC<PostFormProps> = ({ onClose }) => {
 
   return (
     <Form {...form}>
-      <form onSubmit={onSubmit} className="space-y-4">
+      <form onSubmit={onSubmit} className="space-y-4 w-full">
         <FormField
           name="post"
           render={({ field }) => (
