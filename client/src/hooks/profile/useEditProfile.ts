@@ -1,22 +1,11 @@
-import apiClient from "@/utils/apiClient";
 import { TProfileSchema } from "@/validation/profileSchema";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useImageUploadManager } from "../common/useImageUploadManager";
 import { urlToFile } from "@/lib/cropImage";
-import { IProfile } from "@/types/IProfiles";
 import { toast } from "sonner";
 import { useSetProfileData } from "./useSetProfileData";
-
-export interface IEditProfileResponse {
-  profile: IProfile;
-  message: string;
-}
-const editProfile = async (payload: TProfileSchema): Promise<IEditProfileResponse> => {
-  const url = `/api/profiles/${payload.id}`;
-  const res = await apiClient.put(url, payload);
-  return res.data;
-};
+import { editProfile } from "@/api/profile/editProfile";
 
 export const useEditProfile = () => {
   const navigate = useNavigate();

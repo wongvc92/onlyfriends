@@ -1,4 +1,4 @@
-import { getPostsByUsername } from "@/data/post/getPostsByUsername";
+import { getPostsByUsername } from "@/api/post/getPostsByUsername";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { postKeys } from "./postKeys";

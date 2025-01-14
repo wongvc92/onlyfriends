@@ -1,20 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { commentKeys } from "./commentKeys";
-import apiClient from "@/utils/apiClient";
-import { deleteCommentSchema } from "@/validation/commentSchema";
 import { useSetCommentData } from "./useSetComentData";
-
-const deleteComment = async ({ commentId }: { commentId: string }) => {
-  const parsed = deleteCommentSchema.safeParse({ commentId });
-  if (!parsed.success) {
-    throw new Error(`${parsed.error.issues[0].message} - ${parsed.error.issues[0].path}`);
-  }
-
-  const url = `/api/comments/${parsed.data.commentId}`;
-  const res = await apiClient.delete(url);
-  return res.data;
-};
+import { deleteComment } from "@/api/comment/deleteComment";
 
 export const useDeleteComment = (postId: string) => {
   const queryClient = useQueryClient();

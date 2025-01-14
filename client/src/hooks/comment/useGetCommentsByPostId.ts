@@ -1,4 +1,4 @@
-import { getCommentsByPostId } from "@/data/comment/getCommentsByPostId";
+import { getCommentsByPostId } from "@/api/comment/getCommentsByPostId";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { commentKeys } from "./commentKeys";
 

@@ -1,4 +1,4 @@
-import { getPeoples } from "@/data/friend/getPeoples";
+import { getPeoples } from "@/api/friend/getPeoples";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { peopleKeys } from "./peopleKeys";
 import { useSearch } from "@tanstack/react-router";

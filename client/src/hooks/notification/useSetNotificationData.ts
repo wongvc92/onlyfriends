@@ -1,8 +1,8 @@
-import { IGetNotificationsByUserIdResponse } from "@/data/notification/getNotificationsByUserId";
+import { IGetNotificationsByUserIdResponse } from "@/api/notification/getNotificationsByUserId";
+import { IUpdateNotificationRespose } from "@/api/notification/UpdateNotification";
 import { notificationKeys } from "@/hooks/notification/notificationKeys";
 import { INotification, IUnOpenNotification } from "@/types/INotification";
 import { InfiniteData, useQueryClient } from "@tanstack/react-query";
-import { IUpdateNotificationRespose } from "./useUpdateNotification";
 
 export const useSetNotificationData = () => {
   const queryClient = useQueryClient();

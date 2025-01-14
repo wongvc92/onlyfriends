@@ -1,29 +1,18 @@
 import { urlToFile } from "@/lib/cropImage";
 import { useImageUploadManager } from "../common/useImageUploadManager";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import apiClient from "@/utils/apiClient";
 import { IPost } from "@/types/IPost";
 import { postSchema, TPostSchema } from "@/validation/postsSchema";
 import { useSetPostData } from "./useSetPostData";
+import { createPost } from "@/api/post/createPost";
 
 export interface ICreatePostResponse {
   post: IPost;
   message: string;
 }
 
-const createPost = async ({ post, images }: TPostSchema): Promise<ICreatePostResponse> => {
-  const url = "/api/posts";
-  const res = await apiClient.post(url, {
-    post,
-    images,
-  });
-
-  return res.data;
-};
-
 export const useCreatePost = () => {
-  const queryClient = useQueryClient();
   const { uploadImageToS3 } = useImageUploadManager();
   const { createPostUserPage, createPostHomePage } = useSetPostData();
   return useMutation({

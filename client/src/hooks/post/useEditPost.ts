@@ -1,18 +1,7 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import apiClient from "@/utils/apiClient";
-import { IPost } from "@/types/IPost";
 import { useSetPostData } from "./useSetPostData";
-
-export interface IEditPostResponse {
-  post: IPost;
-  message: string;
-}
-const editPost = async ({ tagContent, postId }: { tagContent: string; postId: string }): Promise<IEditPostResponse> => {
-  const url = `/api/posts/${postId}`;
-  const res = await apiClient.put(url, { post: tagContent });
-  return res.data;
-};
+import { editPost, IEditPostResponse } from "@/api/post/editPost";
 
 export const useEditPost = () => {
   const { updatePostHomePage, updateSinglePost } = useSetPostData();

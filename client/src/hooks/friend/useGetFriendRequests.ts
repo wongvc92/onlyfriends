@@ -1,4 +1,4 @@
-import { getFriendsRequests } from "@/data/friend/getFriendsRequests";
+import { getFriendsRequests } from "@/api/friend/getFriendsRequests";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { friendKeys } from "./friendKeys";
 

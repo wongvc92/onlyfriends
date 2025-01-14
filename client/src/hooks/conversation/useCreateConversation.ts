@@ -1,19 +1,7 @@
-import apiClient from "@/utils/apiClient";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { conversationKeys } from "./conversationKeys";
-import { createConversationSchema } from "@/validation/converstationSchema";
-
-const createConversation = async (peopleId: string) => {
-  const parsed = createConversationSchema.safeParse({ peopleId });
-  if (!parsed.success) {
-    throw new Error(`${parsed.error.issues[0].message} - ${parsed.error.issues[0].path}`);
-  }
-
-  const url = "/api/conversations";
-  const res = await apiClient.post(url, { peopleId: parsed.data.peopleId });
-  return res.data;
-};
+import { createConversation } from "@/api/conversation/createConversation";
 
 export const useCreateConversation = () => {
   const navigate = useNavigate();

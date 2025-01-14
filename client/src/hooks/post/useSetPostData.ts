@@ -1,11 +1,12 @@
-import { IGetPostsByUsernameResponse } from "@/data/post/getPostsByUsername";
+import { IGetPostsByUsernameResponse } from "@/api/post/getPostsByUsername";
 import { InfiniteData, useQueryClient } from "@tanstack/react-query";
 import { postKeys } from "./postKeys";
 import { ICreatePostResponse } from "./useCreatePost";
-import { IGetAllPostsResponse } from "@/data/post/getAllPosts";
-import { IEditPostResponse } from "./useEditPost";
+import { IGetAllPostsResponse } from "@/api/post/getAllPosts";
 import { IPost } from "@/types/IPost";
-import { IDeletePostResponse } from "./useDeletePost";
+import { IDeletePostResponse } from "@/api/post/deletePost";
+import { IEditPostResponse } from "@/api/post/editPost";
+
 
 export const useSetPostData = () => {
   const queryClient = useQueryClient();

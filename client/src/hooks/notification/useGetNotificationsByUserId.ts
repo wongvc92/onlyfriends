@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { getNotificationsByUserId } from "@/data/notification/getNotificationsByUserId";
+import { getNotificationsByUserId } from "@/api/notification/getNotificationsByUserId";
 import { useAuth } from "@/context/auth";
 import { notificationKeys } from "./notificationKeys";
 

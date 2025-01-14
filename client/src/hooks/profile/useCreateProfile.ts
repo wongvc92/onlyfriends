@@ -1,22 +1,11 @@
-import apiClient from "@/utils/apiClient";
 import { TProfileSchema } from "@/validation/profileSchema";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
 import { urlToFile } from "@/lib/cropImage";
 import { useImageUploadManager } from "../common/useImageUploadManager";
-import { IProfile } from "@/types/IProfiles";
 import { useSetProfileData } from "./useSetProfileData";
-
-export interface ICreateProfileRespose {
-  profile: IProfile;
-  message: string;
-}
-const createProfile = async (payload: TProfileSchema): Promise<ICreateProfileRespose> => {
-  const url = "/api/profiles";
-  const res = await apiClient.post(url, payload);
-  return res.data;
-};
+import { createProfile } from "@/api/profile/createProfile";
 
 export const useCreateProfile = () => {
   const navigate = useNavigate();

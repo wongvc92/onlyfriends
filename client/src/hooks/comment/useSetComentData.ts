@@ -1,11 +1,12 @@
-import { IGetAllPostsResponse } from "@/data/post/getAllPosts";
+import { IGetAllPostsResponse } from "@/api/post/getAllPosts";
 import { InfiniteData, useQueryClient } from "@tanstack/react-query";
 import { postKeys } from "../post/postKeys";
 import { IPost } from "@/types/IPost";
-import { IGetCommentsByPostIdResponse } from "@/data/comment/getCommentsByPostId";
+import { IGetCommentsByPostIdResponse } from "@/api/comment/getCommentsByPostId";
 import { commentKeys } from "./commentKeys";
-import { ICreateCommentResponse } from "./useCreateComment";
-import { IEditCommentResponse } from "./useEditComment";
+
+import { ICreateCommentResponse } from "@/api/comment/createComment";
+import { IEditCommentResponse } from "@/api/comment/editComment";
 
 export const useSetCommentData = () => {
   const queryClient = useQueryClient();

@@ -1,4 +1,4 @@
-import { getMessagesById } from "@/data/message/getMessagesById";
+import { getMessagesById } from "@/api/message/getMessagesById";
 import { useQuery } from "@tanstack/react-query";
 import { messageKeys } from "./messageKeys";
 

@@ -9,10 +9,11 @@ import { format } from "date-fns";
 import { useGetMessages } from "@/hooks/message/useGetMessages";
 import { ConversationsSchema } from "@/routes/_authenticated/messages";
 import { cn } from "@/lib/utils";
-import { messageKeys } from "@/hooks/message/messageKeys";
 import { useSocket } from "@/context/socket";
+import { useSetMessageData } from "@/hooks/message/useSetMessageData";
 
 const MessageList = () => {
+  const { createNewMessage } = useSetMessageData();
   const { socket } = useSocket();
   const auth = useAuth();
   const { conversationId } = useParams({ from: "/_authenticated/messages/_layout/conversations/_layout/$conversationId/" });
@@ -40,10 +41,7 @@ const MessageList = () => {
 
   useEffect(() => {
     socket?.on("newMessage", (newMessage: IMessage) => {
-
-      queryClient.setQueryData(messageKeys.list(conversationId), (oldData: IMessage[] | undefined) => {
-        return oldData ? [...oldData, newMessage] : [newMessage];
-      });
+      createNewMessage(newMessage, conversationId);
       scrollToBottom();
     });
 

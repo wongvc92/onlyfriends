@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/context/auth";
 import { notificationKeys } from "./notificationKeys";
-import { getUnopenNotification } from "@/data/notification/getUnopenNotification";
+import { getUnopenNotification } from "@/api/notification/getUnopenNotification";
 
 export const useGetUnopenNotification = () => {
   const { user } = useAuth();

@@ -1,4 +1,4 @@
-import { getMessagesCount } from "@/data/message/getMessagesCount";
+import { getMessagesCount } from "@/api/message/getMessagesCount";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 

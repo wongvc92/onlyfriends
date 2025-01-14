@@ -1,14 +1,8 @@
-import apiClient from "@/utils/apiClient";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { peopleKeys } from "../people/peopleKeys";
 import { friendKeys } from "./friendKeys";
-
-const deleteFriend = async (peopleId: string) => {
-  const url = `/api/friends/${peopleId}`;
-  const res = await apiClient.delete(url);
-  return res.data;
-};
+import { deleteFriend } from "@/api/friend/deleteFriend";
 
 export const useDeleteFriend = ({ peopleId }: { peopleId: string }) => {
   const queryClient = useQueryClient();

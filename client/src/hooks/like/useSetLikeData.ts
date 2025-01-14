@@ -1,8 +1,8 @@
 import { InfiniteData, useQueryClient } from "@tanstack/react-query";
 import { postKeys } from "../post/postKeys";
-import { IGetAllPostsResponse } from "@/data/post/getAllPosts";
 import { IPost } from "@/types/IPost";
-import { IGetPostsByUsernameResponse } from "@/data/post/getPostsByUsername";
+import { IGetAllPostsResponse } from "@/api/post/getAllPosts";
+import { IGetPostsByUsernameResponse } from "@/api/post/getPostsByUsername";
 
 export const useSetLikeData = () => {
   const queryClient = useQueryClient();

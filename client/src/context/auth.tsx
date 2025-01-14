@@ -1,7 +1,7 @@
 import React, { createContext } from "react";
 import { IUserClient } from "../types/ICheckAuth";
 import { QueryObserverResult, RefetchOptions, useQuery } from "@tanstack/react-query";
-import { getUser } from "@/data/user/getUser";
+import { getUser } from "@/api/user/getUser";
 
 export interface IAuthContext {
   error: Error | null;

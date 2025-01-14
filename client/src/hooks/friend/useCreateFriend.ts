@@ -1,15 +1,10 @@
-import apiClient from "@/utils/apiClient";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { peopleKeys } from "../people/peopleKeys";
 import { profileKeys } from "../profile/profileKeys";
 import { friendKeys } from "./friendKeys";
+import { createFriend } from "@/api/friend/createFriend";
 
-const createFriend = async (peopleId: string) => {
-  const url = "/api/friends";
-  const res = await apiClient.post(url, { peopleId });
-  return res.data;
-};
 export const useCreateFriend = ({ username, peopleId }: { username?: string; peopleId: string }) => {
   const queryClient = useQueryClient();
 
