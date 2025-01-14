@@ -1,14 +1,11 @@
 import apiClient from "@/utils/apiClient";
-import { InfiniteData, useMutation, useQueryClient } from "@tanstack/react-query";
-import { postKeys } from "../post/postKeys";
+import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { IPost } from "@/types/IPost";
 import { useParams } from "@tanstack/react-router";
-import { IGetAllPostsResponse } from "@/data/post/getAllPosts";
-import { IGetPostsByUsernameResponse } from "@/data/post/getPostsByUsername";
 import { createlikeSchema } from "@/validation/likeSchema";
+import { useSetLikeData } from "./useSetLikeData";
 
-interface ICreateLikeByPostIdResponse {
+export interface ICreateLikeByPostIdResponse {
   postId: string;
 }
 
@@ -30,7 +27,7 @@ const createLikeByPostId = async ({ postId, author_id, content }: ICreateLikePay
 
 export const useCreateLike = () => {
   const { username } = useParams({ strict: false });
-  const queryClient = useQueryClient();
+  const { updateHomePageLikeCount, updateSinglePostLike, updateUserPostLike } = useSetLikeData();
   return useMutation({
     mutationFn: createLikeByPostId,
     onError: (error) => {
@@ -38,72 +35,10 @@ export const useCreateLike = () => {
       toast.error("Failed to like post or post doesn't exist");
     },
     onSuccess: (data: ICreateLikeByPostIdResponse) => {
-      queryClient.setQueryData(postKeys.list(), (oldData: InfiniteData<IGetAllPostsResponse>) => {
-        if (!oldData || !oldData.pages) return oldData;
-
-        const newPages = oldData.pages.map((page) => {
-          if (!page || !page.data) return page;
-
-          return {
-            ...page,
-            data: page.data.map((post) => {
-              if (post && post.id === data.postId) {
-                // Safeguard for undefined posts
-                const currentLikeCount = Number(post.like_count) || 0;
-                return {
-                  ...post,
-                  is_liked: true,
-                  like_count: currentLikeCount + 1,
-                };
-              }
-              return post;
-            }),
-          };
-        });
-
-        return {
-          ...oldData,
-          pages: newPages,
-        };
-      });
-
-      queryClient.setQueryData(postKeys.detail(data.postId), (oldData: IPost) => {
-        if (!oldData) {
-          console.warn("Old data for post detail is undefined. Skipping update.");
-          return oldData; // Safeguard for undefined oldData
-        }
-        const currentLikeCount = Number(oldData.like_count) || 0;
-        return { ...oldData, is_liked: true, like_count: currentLikeCount + 1 } as IPost;
-      });
-
+      updateHomePageLikeCount(data.postId, true, +1);
+      updateSinglePostLike(data.postId, true, +1);
       if (username) {
-        queryClient.setQueryData(postKeys.userPosts(username as string), (oldData: InfiniteData<IGetPostsByUsernameResponse>) => {
-          if (!oldData || !oldData.pages) return oldData;
-
-          const newPages = oldData.pages.map((page) => {
-            if (!page || !page.data) return page;
-
-            return {
-              ...page,
-              data: page.data.map((post) => {
-                if (post && post.id === data.postId) {
-                  const currentLikeCount = Number(post.like_count) || 0;
-                  return {
-                    ...post,
-                    is_liked: true,
-                    like_count: currentLikeCount + 1,
-                  };
-                }
-                return post;
-              }),
-            };
-          });
-
-          return {
-            ...oldData,
-            pages: newPages,
-          };
-        });
+        updateUserPostLike(data.postId, true, +1, username);
       }
     },
   });

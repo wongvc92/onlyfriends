@@ -1,14 +1,14 @@
 import apiClient from "@/utils/apiClient";
 import { TProfileSchema } from "@/validation/profileSchema";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useImageUploadManager } from "../common/useImageUploadManager";
 import { urlToFile } from "@/lib/cropImage";
 import { IProfile } from "@/types/IProfiles";
-import { profileKeys } from "./profileKeys";
 import { toast } from "sonner";
+import { useSetProfileData } from "./useSetProfileData";
 
-interface IEditProfileResponse {
+export interface IEditProfileResponse {
   profile: IProfile;
   message: string;
 }
@@ -21,7 +21,7 @@ const editProfile = async (payload: TProfileSchema): Promise<IEditProfileRespons
 export const useEditProfile = () => {
   const navigate = useNavigate();
   const { uploadImageToS3 } = useImageUploadManager();
-  const queryClient = useQueryClient();
+  const { editProfileData } = useSetProfileData();
   return useMutation({
     mutationFn: async (payload: TProfileSchema) => {
       const convertedUrlToFileBannerImage = await urlToFile(payload.banner_image, "image-file.png", "image/png");
@@ -33,8 +33,7 @@ export const useEditProfile = () => {
       return editProfile({ ...payload, banner_image: signedBannerImage, display_image: signedisplayImage });
     },
     onSuccess: (data) => {
-      queryClient.setQueryData(profileKeys.detail(data.profile.username), () => data.profile);
-
+      editProfileData(data);
       navigate({ to: `/${data.profile.username}` });
     },
     onError: (error: any) => {

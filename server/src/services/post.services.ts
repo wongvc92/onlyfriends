@@ -160,7 +160,39 @@ const getPostsByUsername = async (userId: string, username: string, limit: numbe
 };
 
 const deletePost = async (postId: string, userId: string) => {
-  return await pool.query("DELETE from posts WHERE id=$1 AND author_id=$2", [postId, userId]);
+  const result = await pool.query(
+    `
+      WITH deleted_post AS 
+      (  
+        DELETE from posts 
+        WHERE id=$1 AND author_id=$2   
+        RETURNING *
+        )
+        SELECT dp.*,
+        users.username,
+        profiles.name,
+        profiles.display_image,
+        COUNT(DISTINCT likes.id) AS like_count,
+        COUNT(DISTINCT comments.id) AS comment_count
+        FROM deleted_post dp
+        LEFT JOIN users ON dp.author_id = users.id
+        LEFT JOIN profiles ON profiles.user_id = users.id
+        LEFT JOIN likes ON likes.post_id = dp.id
+        LEFT JOIN comments ON comments.post_id = dp.id
+        GROUP BY 
+            dp.id,
+            dp.post,
+            dp.created_at,
+            dp.updated_at,
+            dp.author_id,
+            users.username,
+            profiles.name,
+            profiles.display_image;
+    `,
+    [postId, userId]
+  );
+
+  return result.rows[0];
 };
 
 const getAllPostsCount = async (): Promise<number> => {

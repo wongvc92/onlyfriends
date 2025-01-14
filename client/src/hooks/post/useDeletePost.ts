@@ -1,13 +1,15 @@
 import apiClient from "@/utils/apiClient";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { postKeys } from "./postKeys";
 import { deletePostSchema } from "@/validation/postsSchema";
+import { useSetPostData } from "./useSetPostData";
+import { IPost } from "@/types/IPost";
 
-interface DeletePostResponse {
+export interface IDeletePostResponse {
   message: string;
+  post: IPost;
 }
-const deletePost = async (postId: string): Promise<DeletePostResponse> => {
+const deletePost = async (postId: string): Promise<IDeletePostResponse> => {
   const parsed = deletePostSchema.safeParse({ postId });
 
   if (!parsed.success) {
@@ -20,17 +22,16 @@ const deletePost = async (postId: string): Promise<DeletePostResponse> => {
 };
 
 export const useDeletePost = () => {
-  const queryClient = useQueryClient();
+  const { deletePostUserPage, deletePostHomePage } = useSetPostData();
   return useMutation({
     mutationFn: (postId: string) => deletePost(postId),
     onError: (error) => {
       toast.error(error.message || "Failed to delete post.");
     },
-    onSuccess: async (data: DeletePostResponse) => {
+    onSuccess: async (data: IDeletePostResponse) => {
       toast.success(data.message);
-      await queryClient.invalidateQueries({
-        queryKey: postKeys.all,
-      });
+      deletePostUserPage(data);
+      deletePostHomePage(data);
     },
   });
 };

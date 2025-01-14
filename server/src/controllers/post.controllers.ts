@@ -79,11 +79,11 @@ const deletePost = asyncHandler(async (req: Request, res: Response) => {
   const { params } = deletePostSchema.parse(req);
   const { postId } = params;
 
-  await postServices.deletePost(postId, currentUser.id);
+  const deletedPost = await postServices.deletePost(postId, currentUser.id);
 
   await notificationServices.deleteNotification({ recipient_id: currentUser.id, source_id: postId, type: "post" });
 
-  res.status(HTTPSTATUS.OK).json({ message: "Post deleted!" });
+  res.status(HTTPSTATUS.OK).json({ post: deletedPost, message: "Post deleted!" });
 });
 
 const getAllPosts = asyncHandler(async (req: Request, res: Response) => {
